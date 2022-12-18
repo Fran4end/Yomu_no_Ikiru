@@ -20,17 +20,9 @@ class _SearchPageState extends State<SearchPage> {
       MangaWorld().getLastAdd().then((value) {
         _mangas = MangaGrid(
           listManga: value,
-          height: MediaQuery.of(context).size.height - 170,
         );
         setState(() {});
       });
-      /*MangaWorld().getArchive().then((value) {
-        _mangas = MangaGrid(
-          listManga: value,
-          height: MediaQuery.of(context).size.height - 170,
-        );
-        setState(() {});
-      });*/
     }
 
     super.initState();
@@ -40,7 +32,13 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Discover'),
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        centerTitle: true,
+        title: Text(
+          'Discover',
+          style: titleGreenStyle(),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -95,7 +93,6 @@ class Delegate extends SearchDelegate {
         if (snapshot.hasData) {
           grid = MangaGrid(
             listManga: snapshot.data!,
-            height: MediaQuery.of(context).size.height,
           );
         } else {
           grid = const Center(child: Text(''));
@@ -109,22 +106,18 @@ class Delegate extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     String search = query.trim().toLowerCase();
     return FutureBuilder(
-      future: MangaWorld().getResults(search),
+      future: MangaWorld().buildSuggestions(search),
       builder: (context, snapshot) {
-        List<Manga> suggestions = [];
+        List<String> suggestions = [];
         if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
-            suggestions = snapshot.data!;
-          } else {
-            suggestions = [];
-          }
+          suggestions = snapshot.data!;
           return ListView.builder(
             itemCount: suggestions.length >= 5 ? 5 : suggestions.length,
             itemBuilder: (context, index) {
               final suggestion = suggestions[index];
               return ListTile(
-                title: Text(suggestion.title),
-                onTap: () => query = suggestion.title,
+                title: Text(suggestion),
+                onTap: () => query = suggestion,
               );
             },
           );
@@ -134,8 +127,8 @@ class Delegate extends SearchDelegate {
             itemBuilder: (context, index) {
               final suggestion = suggestions[index];
               return ListTile(
-                title: Text(suggestion.title),
-                onTap: () => query = suggestion.title,
+                title: Text(suggestion),
+                onTap: () => query = suggestion,
               );
             },
           );

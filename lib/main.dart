@@ -20,19 +20,16 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
-        colorScheme: colorScheme,
         brightness: Brightness.dark,
-        useMaterial3: true,
       ),
-      themeMode: ThemeMode.system,
-      home: const MyHomePage(title: 'Demo'),
+      themeMode: ThemeMode.light,
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -43,16 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    MangaWorld().getArchive();
     return Scaffold(
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-            //indicatorColor: const Color.fromRGBO(40, 137, 153, 0.60),
             labelTextStyle: MaterialStateProperty.all(
           const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         )),
         child: NavigationBar(
-          //backgroundColor: const Color.fromRGBO(114, 192, 204, 0.80),
           selectedIndex: _selectpage,
           height: 60,
           animationDuration: const Duration(milliseconds: 400),
