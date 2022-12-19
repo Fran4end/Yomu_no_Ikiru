@@ -1,38 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:manga_app/manga.dart';
+import 'package:manga_app/mangaBuilder.dart';
+import 'package:manga_app/mangaworld.dart';
 
 class MangaPage extends StatefulWidget {
-  const MangaPage({
-    required this.title,
-    required this.link,
+  MangaPage({
+    required this.manga,
+    required this.mangaBuilder,
     super.key,
   });
-  final String title, link;
+  Manga manga;
+  MangaBuilder mangaBuilder;
 
   @override
   State<StatefulWidget> createState() => _MangaPageState();
 }
 
 class _MangaPageState extends State<MangaPage> {
-  late final Size screen;
-
   @override
   void initState() {
+    MangaWorld().getAllInfo(widget.mangaBuilder).then((value) {
+      widget.mangaBuilder = value;
+      widget.manga = widget.mangaBuilder.build();
+      if (mounted) {
+        setState(() {});
+      }
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    screen = MediaQuery.of(context).size;
+    final screen = MediaQuery.of(context).size;
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0.0,
-      //   centerTitle: true,
-      //   titleTextStyle: titleGreenStyle(),
-      //   title: Text(widget.title),
-      // ),
       body: Stack(
         children: [
           Container(
@@ -41,15 +43,15 @@ class _MangaPageState extends State<MangaPage> {
             color: Colors.black,
           ),
           Hero(
-            tag: widget.title,
+            tag: widget.manga.title.toString(),
             child: Container(
               height: (screen.height / 2) + 70.0,
               width: screen.width,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  // TODO: take image from manga
-                  image: NetworkImage(
-                      'https://cdn.mangaworld.so/mangas/5fa455670febb5685c5ce6e5.png?1671393423505'),
+                  image: widget.manga.image == null
+                      ? Image.asset('assets/blank.jpg').image
+                      : NetworkImage(widget.manga.image.toString()),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -73,11 +75,11 @@ class _MangaPageState extends State<MangaPage> {
             ),
           ),
           Positioned(
-            top: (screen.height / 2) + 90,
+            top: (screen.height / 2) + 70,
             child: Column(
               children: [
                 SizedBox(
-                  height: (screen.height / 2) - 150,
+                  height: (screen.height / 2) - 130,
                   width: screen.width,
                   //TODO: get all chapters
                   child: ListView.builder(
@@ -86,9 +88,14 @@ class _MangaPageState extends State<MangaPage> {
                       return Card(
                         elevation: 5,
                         color: Colors.grey[900],
-                        child: Text(
-                          'Capitolo',
-                          style: subtitleStyle(),
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.only(left: defaultPadding),
+                          child: Text(
+                            'Capitolo',
+                            style: subtitleStyle(),
+                          ),
                         ),
                       );
                     },
@@ -100,6 +107,21 @@ class _MangaPageState extends State<MangaPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      Container(
+                        height: 30,
+                        width: (screen.width / 2) - 120,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: backgroundColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          widget.manga.status == null
+                              ? 'Status'
+                              : widget.manga.status.toString(),
+                          style: titleGreenStyle(),
+                        ),
+                      ),
                       SizedBox(
                         height: 50.0,
                         child: Column(
@@ -113,19 +135,19 @@ class _MangaPageState extends State<MangaPage> {
                           ],
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          height: 50.0,
-                          width: (screen.width / 2) - 50,
-                          decoration: BoxDecoration(
-                              color: secondaryColor,
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size((screen.width / 2) - 50, 45),
+                          elevation: 10,
+                          backgroundColor: primaryColor,
+                          shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0)),
-                          child: Center(
-                            child: Text('Resume', style: titleStyle()),
-                          ),
                         ),
-                      )
+                        child: Center(
+                          child: Text('Resume', style: titleStyle()),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -133,7 +155,7 @@ class _MangaPageState extends State<MangaPage> {
             ),
           ),
           Positioned(
-            top: (screen.height / 2) - 30,
+            top: (screen.height / 2) - 45,
             child: GlassContainer(
               height: 150,
               width: screen.width,
@@ -154,20 +176,36 @@ class _MangaPageState extends State<MangaPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Titolo', style: titleStyle()),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                          Text(
+                            widget.manga.title == null
+                                ? 'Title'
+                                : widget.manga.title.toString(),
+                            style: titleStyle(),
+                          ),
+                          Wrap(
+                            direction: Axis.horizontal,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              Text('auture', style: subtitleStyle()),
+                              Text(
+                                widget.manga.author == null
+                                    ? 'author'
+                                    : widget.manga.author.toString(),
+                                style: subtitleStyle(),
+                              ),
                               const Padding(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: defaultPadding),
+                                    horizontal: defaultPadding / 2),
                                 child: CircleAvatar(
                                   radius: 3,
                                   backgroundColor: Colors.black,
                                 ),
                               ),
-                              Text('artista', style: subtitleStyle()),
+                              Text(
+                                widget.manga.artist == null
+                                    ? 'artist'
+                                    : widget.manga.artist.toString(),
+                                style: subtitleStyle(),
+                              ),
                             ],
                           ),
                           const SizedBox(height: defaultPadding),
@@ -179,9 +217,19 @@ class _MangaPageState extends State<MangaPage> {
                                 size: 22.0,
                               ),
                               const SizedBox(width: defaultPadding / 2),
-                              Text('voto', style: subtitleStyle()),
+                              Text(
+                                widget.manga.vote == null
+                                    ? 'vote'
+                                    : widget.manga.vote.toString(),
+                                style: subtitleStyle(),
+                              ),
                               const SizedBox(width: defaultPadding / 2),
-                              Text('(N)', style: miniStyle())
+                              Text(
+                                widget.manga.readings == null
+                                    ? '(readings)'
+                                    : '(${widget.manga.readings})',
+                                style: miniStyle(),
+                              )
                             ],
                           )
                         ],
@@ -192,7 +240,7 @@ class _MangaPageState extends State<MangaPage> {
                       height: 140,
                       width: (screen.width - 20) / 2,
                       child: Column(
-                          //TODO: Mettere il generi
+                          //TODO: Mettere i generi
                           ),
                     ),
                   ],

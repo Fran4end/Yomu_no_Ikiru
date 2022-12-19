@@ -1,40 +1,48 @@
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
+import 'package:manga_app/costants.dart';
 import 'package:manga_app/manga.dart';
+import 'package:manga_app/mangaBuilder.dart';
 
 class MangaWorld {
-  Future<List<Manga>> getLastAdd() async {
-    List<Manga> mangas = [];
-    final res = await http.Client().get(Uri.parse(
-        'https://api.allorigins.win/raw?url=https://www.mangaworld.so'));
+  Future<Map<String, MangaBuilder>> getLastAdd() async {
+    final res = await http.Client().get(Uri.parse('https://www.mangaworld.so'));
     if (res.statusCode == 200) {
       var page = parse(res.body);
       var mangaList = page
           .getElementsByClassName('comics-grid')[0]
           .getElementsByClassName('entry')
           .toList();
-      for (var element in mangaList) {
-        String status = _getStatus(element);
-        String title = _getTitle(element);
-        String link = _getLink(element);
-        String image = _getImage(element);
-        mangas.add(Manga(
-          image: image,
-          status: status,
-          title: title,
-          link: link,
-        ));
-      }
-      return mangas;
+      mangaList.asMap().forEach((i, element) {
+        MangaBuilder builder = MangaBuilder()
+          ..status = _getStatus(element)
+          ..title = _getTitle(element)
+          ..link = _getLink(element)
+          ..image = _getImage(element);
+        mangasBuilder.update(
+          builder.title.toString(),
+          (value) => builder,
+          ifAbsent: () => builder,
+        );
+        mangasBuilder.update(
+          "last$i",
+          (value) => builder,
+          ifAbsent: () => builder,
+        );
+      });
     } else {
-      return throw Exception;
+      if (kDebugMode) {
+        print(throw Exception);
+      }
     }
+    return mangasBuilder;
   }
 
   Future<List<String>> buildSuggestions(String keyworld) async {
     List<String> sugg = [];
     final res = await http.Client().get(Uri.parse(
-        'https://api.allorigins.win/raw?url=https://www.mangaworld.so/archive?sort=most_read&keyword=$keyworld'));
+        'https://www.mangaworld.so/archive?sort=most_read&keyword=$keyworld'));
     if (res.statusCode == 200) {
       var page = parse(res.body);
       var mangaList = page
@@ -45,40 +53,44 @@ class MangaWorld {
         String title = _getTitle(element);
         sugg.add(title);
       }
-      return sugg;
     } else {
-      return throw Exception;
+      if (kDebugMode) {
+        print(throw Exception);
+      }
     }
+    return sugg;
   }
 
   Future<List<Manga>> getResults(String keyworld) async {
-    List<Manga> mangas = [];
+    List<Manga> tmp = [];
     final res = await http.Client().get(Uri.parse(
-        'https://api.allorigins.win/raw?url=https://www.mangaworld.so/archive?sort=most_read&keyword=$keyworld'));
+        'https://www.mangaworld.so/archive?sort=most_read&keyword=$keyworld'));
     if (res.statusCode == 200) {
       var page = parse(res.body);
       var mangaList = page
           .getElementsByClassName('comics-grid')[0]
           .getElementsByClassName('entry')
           .toList();
-      for (var element in mangaList) {
-        String status = _getStatus(element);
-        String title = _getTitle(element);
-        String image = _getImage(element);
-        String link = _getLink(element);
-        var tmp = Manga(
-          status: status,
-          title: title,
-          image: image,
-          link: link,
+      mangaList.asMap().forEach((i, element) {
+        MangaBuilder builder = MangaBuilder()
+          ..status = _getStatus(element)
+          ..title = _getTitle(element)
+          ..link = _getLink(element)
+          ..image = _getImage(element)
+          ..trama = _getTrama(element);
+        tmp.add(Manga(builder: builder));
+        mangasBuilder.update(
+          builder.title.toString(),
+          (value) => builder,
+          ifAbsent: () => builder,
         );
-
-        mangas.add(tmp);
-      }
-      return mangas;
+      });
     } else {
-      return throw Exception;
+      if (kDebugMode) {
+        print(throw Exception);
+      }
     }
+    return tmp;
   }
 
   _getLink(var element) {
@@ -95,12 +107,10 @@ class MangaWorld {
     return element.getElementsByClassName('status')[0].children[1].text;
   }
 
-  _getArtist(var element) {
-    return element.getElementsByClassName('artist')[0].children[1].text;
-  }
-
-  _getAuthor(var element) {
-    return element.getElementsByClassName('author')[0].children[1].text;
+  _getImage(var element) {
+    var obj = element.getElementsByTagName('img')[0].attributes;
+    String link = obj["src"].toString();
+    return link;
   }
 
   _getTrama(var element) {
@@ -108,20 +118,77 @@ class MangaWorld {
     return temp.replaceAll('Trama: ', '');
   }
 
-  _getImage(var element) {
-    var obj = element.getElementsByTagName('img')[0].attributes;
-    String link = obj["src"].toString();
-    return link;
+  Future getAllInfo(MangaBuilder builder) async {
+    final res = await http.Client().get(Uri.parse(builder.link.toString()));
+    if (res.statusCode == 200) {
+      var page = parse(res.body);
+      var info = page
+          .getElementsByClassName('info')[0]
+          .getElementsByClassName('meta-data')[0];
+      var v = page
+          .getElementsByClassName('info')[0]
+          .getElementsByClassName('references')[0];
+      builder
+        ..artist = _getArtist(info)
+        ..author = _getAuthor(info)
+        ..genres = _getGenres(info)
+        ..readings = double.parse(_getVisual(info))
+        ..vote = double.parse(await _getVote(v));
+    } else {
+      if (kDebugMode) {
+        print(throw Exception);
+      }
+    }
+    return builder;
+  }
+
+  _getArtist(var element) {
+    return element.children[3].getElementsByTagName('a')[0].text;
+  }
+
+  _getAuthor(var element) {
+    return element.children[2].getElementsByTagName('a')[0].text;
   }
 
   _getGenres(var element) {
     List temp = [];
-    List html = element.getElementsByClassName('genres').children.toList();
+    List html = element.children[1].getElementsByTagName('a').toList();
     for (var element in html) {
-      if (element.text != 'Generi: ' && element.text != '') {
-        temp.add(element.text);
-      }
+      temp.add(element.text);
     }
     return temp;
+  }
+
+  _getVisual(var element) {
+    return element.children[6].children[1].text;
+  }
+
+  _getVote(var element) async {
+    String att = '';
+    element.children.forEach((element) {
+      if (element.firstChild != null) {
+        var tmp = element.firstChild.attributes;
+        if (tmp['href'].toString().contains('myanimelist')) {
+          att = tmp['href'].toString();
+        }
+      }
+    });
+    if (att == '') {
+      return '0';
+    }
+    final res = await http.Client().get(Uri.parse(att));
+    if (res.statusCode == 200) {
+      var page = parse(res.body);
+      var ret = page.getElementsByClassName('score-label')[0].text;
+      if (ret == 'N/A') {
+        return '0';
+      } else {
+        return ret;
+      }
+    } else {
+      if (kDebugMode) {
+        print(throw Exception);
+      }
+    }
   }
 }

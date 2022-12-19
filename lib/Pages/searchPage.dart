@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
 import 'package:manga_app/manga.dart';
@@ -19,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
     if (_mangas == null) {
       MangaWorld().getLastAdd().then((value) {
         _mangas = MangaGrid(
-          listManga: value,
+          listManga: _generateListManga(value),
         );
         setState(() {});
       });
@@ -32,12 +34,12 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: primaryColor,
         elevation: 0.0,
         centerTitle: true,
         title: Text(
           'Discover',
-          style: titleGreenStyle(),
+          style: titleStyle(),
         ),
         actions: [
           IconButton(
@@ -61,8 +63,32 @@ class _SearchPageState extends State<SearchPage> {
               ),
               itemBuilder: (context, index) => const CardSkelton(),
             )
-          : _mangas!,
+          : RefreshIndicator(
+              onRefresh: () => _refresh(),
+              child: _mangas!,
+            ),
     );
+  }
+
+  Future _refresh() async {
+    MangaWorld().getLastAdd().then((value) {
+      _mangas = MangaGrid(
+        listManga: _generateListManga(value),
+      );
+      setState(() {});
+    });
+    _mangas = null;
+    setState(() {});
+  }
+
+  List<Manga> _generateListManga(Map map) {
+    List<Manga> mangas = [];
+    map.forEach((key, value) {
+      if (key.toString().contains("last")) {
+        mangas.add(Manga(builder: value));
+      }
+    });
+    return mangas;
   }
 }
 
@@ -104,36 +130,47 @@ class Delegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    Completer<List<String>> completer = Completer();
     String search = query.trim().toLowerCase();
+    late final Debouncer debouncer =
+        Debouncer(const Duration(milliseconds: 300), initialValue: '',
+            onChanged: (value) {
+      completer.complete(
+          MangaWorld().buildSuggestions(value)); // call the API endpoint
+    });
+
+    debouncer.value = search;
+    completer = Completer();
+
     return FutureBuilder(
-      future: MangaWorld().buildSuggestions(search),
-      builder: (context, snapshot) {
-        List<String> suggestions = [];
-        if (snapshot.connectionState == ConnectionState.done) {
-          suggestions = snapshot.data!;
-          return ListView.builder(
-            itemCount: suggestions.length >= 5 ? 5 : suggestions.length,
-            itemBuilder: (context, index) {
-              final suggestion = suggestions[index];
-              return ListTile(
-                title: Text(suggestion),
-                onTap: () => query = suggestion,
+        future: completer.future,
+        builder: (context, snapshot) {
+          List<String> suggestions = [];
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occured',
+                  style: const TextStyle(fontSize: 18),
+                ),
               );
-            },
-          );
-        } else {
-          return ListView.builder(
-            itemCount: suggestions.length >= 5 ? 5 : suggestions.length,
-            itemBuilder: (context, index) {
-              final suggestion = suggestions[index];
-              return ListTile(
-                title: Text(suggestion),
-                onTap: () => query = suggestion,
+            } else if (snapshot.hasData) {
+              suggestions = snapshot.data!;
+              return ListView.builder(
+                itemCount: suggestions.length >= 5 ? 5 : suggestions.length,
+                itemBuilder: (context, index) {
+                  final suggestion = suggestions[index];
+                  return ListTile(
+                    title: Text(suggestion),
+                    onTap: () => query = suggestion,
+                  );
+                },
               );
-            },
+            }
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        }
-      },
-    );
+        });
   }
 }

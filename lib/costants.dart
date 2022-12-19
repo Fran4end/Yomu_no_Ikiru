@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:manga_app/mangaBuilder.dart';
 
 const double defaultPadding = 16;
+Map<String, MangaBuilder> mangasBuilder = {};
 
 // * Text Style
 titleStyle() {

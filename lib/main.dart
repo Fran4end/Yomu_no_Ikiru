@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/Pages/searchPage.dart';
-import 'package:manga_app/costants.dart';
-import 'package:manga_app/mangaworld.dart';
 
 void main() {
   runApp(const MyApp());
