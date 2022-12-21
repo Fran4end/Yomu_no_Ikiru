@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:manga_app/mangaBuilder.dart';
+import 'package:manga_app/manga_builder.dart';
 
+const String baseUrl = "https://www.mangaworld.so";
 const double defaultPadding = 16;
 Map<String, MangaBuilder> mangasBuilder = {};
 
 // * Text Style
 titleStyle() {
-  return GoogleFonts.sourceSansPro(
-      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17);
+  return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17);
 }
 
 titleGreenStyle() {
-  return GoogleFonts.sourceSansPro(
-      color: greenColor, fontWeight: FontWeight.bold, fontSize: 18);
+  return GoogleFonts.sourceSansPro(color: greenColor, fontWeight: FontWeight.bold, fontSize: 18);
 }
 
 subtitleStyle() {
-  return GoogleFonts.sourceSansPro(
-      color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14);
+  return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14);
 }
 
 miniStyle() {

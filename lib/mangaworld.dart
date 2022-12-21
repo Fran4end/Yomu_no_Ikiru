@@ -1,56 +1,74 @@
 import 'package:flutter/foundation.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:manga_app/costants.dart';
 import 'package:manga_app/manga.dart';
-import 'package:manga_app/mangaBuilder.dart';
+import 'package:manga_app/manga_builder.dart';
 
 class MangaWorld {
-  Future<Map<String, MangaBuilder>> getLastAdd() async {
-    final res = await http.Client().get(Uri.parse('https://www.mangaworld.so'));
-    if (res.statusCode == 200) {
-      var page = parse(res.body);
-      var mangaList = page
-          .getElementsByClassName('comics-grid')[0]
-          .getElementsByClassName('entry')
-          .toList();
-      mangaList.asMap().forEach((i, element) {
-        MangaBuilder builder = MangaBuilder()
-          ..status = _getStatus(element)
-          ..title = _getTitle(element)
-          ..link = _getLink(element)
-          ..image = _getImage(element);
-        mangasBuilder.update(
-          builder.title.toString(),
-          (value) => builder,
-          ifAbsent: () => builder,
-        );
-        mangasBuilder.update(
-          "last$i",
-          (value) => builder,
-          ifAbsent: () => builder,
-        );
-      });
-    } else {
-      if (kDebugMode) {
-        print(throw Exception);
-      }
-    }
-    return mangasBuilder;
+  List<MangaBuilder> latests = [];
+  List<MangaBuilder> populars = [];
+
+  Future<Document> getHomePageDocument() async {
+    http.Response res = await http.get(Uri.parse(baseUrl));
+    Document document = parse(res.body);
+
+    return document;
   }
 
-  Future<List<String>> buildSuggestions(String keyworld) async {
-    List<String> sugg = [];
-    final res = await http.Client().get(Uri.parse(
-        'https://www.mangaworld.so/archive?sort=most_read&keyword=$keyworld'));
+  Future<Map<String, List<MangaBuilder>>> all(Document document) async {
+    List<Element> latestElemets = document.querySelectorAll('.comics-grid > .entry');
+    List<Element> popularElemets = document.querySelectorAll('.comics-flex > .entry');
+
+    latests = await _getLatests(latestElemets);
+    populars = await _getPopulars(popularElemets);
+
+    return {'latests': latests, 'populars': populars};
+  }
+
+  Future<List<MangaBuilder>> onlyLatests(Document document) async {
+    var latestElemets = document.querySelectorAll('.comics-grid > .entry');
+    List<MangaBuilder> latestes = await _getLatests(latestElemets);
+    return latestes;
+  }
+
+  Future<List<MangaBuilder>> _getLatests(var elements) async {
+    List<MangaBuilder> latests = [];
+    for (var element in elements) {
+      MangaBuilder tmp = MangaBuilder()
+        ..titleImageLink = _getTitleImageLink(element)
+        ..status = element.querySelector('.content > .status > a')?.text;
+      latests.add(tmp);
+      mangasBuilder.update(
+        tmp.title.toString(),
+        (value) => tmp,
+        ifAbsent: () => tmp,
+      );
+    }
+    return latests;
+  }
+
+  Future<List<MangaBuilder>> _getPopulars(var elements) async {
+    List<MangaBuilder> populars = [];
+    for (var element in elements) {
+      var tmp = MangaBuilder()
+        ..titleImageLink = _getTitleImageLink(element)
+        ..status = 'In corso';
+      populars.add(tmp);
+    }
+    return populars;
+  }
+
+  Future<List<String?>> buildSuggestions(String keyworld) async {
+    List<String?> sugg = [];
+    http.Response res =
+        await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyworld'));
     if (res.statusCode == 200) {
-      var page = parse(res.body);
-      var mangaList = page
-          .getElementsByClassName('comics-grid')[0]
-          .getElementsByClassName('entry')
-          .toList();
-      for (var element in mangaList) {
-        String title = _getTitle(element);
+      Document document = parse(res.body);
+      var titleList = document.querySelectorAll('.comics-grid > .entry');
+      for (var element in titleList) {
+        String? title = element.querySelector('.content > .name > .manga-title')?.text;
         sugg.add(title);
       }
     } else {
@@ -63,28 +81,26 @@ class MangaWorld {
 
   Future<List<Manga>> getResults(String keyworld) async {
     List<Manga> tmp = [];
-    final res = await http.Client().get(Uri.parse(
-        'https://www.mangaworld.so/archive?sort=most_read&keyword=$keyworld'));
+    http.Response res =
+        await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyworld'));
     if (res.statusCode == 200) {
-      var page = parse(res.body);
-      var mangaList = page
-          .getElementsByClassName('comics-grid')[0]
-          .getElementsByClassName('entry')
-          .toList();
-      mangaList.asMap().forEach((i, element) {
+      Document document = parse(res.body);
+      var mangaList = document.querySelectorAll('.comics-grid > .entry');
+      for (var element in mangaList) {
         MangaBuilder builder = MangaBuilder()
-          ..status = _getStatus(element)
-          ..title = _getTitle(element)
-          ..link = _getLink(element)
-          ..image = _getImage(element)
-          ..trama = _getTrama(element);
+          ..status = element.querySelector('.content > .status > a')?.text
+          ..titleImageLink = _getTitleImageLink(element)
+          ..trama = element.querySelector('.content > .story')?.text
+          ..author = element.querySelector('.content > .author > a')?.text
+          ..artist = element.querySelector('.content > .artist > a')?.text
+          ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'));
         tmp.add(Manga(builder: builder));
         mangasBuilder.update(
           builder.title.toString(),
           (value) => builder,
           ifAbsent: () => builder,
         );
-      });
+      }
     } else {
       if (kDebugMode) {
         print(throw Exception);
@@ -93,47 +109,31 @@ class MangaWorld {
     return tmp;
   }
 
-  _getLink(var element) {
-    var obj = element.getElementsByClassName('thumb')[0].attributes;
-    String link = obj["href"].toString();
-    return link;
-  }
-
-  _getTitle(var element) {
-    return element.getElementsByClassName('manga-title')[0].text;
-  }
-
-  _getStatus(var element) {
-    return element.getElementsByClassName('status')[0].children[1].text;
-  }
-
-  _getImage(var element) {
-    var obj = element.getElementsByTagName('img')[0].attributes;
-    String link = obj["src"].toString();
-    return link;
-  }
-
-  _getTrama(var element) {
-    String temp = element.getElementsByClassName('story')[0].text;
-    return temp.replaceAll('Trama: ', '');
+  List<String?> _getTitleImageLink(var element) {
+    return [
+      element.querySelector('.content > .name > .manga-title').text,
+      element.querySelector('.thumb > img').attributes['src'],
+      element.querySelector('.thumb').attributes['href']
+    ];
   }
 
   Future getAllInfo(MangaBuilder builder) async {
-    final res = await http.Client().get(Uri.parse(builder.link.toString()));
+    final link = builder.link;
+    final res = await http.Client().get(Uri.parse(link.toString()));
     if (res.statusCode == 200) {
-      var page = parse(res.body);
-      var info = page
-          .getElementsByClassName('info')[0]
-          .getElementsByClassName('meta-data')[0];
-      var v = page
-          .getElementsByClassName('info')[0]
-          .getElementsByClassName('references')[0];
+      Document document = parse(res.body);
+      var info = document.querySelector('.info > .meta-data');
+      var readings = info?.children[6].children[1].text;
+      await _getChapterVolume(document.querySelector('.chapters-wrapper'), builder);
       builder
-        ..artist = _getArtist(info)
-        ..author = _getAuthor(info)
-        ..genres = _getGenres(info)
-        ..readings = double.parse(_getVisual(info))
-        ..vote = double.parse(await _getVote(v));
+        ..readingsVote = [
+          double.tryParse(readings.toString()),
+          double.tryParse(await _getVote(document.querySelector('.info > .references')))
+        ]
+        ..artist ??= info?.children[3].querySelector('a')?.text
+        ..author ??= info?.children[2].querySelector('a')?.text
+        ..genres ??= _getGenres(info?.children[1].querySelectorAll('a'))
+        ..trama ??= document.querySelector('.comic-description > #noidungm')?.text;
     } else {
       if (kDebugMode) {
         print(throw Exception);
@@ -142,28 +142,66 @@ class MangaWorld {
     return builder;
   }
 
-  _getArtist(var element) {
-    return element.children[3].getElementsByTagName('a')[0].text;
-  }
-
-  _getAuthor(var element) {
-    return element.children[2].getElementsByTagName('a')[0].text;
-  }
-
-  _getGenres(var element) {
-    List temp = [];
-    List html = element.children[1].getElementsByTagName('a').toList();
-    for (var element in html) {
-      temp.add(element.text);
+  Future _getChapterVolume(var element, MangaBuilder builder) async {
+    Map<String, List<String>> chapers = {};
+    List<Element> volumes = element.querySelectorAll('.volume-element');
+    if (volumes.isNotEmpty) {
+      for (var element in volumes) {
+        String volume = element.querySelector('.volume > .volume-name')!.text;
+        List<Element> chaps = element.querySelectorAll('.volume-chapters > .chapter');
+        await _getChapters(chaps, builder, volume);
+      }
+    } else {
+      List<Element> chaps = element.querySelectorAll('.chapters-wrapper > .chapter');
+      await _getChapters(chaps, builder);
     }
-    return temp;
+    return chapers;
   }
 
-  _getVisual(var element) {
-    return element.children[6].children[1].text;
+  _getChapters(List<Element> chaps, MangaBuilder builder, [String volume = '0']) async {
+    for (var element in chaps) {
+      String? link = element.querySelector('.chap')?.attributes['href'];
+      int tmp = link!.indexOf('?');
+      if (tmp > -1) {
+        link = '${link.substring(0, tmp)}?style=list';
+      } else {
+        link = '$link?style=list';
+      }
+      String copertina = await _getCopertina(link);
+      String title = element.querySelector('.chap > span')!.text;
+      List<String> data = [
+        title,
+        volume,
+        element.querySelector('.chap > i')!.text,
+        link,
+        copertina
+      ];
+      builder.chap = data;
+    }
+  }
+
+  Future<String> _getCopertina(String? link) async {
+    if (link == null) {
+      return 'null';
+    }
+    http.Response res = await http.get(Uri.parse(link));
+    Document document = parse(res.body);
+    String image = document.querySelector('#page > #page-0')!.attributes["src"]!;
+    return image;
+  }
+
+  List<String>? _getGenres(var elements) {
+    List<String>? tmp = [];
+    for (var element in elements) {
+      tmp.add(element.text);
+    }
+    return tmp;
   }
 
   _getVote(var element) async {
+    if (element == null) {
+      return '0';
+    }
     String att = '';
     element.children.forEach((element) {
       if (element.firstChild != null) {

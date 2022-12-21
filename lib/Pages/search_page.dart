@@ -3,6 +3,7 @@ import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
 import 'package:manga_app/manga.dart';
+import 'package:manga_app/manga_builder.dart';
 import 'package:manga_app/mangaworld.dart';
 import 'package:manga_app/skeleton.dart';
 
@@ -15,23 +16,28 @@ class SearchPage extends StatefulWidget {
   State<StatefulWidget> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMixin<SearchPage> {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     if (_mangas == null) {
-      MangaWorld().getLastAdd().then((value) {
-        _mangas = MangaGrid(
-          listManga: _generateListManga(value),
-        );
-        setState(() {});
-      });
+      MangaWorld().getHomePageDocument().then(
+        (document) {
+          MangaWorld().onlyLatests(document).then((value) {
+            _mangas = MangaGrid(listManga: _generateListManga(value));
+            setState(() {});
+          });
+        },
+      );
     }
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -54,15 +60,19 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
       body: _mangas == null
-          ? GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: MediaQuery.of(context).size.width /
-                    (MediaQuery.of(context).size.height / 1.8),
-                crossAxisSpacing: defaultPadding * 2.5,
-              ),
-              itemBuilder: (context, index) => const CardSkelton(),
-            )
+          ? OrientationBuilder(builder: (context, orientation) {
+              return GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: orientation == Orientation.portrait ? 2 : 4,
+                  childAspectRatio: orientation == Orientation.portrait
+                      ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 2)
+                      : (MediaQuery.of(context).size.width / 2) /
+                          MediaQuery.of(context).size.height,
+                  crossAxisSpacing: defaultPadding * 1.5,
+                ),
+                itemBuilder: (context, index) => const CardSkelton(),
+              );
+            })
           : RefreshIndicator(
               onRefresh: () => _refresh(),
               child: _mangas!,
@@ -71,23 +81,27 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future _refresh() async {
-    MangaWorld().getLastAdd().then((value) {
-      _mangas = MangaGrid(
-        listManga: _generateListManga(value),
-      );
-      setState(() {});
-    });
+    MangaWorld().getHomePageDocument().then(
+      (document) {
+        MangaWorld().onlyLatests(document).then((value) {
+          _mangas = MangaGrid(listManga: _generateListManga(value));
+          setState(() {});
+        });
+      },
+    );
     _mangas = null;
     setState(() {});
   }
 
-  List<Manga> _generateListManga(Map map) {
+  List<Manga> _generateListManga(List<MangaBuilder>? builders) {
     List<Manga> mangas = [];
-    map.forEach((key, value) {
-      if (key.toString().contains("last")) {
-        mangas.add(Manga(builder: value));
-      }
-    });
+    if (builders == null) {
+      return mangas;
+    }
+    for (var builder in builders) {
+      Manga manga = builder.build();
+      mangas.add(manga);
+    }
     return mangas;
   }
 }
@@ -130,13 +144,11 @@ class Delegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    Completer<List<String>> completer = Completer();
+    Completer<List<String?>> completer = Completer();
     String search = query.trim().toLowerCase();
     late final Debouncer debouncer =
-        Debouncer(const Duration(milliseconds: 300), initialValue: '',
-            onChanged: (value) {
-      completer.complete(
-          MangaWorld().buildSuggestions(value)); // call the API endpoint
+        Debouncer(const Duration(milliseconds: 300), initialValue: '', onChanged: (value) {
+      completer.complete(MangaWorld().buildSuggestions(value));
     });
 
     debouncer.value = search;
@@ -145,7 +157,7 @@ class Delegate extends SearchDelegate {
     return FutureBuilder(
         future: completer.future,
         builder: (context, snapshot) {
-          List<String> suggestions = [];
+          List<String?> suggestions = [];
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
               return Center(
@@ -161,7 +173,7 @@ class Delegate extends SearchDelegate {
                 itemBuilder: (context, index) {
                   final suggestion = suggestions[index];
                   return ListTile(
-                    title: Text(suggestion),
+                    title: Text(suggestion!),
                     onTap: () => query = suggestion,
                   );
                 },

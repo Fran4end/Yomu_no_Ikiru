@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:manga_app/Pages/searchPage.dart';
+import 'package:manga_app/Pages/search_page.dart';
+import 'package:manga_app/mangaworld.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,6 +36,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectpage = 1;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body:
-          _getPage(), // This trailing comma makes auto-formatting nicer for build methods.
+      body: _getPage(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 

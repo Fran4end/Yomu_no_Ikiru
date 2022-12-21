@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:manga_app/manga.dart';
-import 'package:manga_app/mangaBuilder.dart';
+import 'package:manga_app/manga_builder.dart';
+import 'package:manga_app/manga_chaper.dart';
 import 'package:manga_app/mangaworld.dart';
 
 class MangaPage extends StatefulWidget {
@@ -19,11 +20,17 @@ class MangaPage extends StatefulWidget {
 }
 
 class _MangaPageState extends State<MangaPage> {
+  late NetworkImage mangaImage;
+  List<Chapter> chap = [];
+
   @override
   void initState() {
+    mangaImage = NetworkImage(widget.manga.image.toString());
     MangaWorld().getAllInfo(widget.mangaBuilder).then((value) {
       widget.mangaBuilder = value;
       widget.manga = widget.mangaBuilder.build();
+      chap = widget.manga.chapters.toList();
+      chap.sort((a, b) => b.title.compareTo(a.title));
       if (mounted) {
         setState(() {});
       }
@@ -45,13 +52,13 @@ class _MangaPageState extends State<MangaPage> {
           Hero(
             tag: widget.manga.title.toString(),
             child: Container(
-              height: (screen.height / 2) + 70.0,
+              height: (screen.height / 2) + 55,
               width: screen.width,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: widget.manga.image == null
                       ? Image.asset('assets/blank.jpg').image
-                      : NetworkImage(widget.manga.image.toString()),
+                      : mangaImage,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -67,8 +74,7 @@ class _MangaPageState extends State<MangaPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
-                  TopButtonsFunctions(
-                      ic: Icon(Icons.arrow_back_ios_new_rounded)),
+                  TopButtonsFunctions(ic: Icon(Icons.arrow_back_ios_new_rounded)),
                   TopButtonsFunctions(ic: Icon(Icons.favorite_rounded)),
                 ],
               ),
@@ -81,25 +87,31 @@ class _MangaPageState extends State<MangaPage> {
                 SizedBox(
                   height: (screen.height / 2) - 130,
                   width: screen.width,
-                  //TODO: get all chapters
-                  child: ListView.builder(
-                    //itemCount: , Number of chapters
-                    itemBuilder: (context, index) {
-                      return Card(
-                        elevation: 5,
-                        color: Colors.grey[900],
-                        child: Container(
-                          height: 50,
-                          alignment: Alignment.centerLeft,
-                          padding: const EdgeInsets.only(left: defaultPadding),
-                          child: Text(
-                            'Capitolo',
-                            style: subtitleStyle(),
-                          ),
+                  child: chap.isEmpty
+                      ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                      : ListView.builder(
+                          itemCount: chap.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              elevation: 5,
+                              color: Colors.grey[900],
+                              child: ListTile(
+                                leading: SizedBox(
+                                  width: 40,
+                                  height: 50,
+                                  child: Image.network(
+                                    chap[index].copertina!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                title: Text(
+                                  chap[index].title,
+                                  style: subtitleStyle(),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
                 SizedBox(
                   width: screen.width - 30,
@@ -116,9 +128,7 @@ class _MangaPageState extends State<MangaPage> {
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Text(
-                          widget.manga.status == null
-                              ? 'Status'
-                              : widget.manga.status.toString(),
+                          widget.manga.status == null ? 'Status' : widget.manga.status.toString(),
                           style: titleGreenStyle(),
                         ),
                       ),
@@ -141,8 +151,7 @@ class _MangaPageState extends State<MangaPage> {
                           fixedSize: Size((screen.width / 2) - 50, 45),
                           elevation: 10,
                           backgroundColor: primaryColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
                         ),
                         child: Center(
                           child: Text('Resume', style: titleStyle()),
@@ -164,22 +173,20 @@ class _MangaPageState extends State<MangaPage> {
               borderRadius: BorderRadius.circular(30),
               color: Colors.black.withOpacity(0.6),
               child: SizedBox(
-                height: 140,
+                // height: 140,
                 width: screen.width - 20,
                 child: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.only(left: defaultPadding),
-                      height: 140,
+                      // height: 140,
                       width: (screen.width - 20) / 2,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.manga.title == null
-                                ? 'Title'
-                                : widget.manga.title.toString(),
+                            widget.manga.title == null ? 'Title' : widget.manga.title.toString(),
                             style: titleStyle(),
                           ),
                           Wrap(
@@ -193,8 +200,7 @@ class _MangaPageState extends State<MangaPage> {
                                 style: subtitleStyle(),
                               ),
                               const Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: defaultPadding / 2),
+                                padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
                                 child: CircleAvatar(
                                   radius: 3,
                                   backgroundColor: Colors.black,
@@ -218,9 +224,7 @@ class _MangaPageState extends State<MangaPage> {
                               ),
                               const SizedBox(width: defaultPadding / 2),
                               Text(
-                                widget.manga.vote == null
-                                    ? 'vote'
-                                    : widget.manga.vote.toString(),
+                                widget.manga.vote == null ? 'vote' : widget.manga.vote.toString(),
                                 style: subtitleStyle(),
                               ),
                               const SizedBox(width: defaultPadding / 2),
@@ -237,7 +241,7 @@ class _MangaPageState extends State<MangaPage> {
                     ),
                     Container(
                       padding: const EdgeInsets.only(left: defaultPadding / 2),
-                      height: 140,
+                      //height: 140,
                       width: (screen.width - 20) / 2,
                       child: Column(
                           //TODO: Mettere i generi
