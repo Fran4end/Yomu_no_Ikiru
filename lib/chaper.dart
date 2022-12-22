@@ -12,4 +12,6 @@ class Chapter {
     this.copertina,
     this.volume,
   });
+
+  set volumeCopertina(List value) {}
 }

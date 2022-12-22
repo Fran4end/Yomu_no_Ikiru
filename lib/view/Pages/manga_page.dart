@@ -3,8 +3,8 @@ import 'package:manga_app/costants.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:manga_app/manga.dart';
 import 'package:manga_app/manga_builder.dart';
-import 'package:manga_app/manga_chaper.dart';
 import 'package:manga_app/mangaworld.dart';
+import 'package:manga_app/view/Pages/reader_page.dart';
 
 class MangaPage extends StatefulWidget {
   MangaPage({
@@ -19,20 +19,16 @@ class MangaPage extends StatefulWidget {
 
 class _MangaPageState extends State<MangaPage> {
   late NetworkImage mangaImage;
-  List<Chapter> chap = [];
+  // List<Chapter> chap = [];
   late Manga manga;
 
   @override
   void initState() {
     manga = widget.mangaBuilder.build();
     mangaImage = NetworkImage(manga.image.toString());
-    MangaWorld().getAllInfo(widget.mangaBuilder).forEach((value) {
+    MangaWorld().getAllInfo(widget.mangaBuilder).then((value) {
       widget.mangaBuilder = value;
       manga = widget.mangaBuilder.build();
-      chap = manga.chapters;
-      chap.sort(
-        (a, b) => b.title.compareTo(a.title),
-      );
       if (mounted) {
         setState(() {});
       }
@@ -43,6 +39,101 @@ class _MangaPageState extends State<MangaPage> {
   @override
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size;
+    /*return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            expandedHeight: (screen.height / 2) + 55,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(top: defaultPadding * 25),
+              background: Hero(
+                tag: manga.title.toString(),
+                child: Container(
+                  height: (screen.height / 2) + 55,
+                  width: screen.width,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image:
+                          manga.image == null ? Image.asset('assets/blank.jpg').image : mangaImage,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              expandedTitleScale: 1.2,
+              title: GlassContainer(
+                width: screen.width,
+                blur: 4,
+                border: const Border.fromBorderSide(BorderSide.none),
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.black.withOpacity(0.65),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(left: defaultPadding),
+                      width: (screen.width - 20) / 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            manga.title == null ? 'Title' : manga.title.toString(),
+                            style: titleStyle(),
+                          ),
+                          Wrap(
+                            direction: Axis.horizontal,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Text(
+                                manga.author == null ? 'author' : manga.author.toString(),
+                                style: subtitleStyle(),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                                child: CircleAvatar(
+                                  radius: 3,
+                                  backgroundColor: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                manga.artist == null ? 'artist' : manga.artist.toString(),
+                                style: subtitleStyle(),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.star,
+                                color: Colors.orange,
+                                size: 22.0,
+                              ),
+                              const SizedBox(width: defaultPadding / 2),
+                              Text(
+                                manga.vote == null ? 'vote' : manga.vote.toString(),
+                                style: subtitleStyle(),
+                              ),
+                              const SizedBox(width: defaultPadding / 2),
+                              Text(
+                                manga.readings == null ? '(readings)' : '(${manga.readings})',
+                                style: miniStyle(),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );*/
     return Scaffold(
       body: Stack(
         children: [
@@ -87,36 +178,31 @@ class _MangaPageState extends State<MangaPage> {
                 SizedBox(
                   height: (screen.height / 2) - 130,
                   width: screen.width,
-                  child: chap.isEmpty
+                  child: manga.chapters.isEmpty
                       ? const Center(child: CircularProgressIndicator(color: Colors.white))
                       : ListView.builder(
-                          itemCount: chap.length,
+                          itemCount: manga.chapters.length,
                           itemBuilder: (context, index) {
-                            bool failedCop = false;
-                            Widget copertina = Image.asset('assets/blank.jpg');
-                            do {
-                              try {
-                                copertina = Image.network(
-                                  chap[index].copertina!,
-                                  fit: BoxFit.cover,
-                                );
-                                failedCop = false;
-                              } catch (e) {
-                                failedCop = true;
-                              }
-                            } while (failedCop);
                             return Card(
                               elevation: 5,
                               color: Colors.grey[900],
                               child: ListTile(
-                                leading: SizedBox(
-                                  width: 40,
-                                  height: 50,
-                                  child: copertina,
-                                ),
                                 title: Text(
-                                  chap[index].title,
+                                  manga.chapters[index].title,
                                   style: subtitleStyle(),
+                                ),
+                                subtitle: Text(
+                                  manga.chapters[index].date.toString(),
+                                  style: miniStyle(),
+                                ),
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => Reader(
+                                      index: index,
+                                      chapters: manga.chapters,
+                                      chapter: manga.chapters[index],
+                                    ),
+                                  ),
                                 ),
                               ),
                             );
