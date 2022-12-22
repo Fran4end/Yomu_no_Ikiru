@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
@@ -117,48 +119,67 @@ class MangaWorld {
     ];
   }
 
-  Future getAllInfo(MangaBuilder builder) async {
-    final link = builder.link;
-    final res = await http.Client().get(Uri.parse(link.toString()));
-    if (res.statusCode == 200) {
-      Document document = parse(res.body);
-      var info = document.querySelector('.info > .meta-data');
-      var readings = info?.children[6].children[1].text;
-      await _getChapterVolume(document.querySelector('.chapters-wrapper'), builder);
-      builder
-        ..readingsVote = [
-          double.tryParse(readings.toString()),
-          double.tryParse(await _getVote(document.querySelector('.info > .references')))
-        ]
-        ..artist ??= info?.children[3].querySelector('a')?.text
-        ..author ??= info?.children[2].querySelector('a')?.text
-        ..genres ??= _getGenres(info?.children[1].querySelectorAll('a'))
-        ..trama ??= document.querySelector('.comic-description > #noidungm')?.text;
-    } else {
-      if (kDebugMode) {
-        print(throw Exception);
+  Stream<MangaBuilder> getAllInfo(MangaBuilder builder) async* {
+    bool timeout = false;
+    do {
+      try {
+        final link = builder.link;
+        final res = await http.Client().get(Uri.parse(link.toString()));
+        if (res.statusCode == 200) {
+          Document document = parse(res.body);
+          var info = document.querySelector('.info > .meta-data');
+          var readings = info?.children[6].children[1].text;
+          builder
+            ..readingsVote = [
+              double.tryParse(readings.toString()),
+              double.tryParse(await _getVote(document.querySelector('.info > .references')))
+            ]
+            ..artist ??= info?.children[3].querySelector('a')?.text
+            ..author ??= info?.children[2].querySelector('a')?.text
+            ..genres ??= _getGenres(info?.children[1].querySelectorAll('a'))
+            ..trama ??= document.querySelector('.comic-description > #noidungm')?.text;
+          await for (var chapter
+              in _getChapterVolume(document.querySelector('.chapters-wrapper'))) {
+            builder.chap = chapter;
+            yield builder;
+          }
+        } else {
+          if (kDebugMode) {
+            print(throw Exception);
+          }
+        }
+        timeout = false;
+        yield builder;
+      } catch (e) {
+        if (e.toString().contains('Connection reset by peer')) {
+          timeout = true;
+        }
+        print('mangaworld 149: $e');
       }
-    }
-    return builder;
+    } while (timeout);
   }
 
-  Future _getChapterVolume(var element, MangaBuilder builder) async {
-    Map<String, List<String>> chapers = {};
+  Stream<List<String>> _getChapterVolume(var element) async* {
     List<Element> volumes = element.querySelectorAll('.volume-element');
+    List<Element> chaps = [];
+    String volume = '';
     if (volumes.isNotEmpty) {
       for (var element in volumes) {
-        String volume = element.querySelector('.volume > .volume-name')!.text;
-        List<Element> chaps = element.querySelectorAll('.volume-chapters > .chapter');
-        await _getChapters(chaps, builder, volume);
+        volume = element.querySelector('.volume > .volume-name')!.text;
+        chaps = element.querySelectorAll('.volume-chapters > .chapter');
+        await for (var chap in _getChapters(chaps, volume)) {
+          yield chap;
+        }
       }
     } else {
-      List<Element> chaps = element.querySelectorAll('.chapters-wrapper > .chapter');
-      await _getChapters(chaps, builder);
+      chaps = element.querySelectorAll('.chapters-wrapper > .chapter');
+      await for (var chap in _getChapters(chaps)) {
+        yield chap;
+      }
     }
-    return chapers;
   }
 
-  _getChapters(List<Element> chaps, MangaBuilder builder, [String volume = '0']) async {
+  Stream<List<String>> _getChapters(List<Element> chaps, [String volume = '0']) async* {
     for (var element in chaps) {
       String? link = element.querySelector('.chap')?.attributes['href'];
       int tmp = link!.indexOf('?');
@@ -176,7 +197,7 @@ class MangaWorld {
         link,
         copertina
       ];
-      builder.chap = data;
+      yield data;
     }
   }
 

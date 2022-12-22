@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/Pages/manga_page.dart';
 import 'package:manga_app/costants.dart';
@@ -15,7 +16,7 @@ class Manga {
   final double? vote;
   final double? readings;
   final List? genres;
-  final Set<Chapter> chapters;
+  final List<Chapter> chapters;
 
   Manga({required MangaBuilder builder})
       : title = builder.title,
@@ -52,7 +53,7 @@ class MangaCard extends StatelessWidget {
     return Center(
       child: GestureDetector(
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MangaPage(manga: manga, mangaBuilder: mangaBuilder),
+          builder: (context) => MangaPage(mangaBuilder: mangaBuilder),
         )),
         child: OrientationBuilder(
           builder: (context, orientation) {
@@ -86,28 +87,44 @@ class MangaCard extends StatelessWidget {
                         ),
                         child: Hero(
                             tag: manga.title.toString(),
-                            child: Image.network(
-                              manga.image!,
+                            child: SizedBox(
                               height: orientation == Orientation.portrait
                                   ? screen.height / 6.5
                                   : screen.height / 3,
                               width: orientation == Orientation.portrait
                                   ? screen.width / 3
                                   : screen.width / 6.1,
-                              fit: BoxFit.cover,
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: SizedBox(
-                                    height: orientation == Orientation.portrait
-                                        ? screen.height / 6.1
-                                        : screen.height / 3,
-                                    width: orientation == Orientation.portrait
-                                        ? screen.width / 3
-                                        : screen.width / 6.1,
-                                  ),
-                                );
-                              },
+                              child: Image.network(
+                                manga.image!,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  bool timeout = false;
+                                  do {
+                                    try {
+                                      if (loadingProgress == null) {
+                                        timeout = false;
+                                        return child;
+                                      }
+                                      return Center(
+                                        child: SizedBox(
+                                          height: orientation == Orientation.portrait
+                                              ? screen.height / 6.1
+                                              : screen.height / 3,
+                                          width: orientation == Orientation.portrait
+                                              ? screen.width / 3
+                                              : screen.width / 6.1,
+                                          child: const Center(child: CircularProgressIndicator()),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      timeout = true;
+                                      if (kDebugMode) {
+                                        print('manga 120: $e');
+                                      }
+                                    }
+                                  } while (timeout);
+                                },
+                              ),
                             )),
                       ),
                     ),

@@ -12,7 +12,7 @@ class MangaBuilder {
   double? vote;
   double? readings;
   List<String>? genres;
-  Set<Chapter> chapters = {};
+  List<Chapter> chapters = [];
 
   set readingsVote(List<double?> value) {
     readings = value[0];
@@ -29,19 +29,21 @@ class MangaBuilder {
   }
 
   set chap(List<String> value) {
+    Set<Chapter> tmp = chapters.toSet();
     int volume;
     try {
       volume = int.parse(value[1]);
     } catch (e) {
       volume = 0;
     }
-    chapters.toSet().add(Chapter(
-          title: value[0],
-          volume: volume,
-          date: value[2],
-          link: value[3],
-          copertina: value[4],
-        ));
+    tmp.add(Chapter(
+      title: value[0],
+      volume: volume,
+      date: value[2],
+      link: value[3],
+      copertina: value[4],
+    ));
+    chapters = tmp.toList();
   }
 
   build() {

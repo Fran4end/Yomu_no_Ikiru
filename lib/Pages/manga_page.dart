@@ -8,11 +8,9 @@ import 'package:manga_app/mangaworld.dart';
 
 class MangaPage extends StatefulWidget {
   MangaPage({
-    required this.manga,
     required this.mangaBuilder,
     super.key,
   });
-  Manga manga;
   MangaBuilder mangaBuilder;
 
   @override
@@ -22,15 +20,19 @@ class MangaPage extends StatefulWidget {
 class _MangaPageState extends State<MangaPage> {
   late NetworkImage mangaImage;
   List<Chapter> chap = [];
+  late Manga manga;
 
   @override
   void initState() {
-    mangaImage = NetworkImage(widget.manga.image.toString());
-    MangaWorld().getAllInfo(widget.mangaBuilder).then((value) {
+    manga = widget.mangaBuilder.build();
+    mangaImage = NetworkImage(manga.image.toString());
+    MangaWorld().getAllInfo(widget.mangaBuilder).forEach((value) {
       widget.mangaBuilder = value;
-      widget.manga = widget.mangaBuilder.build();
-      chap = widget.manga.chapters.toList();
-      chap.sort((a, b) => b.title.compareTo(a.title));
+      manga = widget.mangaBuilder.build();
+      chap = manga.chapters;
+      chap.sort(
+        (a, b) => b.title.compareTo(a.title),
+      );
       if (mounted) {
         setState(() {});
       }
@@ -50,15 +52,13 @@ class _MangaPageState extends State<MangaPage> {
             color: Colors.black,
           ),
           Hero(
-            tag: widget.manga.title.toString(),
+            tag: manga.title.toString(),
             child: Container(
               height: (screen.height / 2) + 55,
               width: screen.width,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: widget.manga.image == null
-                      ? Image.asset('assets/blank.jpg').image
-                      : mangaImage,
+                  image: manga.image == null ? Image.asset('assets/blank.jpg').image : mangaImage,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -92,6 +92,19 @@ class _MangaPageState extends State<MangaPage> {
                       : ListView.builder(
                           itemCount: chap.length,
                           itemBuilder: (context, index) {
+                            bool failedCop = false;
+                            Widget copertina = Image.asset('assets/blank.jpg');
+                            do {
+                              try {
+                                copertina = Image.network(
+                                  chap[index].copertina!,
+                                  fit: BoxFit.cover,
+                                );
+                                failedCop = false;
+                              } catch (e) {
+                                failedCop = true;
+                              }
+                            } while (failedCop);
                             return Card(
                               elevation: 5,
                               color: Colors.grey[900],
@@ -99,10 +112,7 @@ class _MangaPageState extends State<MangaPage> {
                                 leading: SizedBox(
                                   width: 40,
                                   height: 50,
-                                  child: Image.network(
-                                    chap[index].copertina!,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: copertina,
                                 ),
                                 title: Text(
                                   chap[index].title,
@@ -128,7 +138,7 @@ class _MangaPageState extends State<MangaPage> {
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Text(
-                          widget.manga.status == null ? 'Status' : widget.manga.status.toString(),
+                          manga.status == null ? 'Status' : manga.status.toString(),
                           style: titleGreenStyle(),
                         ),
                       ),
@@ -186,7 +196,7 @@ class _MangaPageState extends State<MangaPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.manga.title == null ? 'Title' : widget.manga.title.toString(),
+                            manga.title == null ? 'Title' : manga.title.toString(),
                             style: titleStyle(),
                           ),
                           Wrap(
@@ -194,9 +204,7 @@ class _MangaPageState extends State<MangaPage> {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               Text(
-                                widget.manga.author == null
-                                    ? 'author'
-                                    : widget.manga.author.toString(),
+                                manga.author == null ? 'author' : manga.author.toString(),
                                 style: subtitleStyle(),
                               ),
                               const Padding(
@@ -207,9 +215,7 @@ class _MangaPageState extends State<MangaPage> {
                                 ),
                               ),
                               Text(
-                                widget.manga.artist == null
-                                    ? 'artist'
-                                    : widget.manga.artist.toString(),
+                                manga.artist == null ? 'artist' : manga.artist.toString(),
                                 style: subtitleStyle(),
                               ),
                             ],
@@ -224,14 +230,12 @@ class _MangaPageState extends State<MangaPage> {
                               ),
                               const SizedBox(width: defaultPadding / 2),
                               Text(
-                                widget.manga.vote == null ? 'vote' : widget.manga.vote.toString(),
+                                manga.vote == null ? 'vote' : manga.vote.toString(),
                                 style: subtitleStyle(),
                               ),
                               const SizedBox(width: defaultPadding / 2),
                               Text(
-                                widget.manga.readings == null
-                                    ? '(readings)'
-                                    : '(${widget.manga.readings})',
+                                manga.readings == null ? '(readings)' : '(${manga.readings})',
                                 style: miniStyle(),
                               )
                             ],
