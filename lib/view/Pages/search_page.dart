@@ -123,13 +123,16 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     ? OrientationBuilder(builder: (context, orientation) {
                         return GridView.builder(
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: orientation == Orientation.portrait ? 2 : 4,
+                            mainAxisExtent: 200,
+                            crossAxisCount: 2,
                             childAspectRatio: orientation == Orientation.portrait
                                 ? MediaQuery.of(context).size.width /
                                     (MediaQuery.of(context).size.height / 2)
                                 : (MediaQuery.of(context).size.width / 2) /
                                     MediaQuery.of(context).size.height,
                             crossAxisSpacing: defaultPadding * 1.5,
+                            mainAxisSpacing:
+                                orientation == Orientation.portrait ? defaultPadding / 2 : 2,
                           ),
                           itemBuilder: (context, index) => const CardSkelton(),
                         );

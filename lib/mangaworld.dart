@@ -5,13 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:manga_app/costants.dart';
 import 'package:manga_app/manga.dart';
 import 'package:manga_app/manga_builder.dart';
-import 'package:manga_app/chaper.dart';
-import 'package:observer/observer.dart';
 
-class MangaWorld with Observer {
+class MangaWorld {
   List<MangaBuilder> latests = [];
   List<MangaBuilder> populars = [];
-  bool alreadyAdd = false;
 
   Future<Document> getHomePageDocument() async {
     http.Response res = await http.get(Uri.parse(baseUrl));
@@ -174,72 +171,11 @@ class MangaWorld with Observer {
     return builder;
   }
 
-  getLastAndFirst2Chapter(var document) {
-    List<Element> chaptersElement =
-        document.querySelector('.chapters-wrapper').querySelectorAll('.chapter > .chap');
-    List<Element> chapEl = [chaptersElement[0], chaptersElement[1], chaptersElement.last];
-    for (var chap in chapEl) {
-      Map attributes = chap.attributes;
-      String link = attributes['href'];
-      int tmp = link.indexOf('?');
-      if (tmp > -1) {
-        link = '${link.substring(0, tmp)}?style=list';
-      } else {
-        link = '$link?style=list';
-      }
-      // String copertina = await _getCopertina(link);
-      List<String> data = [];
-    }
-  }
-
   Future<Document> _getDetailedPageDocument(MangaBuilder builder) async {
     final link = builder.link;
     final res = await http.Client().get(Uri.parse(link.toString()));
     Document document = parse(res.body);
     return document;
-  }
-
-  Stream<List<String>> _getChapterVolume(var element) async* {
-    List<Element> volumes = element.querySelectorAll('.volume-element');
-    List<Element> chaps = [];
-    // String volume = '';
-    if (volumes.isNotEmpty) {
-      chaps = element.querySelectorAll('.volume-chapters > .chapter');
-      // for (var element in volumes) {
-      //   volume = element.querySelector('.volume > .volume-name')!.text;
-      //   chaps = element.querySelectorAll('.volume-chapters > .chapter');
-      //   await for (var chap in _getChapters(chaps, volume)) {
-      //     yield chap;
-      //   }
-      // }
-    } else {
-      chaps = element.querySelectorAll('.chapters-wrapper > .chapter');
-    }
-    // await for (var chap in _getChapters(chaps)) {
-    //   yield chap;
-    // }
-  }
-
-  Stream<List<String>> old_getChapters(List<Element> chaps, [String volume = '0']) async* {
-    for (var element in chaps) {
-      String? link = element.querySelector('.chap')?.attributes['href'];
-      int tmp = link!.indexOf('?');
-      if (tmp > -1) {
-        link = '${link.substring(0, tmp)}?style=list';
-      } else {
-        link = '$link?style=list';
-      }
-      String copertina = await _getCopertina(link);
-      String title = element.querySelector('.chap > span')!.text;
-      List<String> data = [
-        title,
-        volume,
-        element.querySelector('.chap > i')!.text,
-        link,
-        copertina
-      ];
-      yield data;
-    }
   }
 
   Future<String> _getCopertina(String? link) async {
@@ -290,10 +226,5 @@ class MangaWorld with Observer {
         print(throw Exception);
       }
     }
-  }
-
-  @override
-  void update(Observable observable, Object arg) {
-    alreadyAdd = arg as bool;
   }
 }

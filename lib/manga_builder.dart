@@ -1,9 +1,7 @@
 import 'package:manga_app/manga.dart';
 import 'package:manga_app/chaper.dart';
-import 'package:manga_app/mangaworld.dart';
-import 'package:observer/observer.dart';
 
-class MangaBuilder with Observable {
+class MangaBuilder {
   late String title;
   late String image;
   late String link;
@@ -15,9 +13,6 @@ class MangaBuilder with Observable {
   double? readings;
   List<String>? genres;
   Set<Chapter> chapters = {};
-  MangaBuilder() {
-    addObserver(MangaWorld());
-  }
 
   set readingsVote(List<double?> value) {
     readings = value[0];
@@ -37,21 +32,11 @@ class MangaBuilder with Observable {
   }
 
   set chap(List<String> value) {
-    // int volume;
-    // try {
-    //   volume = int.parse(value[1]);
-    // } catch (e) {
-    //   volume = 0;
-    // }
-    if (chapters.add(Chapter(
+    chapters.add(Chapter(
       title: value[0],
       date: value[1],
       link: value[2],
-    ))) {
-      notifyObservers(true);
-    } else {
-      notifyObservers(false);
-    }
+    ));
   }
 
   build() {
