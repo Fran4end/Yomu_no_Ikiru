@@ -93,7 +93,7 @@ class MangaWorld {
           ..trama = element.querySelector('.content > .story')?.text
           ..author = element.querySelector('.content > .author > a')?.text
           ..artist = element.querySelector('.content > .artist > a')?.text
-          ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'));
+          ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'))!;
         tmp.add(Manga(builder: builder));
         mangasBuilder.update(
           builder.title.toString(),
@@ -131,7 +131,7 @@ class MangaWorld {
           ]
           ..artist ??= info!.children[3].querySelector('a')!.text
           ..author ??= info!.children[2].querySelector('a')!.text
-          ..genres ??= _getGenres(info?.children[1].querySelectorAll('a'))
+          ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
           ..trama ??= document.querySelector('.comic-description > #noidungm')!.text;
         builder = await getChapters(builder);
         timeout = false;

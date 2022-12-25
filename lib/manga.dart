@@ -11,7 +11,7 @@ class Manga {
   final String? link;
   final double? vote;
   final double? readings;
-  final List? genres;
+  final List<String> genres;
   final List<Chapter> chapters;
 
   Manga({required MangaBuilder builder})

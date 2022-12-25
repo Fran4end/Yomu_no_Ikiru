@@ -11,6 +11,10 @@ titleStyle() {
   return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17);
 }
 
+titleBlackStyle() {
+  return GoogleFonts.sourceSansPro(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17);
+}
+
 titleGreenStyle() {
   return GoogleFonts.sourceSansPro(color: greenColor, fontWeight: FontWeight.bold, fontSize: 18);
 }

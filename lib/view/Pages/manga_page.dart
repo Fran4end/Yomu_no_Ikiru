@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
-import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:manga_app/manga.dart';
 import 'package:manga_app/manga_builder.dart';
 import 'package:manga_app/mangaworld.dart';
@@ -18,17 +17,18 @@ class MangaPage extends StatefulWidget {
 }
 
 class _MangaPageState extends State<MangaPage> {
-  late NetworkImage mangaImage;
-  // List<Chapter> chap = [];
+  late Image mangaImage;
   late Manga manga;
+  Widget genres = const Center();
 
   @override
   void initState() {
     manga = widget.mangaBuilder.build();
-    mangaImage = NetworkImage(manga.image.toString());
+    mangaImage = Image.network(manga.image.toString());
     MangaWorld().getAllInfo(widget.mangaBuilder).then((value) {
       widget.mangaBuilder = value;
       manga = widget.mangaBuilder.build();
+      genres = GenresWrap(manga: manga);
       if (mounted) {
         setState(() {});
       }
@@ -39,310 +39,250 @@ class _MangaPageState extends State<MangaPage> {
   @override
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size;
-    /*return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: (screen.height / 2) + 55,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(top: defaultPadding * 25),
-              background: Hero(
-                tag: manga.title.toString(),
-                child: Container(
-                  height: (screen.height / 2) + 55,
-                  width: screen.width,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image:
-                          manga.image == null ? Image.asset('assets/blank.jpg').image : mangaImage,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+    return Scaffold(
+      body: OrientationBuilder(
+        builder: (context, orientation) => CustomScrollView(
+          slivers: [
+            SliverPersistentHeader(
+              delegate: CustomSliverAppBarDelegate(
+                manga: manga,
+                mangaImage: mangaImage,
+                screen: screen,
+                expandedHeight: (screen.height / 2) + 55,
+                genres: genres,
               ),
-              expandedTitleScale: 1.2,
-              title: GlassContainer(
-                width: screen.width,
-                blur: 4,
-                border: const Border.fromBorderSide(BorderSide.none),
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.black.withOpacity(0.65),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(left: defaultPadding),
-                      width: (screen.width - 20) / 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            manga.title == null ? 'Title' : manga.title.toString(),
-                            style: titleStyle(),
+              pinned: true,
+            ),
+            buildChapters(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildChapters() => SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return manga.chapters.isEmpty
+                ? null
+                : Card(
+                    elevation: 5,
+                    color: Colors.grey[900],
+                    child: ListTile(
+                      title: Text(
+                        manga.chapters[index].title,
+                        style: subtitleStyle(),
+                      ),
+                      subtitle: Text(
+                        manga.chapters[index].date.toString(),
+                        style: miniStyle(),
+                      ),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Reader(
+                            index: index,
+                            chapters: manga.chapters,
+                            chapter: manga.chapters[index],
+                            pageIndex: 0, //TODO Implement bookmark
                           ),
-                          Wrap(
-                            direction: Axis.horizontal,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Text(
-                                manga.author == null ? 'author' : manga.author.toString(),
-                                style: subtitleStyle(),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-                                child: CircleAvatar(
-                                  radius: 3,
-                                  backgroundColor: Colors.black,
-                                ),
-                              ),
-                              Text(
-                                manga.artist == null ? 'artist' : manga.artist.toString(),
-                                style: subtitleStyle(),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.orange,
-                                size: 22.0,
-                              ),
-                              const SizedBox(width: defaultPadding / 2),
-                              Text(
-                                manga.vote == null ? 'vote' : manga.vote.toString(),
-                                style: subtitleStyle(),
-                              ),
-                              const SizedBox(width: defaultPadding / 2),
-                              Text(
-                                manga.readings == null ? '(readings)' : '(${manga.readings})',
-                                style: miniStyle(),
-                              )
-                            ],
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );*/
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: screen.height,
-            width: screen.width,
-            color: Colors.black,
-          ),
-          Hero(
-            tag: manga.title.toString(),
-            child: Container(
-              height: (screen.height / 2) + 55,
-              width: screen.width,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: manga.image == null ? Image.asset('assets/blank.jpg').image : mangaImage,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 35.0,
-            left: 10.0,
-            child: Container(
-              color: Colors.transparent,
-              height: 50.0,
-              width: screen.width - 20.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  TopButtonsFunctions(ic: Icon(Icons.arrow_back_ios_new_rounded)),
-                  TopButtonsFunctions(ic: Icon(Icons.favorite_rounded)),
+                  );
+          },
+          childCount: manga.chapters.length,
+        ),
+      );
+}
+
+class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  final Manga manga;
+  final Image mangaImage;
+  final Size screen;
+  final double expandedHeight;
+  final Widget genres;
+  CustomSliverAppBarDelegate({
+    required this.manga,
+    required this.mangaImage,
+    required this.screen,
+    required this.expandedHeight,
+    required this.genres,
+  });
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    const size = 140;
+    final top = expandedHeight - shrinkOffset - ((size / 2) + 60);
+    return Stack(
+      fit: StackFit.expand,
+      clipBehavior: Clip.none,
+      children: [
+        buildBackground(shrinkOffset, screen, mangaImage),
+        builAppBar(shrinkOffset, context),
+        Positioned(
+          top: top,
+          child: buildDetail(screen, shrinkOffset),
+        ),
+      ],
+    );
+  }
+
+  Widget buildDetail(Size screen, double shrinkOffset) {
+    return Opacity(
+      opacity: disappear(shrinkOffset),
+      child: SizedBox(
+        height: 140,
+        width: screen.width - 20,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            genres,
+            Container(
+              padding: const EdgeInsets.all(defaultPadding),
+              width: (screen.width - 20) / 2,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        color: Colors.orange,
+                        size: 22.0,
+                      ),
+                      const SizedBox(width: defaultPadding / 2),
+                      Text(
+                        manga.vote == null ? '0' : manga.vote.toString(),
+                        style: subtitleStyle(),
+                      ),
+                      const SizedBox(width: defaultPadding / 2),
+                      Text(
+                        manga.readings == null ? '(0)' : '(${manga.readings})',
+                        style: miniStyle(),
+                      )
+                    ],
+                  )
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget builAppBar(double shrinkOffset, BuildContext context) => Opacity(
+        opacity: 0.8,
+        child: AppBar(
+          centerTitle: true,
+          titleTextStyle: titleStyle(),
+          leading: const Padding(
+            padding: EdgeInsets.all(defaultPadding / 2),
+            child: TopButtonsFunctions(ic: Icon(Icons.arrow_back_ios_new_rounded)),
           ),
-          Positioned(
-            top: (screen.height / 2) + 70,
-            child: Column(
+          actions: const [
+            Padding(
+              padding: EdgeInsets.all(defaultPadding / 2),
+              child: TopButtonsFunctions(ic: Icon(Icons.favorite_rounded)),
+            ),
+            SizedBox(
+              width: defaultPadding / 2,
+            ),
+          ],
+          title: FittedBox(
+            fit: BoxFit.contain,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  height: (screen.height / 2) - 130,
-                  width: screen.width,
-                  child: manga.chapters.isEmpty
-                      ? const Center(child: CircularProgressIndicator(color: Colors.white))
-                      : ListView.builder(
-                          itemCount: manga.chapters.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              elevation: 5,
-                              color: Colors.grey[900],
-                              child: ListTile(
-                                title: Text(
-                                  manga.chapters[index].title,
-                                  style: subtitleStyle(),
-                                ),
-                                subtitle: Text(
-                                  manga.chapters[index].date.toString(),
-                                  style: miniStyle(),
-                                ),
-                                onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => Reader(
-                                      index: index,
-                                      chapters: manga.chapters,
-                                      chapter: manga.chapters[index],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      manga.title == null ? 'Title' : manga.title.toString(),
+                      style: titleStyle(),
+                      textAlign: TextAlign.center,
+                    ),
+                    Wrap(
+                      direction: Axis.horizontal,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          manga.author == null ? 'author' : manga.author.toString(),
+                          style: subtitleStyle(),
                         ),
-                ),
-                SizedBox(
-                  width: screen.width - 30,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 30,
-                        width: (screen.width / 2) - 120,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: backgroundColor,
-                          borderRadius: BorderRadius.circular(5),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                          child: CircleAvatar(
+                            radius: 3,
+                            backgroundColor: Colors.black,
+                          ),
                         ),
-                        child: Text(
-                          manga.status == null ? 'Status' : manga.status.toString(),
-                          style: titleGreenStyle(),
+                        Text(
+                          manga.artist == null ? 'artist' : manga.artist.toString(),
+                          style: subtitleStyle(),
                         ),
-                      ),
-                      SizedBox(
-                        height: 50.0,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('bookmark', style: miniStyle()),
-                            Text(
-                              'cap ragg',
-                              style: subtitleStyle(),
-                            )
-                          ],
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size((screen.width / 2) - 50, 45),
-                          elevation: 10,
-                          backgroundColor: primaryColor,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                        ),
-                        child: Center(
-                          child: Text('Resume', style: titleStyle()),
-                        ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          Positioned(
-            top: (screen.height / 2) - 45,
-            child: GlassContainer(
-              height: 150,
-              width: screen.width,
-              blur: 4,
-              border: const Border.fromBorderSide(BorderSide.none),
-              borderRadius: BorderRadius.circular(30),
-              color: Colors.black.withOpacity(0.6),
-              child: SizedBox(
-                // height: 140,
-                width: screen.width - 20,
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(left: defaultPadding),
-                      // height: 140,
-                      width: (screen.width - 20) / 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            manga.title == null ? 'Title' : manga.title.toString(),
-                            style: titleStyle(),
-                          ),
-                          Wrap(
-                            direction: Axis.horizontal,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Text(
-                                manga.author == null ? 'author' : manga.author.toString(),
-                                style: subtitleStyle(),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-                                child: CircleAvatar(
-                                  radius: 3,
-                                  backgroundColor: Colors.black,
-                                ),
-                              ),
-                              Text(
-                                manga.artist == null ? 'artist' : manga.artist.toString(),
-                                style: subtitleStyle(),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: defaultPadding),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.orange,
-                                size: 22.0,
-                              ),
-                              const SizedBox(width: defaultPadding / 2),
-                              Text(
-                                manga.vote == null ? 'vote' : manga.vote.toString(),
-                                style: subtitleStyle(),
-                              ),
-                              const SizedBox(width: defaultPadding / 2),
-                              Text(
-                                manga.readings == null ? '(readings)' : '(${manga.readings})',
-                                style: miniStyle(),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(left: defaultPadding / 2),
-                      //height: 140,
-                      width: (screen.width - 20) / 2,
-                      child: Column(
-                          //TODO: Mettere i generi
-                          ),
-                    ),
-                  ],
-                ),
-              ),
+        ),
+      );
+
+  Widget buildBackground(double shrinkOffset, Size screen, Image image) => Hero(
+        tag: manga.title.toString(),
+        child: Container(
+          width: screen.width,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: image.image,
+              fit: BoxFit.cover,
             ),
           ),
-        ],
+        ),
+      );
+
+  double disappear(double shrinkOffset) => 1 - shrinkOffset / expandedHeight;
+
+  @override
+  double get maxExtent => expandedHeight;
+
+  @override
+  double get minExtent => kToolbarHeight + 30;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
+}
+
+class GenresWrap extends StatelessWidget {
+  const GenresWrap({
+    Key? key,
+    required this.manga,
+  }) : super(key: key);
+
+  final Manga manga;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        direction: Axis.horizontal,
+        children: manga.genres.map((e) {
+          return Card(
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(defaultPadding / 2),
+                child: Text(e),
+              ));
+        }).toList(),
       ),
     );
   }

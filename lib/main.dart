@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
 
 void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations(
-  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 

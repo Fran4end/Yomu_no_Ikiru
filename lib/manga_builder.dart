@@ -11,7 +11,7 @@ class MangaBuilder {
   String? trama;
   double? vote;
   double? readings;
-  List<String>? genres;
+  List<String> genres = [];
   Set<Chapter> chapters = {};
 
   set readingsVote(List<double?> value) {
