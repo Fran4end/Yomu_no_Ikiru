@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../costants.dart';
-import '../../manga.dart';
-import '../../manga_builder.dart';
+import '../../model/manga.dart';
+import '../../model/manga_builder.dart';
 import '../Pages/manga_page.dart';
 
 class MangaCard extends StatelessWidget {

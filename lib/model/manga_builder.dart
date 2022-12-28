@@ -1,10 +1,10 @@
-import 'package:manga_app/manga.dart';
-import 'package:manga_app/chaper.dart';
+import 'package:manga_app/model/manga.dart';
+import 'package:manga_app/model/chaper.dart';
 
 class MangaBuilder {
-  late String title;
-  late String image;
-  late String link;
+  String title = '';
+  String image = '';
+  String link = '';
   String? status;
   String? author;
   String? artist;
@@ -13,6 +13,8 @@ class MangaBuilder {
   double? readings;
   List<String> genres = [];
   Set<Chapter> chapters = {};
+  int index = 0;
+  int pageIndex = 0;
 
   set readingsVote(List<double?> value) {
     readings = value[0];
@@ -31,15 +33,23 @@ class MangaBuilder {
     link = values[2]!;
   }
 
+  set setChapIndex(int index) {
+    if (index < 0) {
+      print('error');
+    } else {
+      this.index = index;
+    }
+  }
+
   set chap(List<String> value) {
     chapters.add(Chapter(
-      title: value[0],
+      title: value[0].replaceAll("Scan ITA", ""),
       date: value[1],
       link: value[2],
     ));
   }
 
   build() {
-    return Manga(builder: this);
+    return Manga.withBuilder(this);
   }
 }

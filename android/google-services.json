@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "331308178402",
+    "project_id": "manga-bec41",
+    "storage_bucket": "manga-bec41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331308178402:android:eb9305521ea07502b737bb",
+        "android_client_info": {
+          "package_name": "com.example.manga_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "331308178402-d9peqv0b2o3olfg6dcoqs2383uhh6rcv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIrSc5uTRGajZbusTR6miU8i3iNEJuUbg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "331308178402-d9peqv0b2o3olfg6dcoqs2383uhh6rcv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

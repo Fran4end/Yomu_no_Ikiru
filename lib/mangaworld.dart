@@ -3,8 +3,8 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:manga_app/costants.dart';
-import 'package:manga_app/manga.dart';
-import 'package:manga_app/manga_builder.dart';
+import 'package:manga_app/model/manga.dart';
+import 'package:manga_app/model/manga_builder.dart';
 
 class MangaWorld {
   List<MangaBuilder> latests = [];
@@ -94,7 +94,7 @@ class MangaWorld {
           ..author = element.querySelector('.content > .author > a')?.text
           ..artist = element.querySelector('.content > .artist > a')?.text
           ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'))!;
-        tmp.add(Manga(builder: builder));
+        tmp.add(Manga.withBuilder(builder));
         mangasBuilder.update(
           builder.title.toString(),
           (value) => builder,
@@ -133,7 +133,9 @@ class MangaWorld {
           ..author ??= info!.children[2].querySelector('a')!.text
           ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
           ..trama ??= document.querySelector('.comic-description > #noidungm')!.text;
-        builder = await getChapters(builder);
+        if (builder.chapters.isEmpty) {
+          builder = await getChapters(builder);
+        }
         timeout = false;
       } catch (e, s) {
         if (e.toString().contains('Connection reset by peer')) {

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../costants.dart';
-import '../../manga.dart';
-import '../../manga_builder.dart';
+import '../../model/manga.dart';
+import '../../model/manga_builder.dart';
 import '../../mangaworld.dart';
 import '../widgets/skeleton.dart';
 import '../widgets/manga_widget.dart';
@@ -150,6 +150,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   }
 
   Future _refresh() async {
+    _mangas = null;
+    setState(() {});
     MangaWorld().getHomePageDocument().then(
       (document) {
         MangaWorld().onlyLatests(document).then((value) {
@@ -158,8 +160,6 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
         });
       },
     );
-    _mangas = null;
-    setState(() {});
   }
 
   List<Manga> _generateListManga(List<MangaBuilder>? builders) {

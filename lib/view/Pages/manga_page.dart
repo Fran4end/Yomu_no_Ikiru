@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
-import 'package:manga_app/manga.dart';
-import 'package:manga_app/manga_builder.dart';
+import 'package:manga_app/model/manga.dart';
+import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/mangaworld.dart';
 import 'package:manga_app/view/Pages/reader_page.dart';
+import '../../model/utils.dart';
 
 class MangaPage extends StatefulWidget {
   MangaPage({
@@ -20,9 +22,12 @@ class _MangaPageState extends State<MangaPage> {
   late Image mangaImage;
   late Manga manga;
   Widget genres = const Center();
+  Map fileContent = {};
+  final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
+    super.initState();
     manga = widget.mangaBuilder.build();
     mangaImage = Image.network(manga.image.toString());
     MangaWorld().getAllInfo(widget.mangaBuilder).then((value) {
@@ -33,7 +38,12 @@ class _MangaPageState extends State<MangaPage> {
         setState(() {});
       }
     });
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Utils().writeFile(manga.title!, user).then((file) => Utils().uploadJson(file, user));
+    super.dispose();
   }
 
   @override
@@ -83,7 +93,7 @@ class _MangaPageState extends State<MangaPage> {
                             index: index,
                             chapters: manga.chapters,
                             chapter: manga.chapters[index],
-                            pageIndex: 0, //TODO Implement bookmark
+                            pageIndex: manga.pageIndex, //TODO Implement bookmark
                           ),
                         ),
                       ),

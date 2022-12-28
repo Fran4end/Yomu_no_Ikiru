@@ -1,17 +1,19 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html/parser.dart';
-import 'package:manga_app/chaper.dart';
+import 'package:manga_app/model/chaper.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:http/http.dart' as http;
+import 'package:manga_app/model/utils.dart';
 import 'package:photo_view/photo_view.dart';
 import 'dart:math';
 
 import 'package:photo_view/photo_view_gallery.dart';
 
 class Reader extends StatefulWidget {
-  Reader({
+  const Reader({
     required this.index,
     required this.chapters,
     required this.chapter,
@@ -28,17 +30,22 @@ class Reader extends StatefulWidget {
 
 class _ReaderState extends State<Reader> {
   late final PageController pageController;
-  late int index = widget.pageIndex;
+  late int pageIndex = widget.pageIndex;
   List<String> imageUrls = [];
   Axis _axis = Axis.horizontal;
   Icon _icon = const Icon(Icons.keyboard_double_arrow_left);
   bool _showAppBar = false;
   bool _reverse = true;
+  Timer? timer;
 
   @override
   void initState() {
     pageController = PageController(initialPage: widget.pageIndex);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+    timer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => Utils().saveBookmark(widget.index, pageIndex, widget.chapter),
+    );
     getImages().then((value) {
       setState(() {
         imageUrls = value;
@@ -46,6 +53,12 @@ class _ReaderState extends State<Reader> {
     });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -131,7 +144,7 @@ class _ReaderState extends State<Reader> {
                     scrollDirection: _axis,
                     reverse: _reverse,
                     onPageChanged: (index) => setState(() {
-                      this.index = index;
+                      pageIndex = index;
                     }),
                     builder: (context, index) {
                       final urlImage = imageUrls[index];
@@ -157,7 +170,7 @@ class _ReaderState extends State<Reader> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "${index + 1} / ${imageUrls.length}",
+                          "${pageIndex + 1} / ${imageUrls.length}",
                           style: const TextStyle(color: Colors.white),
                         ),
                       )),

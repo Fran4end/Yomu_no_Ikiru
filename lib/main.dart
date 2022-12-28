@@ -1,8 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:manga_app/costants.dart';
+import 'package:manga_app/model/utils.dart';
+import 'package:manga_app/view/Pages/user_page.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
 
-void main() {
+main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -13,6 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
+      scaffoldMessengerKey: Utils.messengerKey,
       title: 'Manga!',
       theme: ThemeData(
         brightness: Brightness.light,
@@ -72,6 +80,11 @@ class _MyHomePageState extends State<MyHomePage> {
               selectedIcon: Icon(Icons.my_library_books),
               label: 'Library',
             ),
+            NavigationDestination(
+              icon: Icon(Icons.account_box_outlined),
+              selectedIcon: Icon(Icons.account_box),
+              label: 'Account',
+            ),
           ],
         ),
       ),
@@ -81,12 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getPage() {
     switch (_selectpage) {
-      case 0:
-        return Center(
-          child: Text('A'),
-        );
       case 1:
         return const SearchPage();
+      case 3:
+        return UserPage();
       default:
         return Center(
           child: Text('A'),
