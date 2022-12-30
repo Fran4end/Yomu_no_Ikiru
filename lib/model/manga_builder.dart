@@ -49,7 +49,7 @@ class MangaBuilder {
     ));
   }
 
-  build() {
+  Manga build() {
     return Manga.withBuilder(this);
   }
 }

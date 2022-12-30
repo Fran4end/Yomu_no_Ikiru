@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
 import 'package:manga_app/model/utils.dart';
+import 'package:manga_app/view/Pages/library_page.dart';
 import 'package:manga_app/view/Pages/user_page.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
 
@@ -43,10 +44,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectpage = 1;
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,10 +93,12 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (_selectpage) {
       case 1:
         return const SearchPage();
+      case 2:
+        return const LibraryPage();
       case 3:
-        return UserPage();
+        return const UserPage();
       default:
-        return Center(
+        return const Center(
           child: Text('A'),
         );
     }

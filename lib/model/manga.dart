@@ -62,6 +62,15 @@ class Manga {
         'pageIndex': pageIndex,
       };
 
+  Map<String, dynamic> toJsonOnlyBookmark() => {
+        'title': title,
+        'image': image,
+        'link': link,
+        'status': status,
+        'index': index,
+        'pageIndex': pageIndex,
+      };
+
   @override
   String toString() {
     return '$title -> ($author, $artist): $status ($vote, $readings) \n[$trama] $genres\n$image\n$link\n\n';

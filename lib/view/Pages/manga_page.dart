@@ -8,11 +8,13 @@ import 'package:manga_app/view/Pages/reader_page.dart';
 import '../../model/utils.dart';
 
 class MangaPage extends StatefulWidget {
-  MangaPage({
+  const MangaPage({
     required this.mangaBuilder,
+    required this.save,
     super.key,
   });
-  MangaBuilder mangaBuilder;
+  final MangaBuilder mangaBuilder;
+  final bool save;
 
   @override
   State<StatefulWidget> createState() => _MangaPageState();
@@ -21,19 +23,22 @@ class MangaPage extends StatefulWidget {
 class _MangaPageState extends State<MangaPage> {
   late Image mangaImage;
   late Manga manga;
+  late MangaBuilder mangaBuilder = widget.mangaBuilder;
   Widget genres = const Center();
   Map fileContent = {};
   final User? user = FirebaseAuth.instance.currentUser;
+  late bool save = widget.save;
 
   @override
   void initState() {
     super.initState();
-    manga = widget.mangaBuilder.build();
+    manga = mangaBuilder.build();
     mangaImage = Image.network(manga.image.toString());
-    MangaWorld().getAllInfo(widget.mangaBuilder).then((value) {
-      widget.mangaBuilder = value;
-      manga = widget.mangaBuilder.build();
+    MangaWorld().getAllInfo(mangaBuilder).then((value) {
+      mangaBuilder = value;
+      manga = mangaBuilder.build();
       genres = GenresWrap(manga: manga);
+      print('${mangaBuilder.index} || ${mangaBuilder.pageIndex}');
       if (mounted) {
         setState(() {});
       }
@@ -42,7 +47,11 @@ class _MangaPageState extends State<MangaPage> {
 
   @override
   void dispose() {
-    Utils().writeFile(manga.title!, user).then((file) => Utils().uploadJson(file, user));
+    if (save) {
+      Utils().writeFile(manga.title!).then((file) => Utils.uploadJson(file, manga.title!));
+    } else {
+      Utils().deleteFile(manga.title!);
+    }
     super.dispose();
   }
 
@@ -51,21 +60,81 @@ class _MangaPageState extends State<MangaPage> {
     final screen = MediaQuery.of(context).size;
     return Scaffold(
       body: OrientationBuilder(
-        builder: (context, orientation) => CustomScrollView(
-          slivers: [
-            SliverPersistentHeader(
-              delegate: CustomSliverAppBarDelegate(
-                manga: manga,
-                mangaImage: mangaImage,
-                screen: screen,
-                expandedHeight: (screen.height / 2) + 55,
-                genres: genres,
-              ),
-              pinned: true,
+        builder: (context, orientation) => Stack(
+          fit: StackFit.expand,
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverPersistentHeader(
+                  delegate: CustomSliverAppBarDelegate(
+                    manga: manga,
+                    mangaImage: mangaImage,
+                    screen: screen,
+                    expandedHeight: (screen.height / 2) + 55,
+                    genres: genres,
+                    save: save,
+                    function: () => setState(() => save = !save),
+                  ),
+                  pinned: true,
+                ),
+                buildChapters(),
+              ],
             ),
-            buildChapters(),
+            Positioned(
+              bottom: 30,
+              child: buildBottomBar(screen, manga),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildBottomBar(Size screen, Manga manga) {
+    return SizedBox(
+      width: screen.width - 30,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: defaultPadding * 2),
+            child: Container(
+              height: 30,
+              width: 100,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Text(
+                manga.status == null ? 'Status' : manga.status.toString(),
+                style: titleGreenStyle(),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => Reader(
+                  index: (manga.chapters.length - manga.index) - 1,
+                  chapters: manga.chapters,
+                  chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
+                  pageIndex: manga.pageIndex,
+                ),
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size((screen.width / 2) - 50, 45),
+              elevation: 10,
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+            ),
+            child: Center(
+              child: Text('Resume', style: titleStyle()),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -93,7 +162,7 @@ class _MangaPageState extends State<MangaPage> {
                             index: index,
                             chapters: manga.chapters,
                             chapter: manga.chapters[index],
-                            pageIndex: manga.pageIndex, //TODO Implement bookmark
+                            pageIndex: manga.pageIndex,
                           ),
                         ),
                       ),
@@ -111,24 +180,28 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final Size screen;
   final double expandedHeight;
   final Widget genres;
+  final bool save;
+  final Function()? function;
   CustomSliverAppBarDelegate({
     required this.manga,
     required this.mangaImage,
     required this.screen,
     required this.expandedHeight,
     required this.genres,
+    required this.save,
+    required this.function,
   });
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    const size = 140;
-    final top = expandedHeight - shrinkOffset - ((size / 2) + 60);
+    const double size = 130;
+    final top = expandedHeight - shrinkOffset - size;
     return Stack(
       fit: StackFit.expand,
       clipBehavior: Clip.none,
       children: [
         buildBackground(shrinkOffset, screen, mangaImage),
-        builAppBar(shrinkOffset, context),
+        builAppBar(shrinkOffset, context, function),
         Positioned(
           top: top,
           child: buildDetail(screen, shrinkOffset),
@@ -183,21 +256,29 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     );
   }
 
-  Widget builAppBar(double shrinkOffset, BuildContext context) => Opacity(
+  Widget builAppBar(double shrinkOffset, BuildContext context, Function()? function) => Opacity(
         opacity: 0.8,
         child: AppBar(
           centerTitle: true,
           titleTextStyle: titleStyle(),
-          leading: const Padding(
-            padding: EdgeInsets.all(defaultPadding / 2),
-            child: TopButtonsFunctions(ic: Icon(Icons.arrow_back_ios_new_rounded)),
-          ),
-          actions: const [
-            Padding(
-              padding: EdgeInsets.all(defaultPadding / 2),
-              child: TopButtonsFunctions(ic: Icon(Icons.favorite_rounded)),
+          leading: Padding(
+            padding: const EdgeInsets.all(defaultPadding / 2),
+            child: TopButtonsFunctions(
+              ic: const Icon(Icons.arrow_back_ios_new_rounded),
+              function: () => Navigator.of(context).pop(),
             ),
-            SizedBox(
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(defaultPadding / 2),
+              child: TopButtonsFunctions(
+                ic: save
+                    ? const Icon(Icons.favorite_rounded)
+                    : const Icon(Icons.favorite_outline_rounded),
+                function: function,
+              ),
+            ),
+            const SizedBox(
               width: defaultPadding / 2,
             ),
           ],
@@ -302,16 +383,16 @@ class TopButtonsFunctions extends StatelessWidget {
   const TopButtonsFunctions({
     Key? key,
     required this.ic,
+    required this.function,
   }) : super(key: key);
 
   final Icon ic;
+  final Function()? function;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.of(context).pop();
-      },
+      onTap: function,
       child: Container(
         height: 45,
         width: 45,

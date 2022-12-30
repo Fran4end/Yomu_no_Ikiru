@@ -11,10 +11,12 @@ class MangaCard extends StatelessWidget {
     Key? key,
     required this.manga,
     required this.mangaBuilder,
+    this.save = false,
   }) : super(key: key);
 
   final Manga manga;
   final MangaBuilder mangaBuilder;
+  final bool save;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,10 @@ class MangaCard extends StatelessWidget {
     return Center(
       child: GestureDetector(
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MangaPage(mangaBuilder: mangaBuilder),
+          builder: (context) => MangaPage(
+            mangaBuilder: mangaBuilder,
+            save: save,
+          ),
         )),
         child: OrientationBuilder(
           builder: (context, orientation) {
@@ -142,10 +147,13 @@ class MangaGrid extends StatelessWidget {
   const MangaGrid({
     Key? key,
     required List<Manga> listManga,
+    required,
+    this.save = false,
   })  : _listManga = listManga,
         super(key: key);
 
   final List<Manga> _listManga;
+  final bool save;
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +175,7 @@ class MangaGrid extends StatelessWidget {
               mangaBuilder: mangasBuilder[_listManga[index].title.toString()] != null
                   ? mangasBuilder[_listManga[index].title.toString()]!
                   : MangaBuilder(),
+              save: save,
             );
           }),
           itemCount: _listManga.length,

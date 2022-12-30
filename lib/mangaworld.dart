@@ -60,25 +60,6 @@ class MangaWorld {
     return populars;
   }
 
-  Future<List<String?>> buildSuggestions(String keyworld) async {
-    List<String?> sugg = [];
-    http.Response res =
-        await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyworld'));
-    if (res.statusCode == 200) {
-      Document document = parse(res.body);
-      var titleList = document.querySelectorAll('.comics-grid > .entry');
-      for (var element in titleList) {
-        String? title = element.querySelector('.content > .name > .manga-title')?.text;
-        sugg.add(title);
-      }
-    } else {
-      if (kDebugMode) {
-        print(throw Exception);
-      }
-    }
-    return sugg;
-  }
-
   Future<List<Manga>> getResults(String keyworld) async {
     List<Manga> tmp = [];
     http.Response res =
@@ -94,7 +75,7 @@ class MangaWorld {
           ..author = element.querySelector('.content > .author > a')?.text
           ..artist = element.querySelector('.content > .artist > a')?.text
           ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'))!;
-        tmp.add(Manga.withBuilder(builder));
+        tmp.add(builder.build());
         mangasBuilder.update(
           builder.title.toString(),
           (value) => builder,
@@ -121,9 +102,10 @@ class MangaWorld {
     bool timeout = false;
     do {
       try {
+        print(builder.title);
         Document document = await _getDetailedPageDocument(builder);
         var info = document.querySelector('.info > .meta-data');
-        var readings = info?.children[6].children[1].text;
+        String? readings = info?.children[6].children[1].text;
         builder
           ..readingsVote = [
             double.tryParse(readings.toString()),
