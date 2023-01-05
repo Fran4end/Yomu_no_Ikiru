@@ -21,7 +21,7 @@ class _UserPageState extends State<UserPage> {
         } else if (snapshot.hasError) {
           return const Center(child: Text('Somthing went wrong'));
         } else if (snapshot.hasData) {
-          return VerifyEmailPage();
+          return const VerifyEmailPage();
         } else {
           return const AuthPage();
         }

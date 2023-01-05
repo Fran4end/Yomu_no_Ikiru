@@ -95,3 +95,26 @@ class CardSkelton extends StatelessWidget {
     );
   }
 }
+
+class SkeletonGrid extends StatelessWidget {
+  const SkeletonGrid({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return OrientationBuilder(
+        builder: (context, orientation) => GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                mainAxisExtent: 200,
+                crossAxisCount: 2,
+                childAspectRatio: orientation == Orientation.portrait
+                    ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 2)
+                    : (MediaQuery.of(context).size.width / 2) / MediaQuery.of(context).size.height,
+                crossAxisSpacing: defaultPadding * 1.5,
+                mainAxisSpacing: orientation == Orientation.portrait ? defaultPadding / 2 : 2,
+              ),
+              itemBuilder: (context, index) => const CardSkelton(),
+            ));
+  }
+}

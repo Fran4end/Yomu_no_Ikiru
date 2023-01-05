@@ -5,6 +5,7 @@ import 'package:manga_app/model/manga.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/mangaworld.dart';
 import 'package:manga_app/view/Pages/reader_page.dart';
+import '../../model/file_manag.dart';
 import '../../model/utils.dart';
 
 class MangaPage extends StatefulWidget {
@@ -38,7 +39,6 @@ class _MangaPageState extends State<MangaPage> {
       mangaBuilder = value;
       manga = mangaBuilder.build();
       genres = GenresWrap(manga: manga);
-      print('${mangaBuilder.index} || ${mangaBuilder.pageIndex}');
       if (mounted) {
         setState(() {});
       }
@@ -48,9 +48,9 @@ class _MangaPageState extends State<MangaPage> {
   @override
   void dispose() {
     if (save) {
-      Utils().writeFile(manga.title!).then((file) => Utils.uploadJson(file, manga.title!));
+      FileManag.writeFile(manga.title!).then((file) => Utils.uploadJson(file, manga.title!));
     } else {
-      Utils().deleteFile(manga.title!);
+      FileManag.deleteFile(manga.title!);
     }
     super.dispose();
   }
@@ -73,7 +73,13 @@ class _MangaPageState extends State<MangaPage> {
                     expandedHeight: (screen.height / 2) + 55,
                     genres: genres,
                     save: save,
-                    function: () => setState(() => save = !save),
+                    function: () {
+                      if (user != null) {
+                        setState(() => save = !save);
+                      } else {
+                        Utils.showSnackBar('You need to login before save a manga');
+                      }
+                    },
                   ),
                   pinned: true,
                 ),
@@ -114,16 +120,20 @@ class _MangaPageState extends State<MangaPage> {
             ),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => Reader(
-                  index: (manga.chapters.length - manga.index) - 1,
-                  chapters: manga.chapters,
-                  chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
-                  pageIndex: manga.pageIndex,
-                ),
-              ),
-            ),
+            onPressed: () {
+              if (manga.chapters.isNotEmpty) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => Reader(
+                      index: (manga.chapters.length - manga.index) - 1,
+                      chapters: manga.chapters,
+                      chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
+                      pageIndex: manga.pageIndex,
+                    ),
+                  ),
+                );
+              }
+            },
             style: ElevatedButton.styleFrom(
               fixedSize: Size((screen.width / 2) - 50, 45),
               elevation: 10,
@@ -156,16 +166,20 @@ class _MangaPageState extends State<MangaPage> {
                         manga.chapters[index].date.toString(),
                         style: miniStyle(),
                       ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => Reader(
-                            index: index,
-                            chapters: manga.chapters,
-                            chapter: manga.chapters[index],
-                            pageIndex: manga.pageIndex,
+                      onTap: () {
+                        int pIndex = 0;
+                        if (manga.index == index) pIndex = manga.pageIndex;
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => Reader(
+                              index: index,
+                              chapters: manga.chapters,
+                              chapter: manga.chapters[index],
+                              pageIndex: pIndex,
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   );
           },

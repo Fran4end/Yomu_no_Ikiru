@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/view/widgets/user_info_widget.dart';
-
 import '../../costants.dart';
 import '../../model/utils.dart';
 
@@ -42,7 +42,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     setState(() {
       isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     });
-    if (isEmailVerified) timer?.cancel();
+    if (isEmailVerified) {
+      timer?.cancel();
+    }
   }
 
   Future sendVerificationEmail() async {
@@ -72,7 +74,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'A verification email has been sent to your mail',
+                    "A verification email has been sent to your mail.\nIf you haven't received it, check your spam",
                     style: titleStyle(),
                     textAlign: TextAlign.center,
                   ),
@@ -83,9 +85,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                       minimumSize: const Size.fromHeight(50),
                     ),
                     icon: const Icon(Icons.email),
-                    label: const Text(
+                    label: Text(
                       'Resent Email',
-                      style: TextStyle(color: Colors.white, fontSize: 25),
+                      style: titleStyle(),
                     ),
                   ),
                   TextButton(

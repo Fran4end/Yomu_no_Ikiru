@@ -49,6 +49,7 @@ dependencies:
   email_validator: ^2.1.17
   firebase_storage: ^11.0.9
   path_provider: ^2.0.11
+  firebase_app_check: ^0.1.1+8
 
 dev_dependencies:
   flutter_test:

@@ -6,10 +6,17 @@ import 'package:manga_app/model/utils.dart';
 import 'package:manga_app/view/Pages/library_page.dart';
 import 'package:manga_app/view/Pages/user_page.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseAppCheck.instance.activate(
+    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
+    // Set androidProvider to `AndroidProvider.debug`
+    androidProvider: AndroidProvider.debug,
+  );
+
   runApp(const MyApp());
 }
 
@@ -85,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: _getPage(), // This trailing comma makes auto-formatting nicer for build methods.
+      body: _getPage(),
     );
   }
 

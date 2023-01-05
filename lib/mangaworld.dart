@@ -60,7 +60,7 @@ class MangaWorld {
     return populars;
   }
 
-  Future<List<Manga>> getResults(String keyworld) async {
+  static Future<List<Manga>> getResults(String keyworld) async {
     List<Manga> tmp = [];
     http.Response res =
         await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyworld'));
@@ -90,7 +90,7 @@ class MangaWorld {
     return tmp;
   }
 
-  List<String?> _getTitleImageLink(var element) {
+  static List<String?> _getTitleImageLink(var element) {
     return [
       element.querySelector('.content > .name > .manga-title').text,
       element.querySelector('.thumb > img').attributes['src'],
@@ -172,7 +172,7 @@ class MangaWorld {
     return image;
   }
 
-  List<String>? _getGenres(var elements) {
+  static List<String>? _getGenres(var elements) {
     List<String>? tmp = [];
     for (var element in elements) {
       tmp.add(element.text);
