@@ -5,11 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:manga_app/costants.dart';
 import 'package:manga_app/model/manga.dart';
 import 'package:manga_app/model/manga_builder.dart';
+import 'package:manga_app/model/utils.dart';
 
 class MangaWorld {
-  List<MangaBuilder> latests = [];
-  List<MangaBuilder> populars = [];
-
   Future<Document> getHomePageDocument() async {
     http.Response res = await http.get(Uri.parse(baseUrl));
     Document document = parse(res.body);
@@ -21,16 +19,11 @@ class MangaWorld {
     List<Element> latestElemets = document.querySelectorAll('.comics-grid > .entry');
     List<Element> popularElemets = document.querySelectorAll('.comics-flex > .entry');
 
-    latests = await _getLatests(latestElemets);
-    populars = await _getPopulars(popularElemets);
+    print(popularElemets);
+    final latests = await _getLatests(latestElemets);
+    final populars = await _getPopulars(popularElemets);
 
     return {'latests': latests, 'populars': populars};
-  }
-
-  Future<List<MangaBuilder>> onlyLatests(Document document) async {
-    var latestElemets = document.querySelectorAll('.comics-grid > .entry');
-    List<MangaBuilder> latestes = await _getLatests(latestElemets);
-    return latestes;
   }
 
   Future<List<MangaBuilder>> _getLatests(var elements) async {
@@ -41,7 +34,7 @@ class MangaWorld {
         ..status = element.querySelector('.content > .status > a')?.text;
       latests.add(tmp);
       mangasBuilder.update(
-        tmp.title.toString(),
+        tmp.title.toString().trim(),
         (value) => tmp,
         ifAbsent: () => tmp,
       );
@@ -92,7 +85,7 @@ class MangaWorld {
 
   static List<String?> _getTitleImageLink(var element) {
     return [
-      element.querySelector('.content > .name > .manga-title').text,
+      element.querySelector('.name > .manga-title').text,
       element.querySelector('.thumb > img').attributes['src'],
       element.querySelector('.thumb').attributes['href']
     ];
@@ -100,9 +93,11 @@ class MangaWorld {
 
   Future<MangaBuilder> getAllInfo(MangaBuilder builder) async {
     bool timeout = false;
+    print(builder.library);
+    final refs = await Utils.downloadJson();
+    for (var ref in refs) {}
     do {
       try {
-        print(builder.title);
         Document document = await _getDetailedPageDocument(builder);
         var info = document.querySelector('.info > .meta-data');
         String? readings = info?.children[6].children[1].text;

@@ -8,23 +8,23 @@ final navigatorKey = GlobalKey<NavigatorState>();
 Map<String, MangaBuilder> mangasBuilder = {};
 
 // * Text Style
-titleStyle() {
+TextStyle titleStyle() {
   return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18);
 }
 
-titleBlackStyle() {
+TextStyle titleBlackStyle() {
   return GoogleFonts.sourceSansPro(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18);
 }
 
-titleGreenStyle() {
+TextStyle titleGreenStyle() {
   return GoogleFonts.sourceSansPro(color: greenColor, fontWeight: FontWeight.bold, fontSize: 18);
 }
 
-subtitleStyle() {
+TextStyle subtitleStyle() {
   return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14);
 }
 
-miniStyle() {
+TextStyle miniStyle() {
   return GoogleFonts.sourceSansPro(color: Colors.white, fontSize: 12);
 }
 

@@ -15,6 +15,7 @@ class MangaBuilder {
   Set<Chapter> chapters = {};
   int index = 0;
   int pageIndex = 0;
+  bool library = false;
 
   set readingsVote(List<double?> value) {
     readings = value[0];
@@ -50,6 +51,21 @@ class MangaBuilder {
   }
 
   Manga build() {
-    return Manga.withBuilder(this);
+    return Manga(
+      artist: artist,
+      author: author,
+      chapters: chapters.toList(),
+      genres: genres,
+      image: image,
+      index: index,
+      library: library,
+      link: link,
+      pageIndex: pageIndex,
+      readings: readings,
+      status: status,
+      title: title,
+      trama: trama,
+      vote: vote,
+    );
   }
 }

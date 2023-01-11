@@ -33,7 +33,13 @@ class _LibraryPageState extends State<LibraryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Library'),
+        backgroundColor: primaryColor,
+        elevation: 0.0,
+        centerTitle: true,
+        title: Text(
+          'Library',
+          style: titleStyle(),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(defaultPadding),

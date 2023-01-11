@@ -12,7 +12,13 @@ class UserInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Page'),
+        backgroundColor: primaryColor,
+        elevation: 0.0,
+        centerTitle: true,
+        title: Text(
+          'User',
+          style: titleStyle(),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(defaultPadding * 2),

@@ -35,6 +35,9 @@ class _MangaPageState extends State<MangaPage> {
     super.initState();
     manga = mangaBuilder.build();
     mangaImage = Image.network(manga.image.toString());
+    if (manga.library) {
+      save = true;
+    }
     MangaWorld().getAllInfo(mangaBuilder).then((value) {
       mangaBuilder = value;
       manga = mangaBuilder.build();
@@ -48,9 +51,9 @@ class _MangaPageState extends State<MangaPage> {
   @override
   void dispose() {
     if (save) {
-      FileManag.writeFile(manga.title!).then((file) => Utils.uploadJson(file, manga.title!));
+      FileManag.writeFile(manga.title).then((file) => Utils.uploadJson(file, manga.title));
     } else {
-      FileManag.deleteFile(manga.title!);
+      FileManag.deleteFile(manga.title);
     }
     super.dispose();
   }

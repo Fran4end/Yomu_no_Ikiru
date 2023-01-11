@@ -69,7 +69,7 @@ class MangaCard extends StatelessWidget {
                                   ? screen.width / 3
                                   : screen.width / 6.1,
                               child: Image.network(
-                                manga.image!,
+                                manga.image,
                                 fit: BoxFit.cover,
                                 loadingBuilder: (context, child, loadingProgress) {
                                   bool timeout = false;
@@ -122,7 +122,7 @@ class MangaCard extends StatelessWidget {
                             fit: BoxFit.cover,
                             child: Text(
                               manga.title.toString().length > 20
-                                  ? '${manga.title!.trim().characters.take(20)}...'
+                                  ? '${manga.title.trim().characters.take(20)}...'
                                   : manga.title.toString().trim(),
                               overflow: TextOverflow.clip,
                               textAlign: TextAlign.center,

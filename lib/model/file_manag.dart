@@ -14,13 +14,13 @@ class FileManag {
   static Future<List<File>> downloadAllFile(List<Reference> refs) async {
     List<File> files = [];
     for (var ref in refs) {
-      final file = await _downloadFile(ref);
+      final file = await downloadFile(ref);
       files.add(file);
     }
     return files;
   }
 
-  static Future<File> _downloadFile(Reference ref) async {
+  static Future<File> downloadFile(Reference ref) async {
     Directory dir = await getApplicationDocumentsDirectory();
     File file = File('${dir.path}/${user?.displayName}/${ref.name}');
     await ref.writeToFile(file);
@@ -30,13 +30,13 @@ class FileManag {
   static Future<List<MangaBuilder>> readAllFile(List<File> files) async {
     List<MangaBuilder> builders = [];
     for (var file in files) {
-      final builder = await _readFile(file);
+      final builder = await readFile(file);
       builders.add(builder);
     }
     return builders;
   }
 
-  static Future<MangaBuilder> _readFile(File file) async {
+  static Future<MangaBuilder> readFile(File file) async {
     final content = await file.readAsString();
     final json = jsonDecode(content);
     MangaBuilder builder = MangaBuilder()
@@ -56,11 +56,13 @@ class FileManag {
 
   static Future<File> writeFile(String title) async {
     user = FirebaseAuth.instance.currentUser;
-    Manga manga = Utils.getMangaBuilderFromTitle(title).build();
+    final builder = Utils.getMangaBuilderFromTitle(title);
+    builder.library = true;
+    Manga manga = builder.build();
     Directory dir = await getApplicationDocumentsDirectory();
     File jsonFile = File('${dir.path}/${user?.displayName}/$title.json');
     bool fileExist = await jsonFile.exists();
-    Map<String, dynamic> jsonFileContent = manga.toJsonOnlyBookmark();
+    Map<String, dynamic> jsonFileContent = manga.toJson();
     if (!fileExist) {
       jsonFile = await createFile(title);
     }
@@ -68,7 +70,7 @@ class FileManag {
     return jsonFile;
   }
 
-  static void deleteFile(String title, [String path = '/']) async {
+  static void deleteFile(String title, [String path = 'all']) async {
     user = FirebaseAuth.instance.currentUser;
     Directory dir = await getApplicationDocumentsDirectory();
     File jsonFile = File('${dir.path}/${user?.displayName}/$title.json');
@@ -76,7 +78,7 @@ class FileManag {
     if (user == null) {
       print('user not logined');
     } else {
-      final ref = FirebaseStorage.instance.ref('${user?.uid}$path$title.json');
+      final ref = FirebaseStorage.instance.ref('${user?.uid}/$path/$title.json');
       try {
         await ref.delete();
       } catch (e) {

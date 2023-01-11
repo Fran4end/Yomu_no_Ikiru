@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
 import 'package:manga_app/model/utils.dart';
+import 'package:manga_app/view/Pages/home_page.dart';
 import 'package:manga_app/view/Pages/library_page.dart';
 import 'package:manga_app/view/Pages/user_page.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
@@ -13,7 +14,6 @@ main() async {
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance.activate(
     webRecaptchaSiteKey: 'recaptcha-v3-site-key',
-    // Set androidProvider to `AndroidProvider.debug`
     androidProvider: AndroidProvider.debug,
   );
 
@@ -50,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectpage = 1;
+  int _selectpage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getPage() {
     switch (_selectpage) {
+      case 0:
+        return const HomePage();
       case 1:
         return const SearchPage();
       case 2:

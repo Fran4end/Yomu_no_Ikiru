@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:manga_app/costants.dart';
 import 'package:manga_app/model/chaper.dart';
 import 'package:manga_app/model/manga_builder.dart';
@@ -34,29 +33,27 @@ class Utils {
       ..showSnackBar(snackBar);
   }
 
-  static Future uploadJson(File file, String title, [String path = '/']) async {
+  static Future uploadJson(File file, String title, [String path = 'all']) async {
     user = FirebaseAuth.instance.currentUser;
     if (user == null || title == '') {
       print('user not logined or file not valid');
       return;
     } else {
-      final filePath = '${user?.uid}/$path$title.json';
       if (file.existsSync()) {
-        final ref = FirebaseStorage.instance.ref().child(filePath);
+        final ref = FirebaseStorage.instance.ref().child('${user?.uid}/$path/$title.json');
         ref.putFile(file);
       }
     }
   }
 
-  static Future<List<Reference>> downloadJson([String path = '/']) async {
+  static Future<List<Reference>> downloadJson([String path = 'all']) async {
     user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print('user not logined');
       return [];
     } else {
       try {
-        final ref = FirebaseStorage.instance.ref('${user?.uid}$path');
-        final list = await ref.listAll();
+        final list = await FirebaseStorage.instance.ref().child('${user?.uid}/$path/').listAll();
         return list.items;
       } on FirebaseException catch (e) {
         showSnackBar(e.message);
@@ -66,7 +63,7 @@ class Utils {
   }
 
   static MangaBuilder getMangaBuilderFromTitle(String title) {
-    String t = title.replaceAll(RegExp(r'[^\sa-zA-Z]'), '');
+    String t = title.replaceAll(RegExp(r'[0-9]'), '');
     t = t.replaceAll('Capitolo', '').trim();
     if (mangasBuilder.containsKey(t)) {
       return mangasBuilder[t]!;

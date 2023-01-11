@@ -1,22 +1,39 @@
-import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/model/chaper.dart';
 
 class Manga {
-  final String? title;
+  final String title;
   final String? author;
   final String? artist;
   final String? status;
   final String? trama;
-  final String? image;
-  final String? link;
+  final String image;
+  final String link;
   final double? vote;
   final double? readings;
   final List<String> genres;
   final List<Chapter> chapters;
   final int index;
   final int pageIndex;
+  final bool library;
 
-  Manga.withBuilder(MangaBuilder builder)
+  Manga({
+    required this.title,
+    required this.author,
+    required this.artist,
+    required this.status,
+    required this.trama,
+    required this.image,
+    required this.link,
+    required this.vote,
+    required this.readings,
+    required this.genres,
+    required this.chapters,
+    required this.index,
+    required this.pageIndex,
+    required this.library,
+  });
+
+/*  Manga.withBuilder(MangaBuilder builder)
       : title = builder.title,
         image = builder.image,
         link = builder.link,
@@ -29,7 +46,8 @@ class Manga {
         chapters = builder.chapters.toList(),
         readings = builder.readings,
         index = builder.index,
-        pageIndex = builder.pageIndex;
+        pageIndex = builder.pageIndex,
+        library = builder.library;*/
 
   Manga.fromJson(Map<String, dynamic> json)
       : title = json['title'],
@@ -44,7 +62,8 @@ class Manga {
         chapters = json['chapters'],
         readings = json['readings'],
         index = json['index'],
-        pageIndex = json['pageIndex'];
+        pageIndex = json['pageIndex'],
+        library = json['library'];
 
   Map<String, dynamic> toJson() => {
         'title': title,
@@ -60,6 +79,7 @@ class Manga {
         'readings': readings,
         'index': index,
         'pageIndex': pageIndex,
+        'library': library,
       };
 
   Map<String, dynamic> toJsonOnlyBookmark() => {
@@ -69,6 +89,7 @@ class Manga {
         'status': status,
         'index': index,
         'pageIndex': pageIndex,
+        'library': library,
       };
 
   @override
