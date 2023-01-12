@@ -62,7 +62,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         return RefreshIndicator(
                           onRefresh: _refresh,
                           child: MangaGrid(
-                            listManga: Utils.generateListManga(builders),
+                            listManga: builders,
                             save: true,
                           ),
                         );

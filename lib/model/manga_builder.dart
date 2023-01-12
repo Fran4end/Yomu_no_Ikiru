@@ -1,5 +1,6 @@
 import 'package:manga_app/model/manga.dart';
 import 'package:manga_app/model/chaper.dart';
+import 'package:manga_app/model/utils.dart';
 
 class MangaBuilder {
   String title = '';
@@ -15,7 +16,7 @@ class MangaBuilder {
   Set<Chapter> chapters = {};
   int index = 0;
   int pageIndex = 0;
-  bool library = false;
+  bool save = false;
 
   set readingsVote(List<double?> value) {
     readings = value[0];
@@ -36,7 +37,7 @@ class MangaBuilder {
 
   set setChapIndex(int index) {
     if (index < 0) {
-      print('error');
+      Utils.showSnackBar('Error on save chapter bookmark');
     } else {
       this.index = index;
     }
@@ -51,21 +52,26 @@ class MangaBuilder {
   }
 
   Manga build() {
+    artist ??= 'No artist found';
+    author ??= 'No author found';
+    readings ??= 0;
+    status ??= 'Unknow status';
+    trama ??= 'No trama found';
+    vote ??= 0;
     return Manga(
-      artist: artist,
-      author: author,
+      artist: artist!,
+      author: author!,
       chapters: chapters.toList(),
       genres: genres,
       image: image,
       index: index,
-      library: library,
       link: link,
       pageIndex: pageIndex,
-      readings: readings,
-      status: status,
+      readings: readings!,
+      status: status!,
       title: title,
-      trama: trama,
-      vote: vote,
+      trama: trama!,
+      vote: vote!,
     );
   }
 }

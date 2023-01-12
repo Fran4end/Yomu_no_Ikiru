@@ -20,13 +20,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     MangaWorld().getHomePageDocument().then(
-      (document) {
-        MangaWorld().all(document).then(
-              (value) => setState(() {
-                popular = value['populars']!;
-                recent = value['latests']!;
-              }),
-            );
+      (document) async {
+        MangaWorld().all(document).then((value) {
+          if (mounted) {
+            setState(() {
+              popular = value['populars']!;
+              recent = value['latests']!;
+            });
+          }
+        });
       },
     );
   }

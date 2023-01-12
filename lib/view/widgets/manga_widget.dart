@@ -9,17 +9,18 @@ import '../Pages/manga_page.dart';
 class MangaCard extends StatelessWidget {
   const MangaCard({
     Key? key,
-    required this.manga,
     required this.mangaBuilder,
     this.save = false,
+    this.tag = '',
   }) : super(key: key);
 
-  final Manga manga;
   final MangaBuilder mangaBuilder;
   final bool save;
+  final String tag;
 
   @override
   Widget build(BuildContext context) {
+    Manga manga = mangaBuilder.build();
     final screen = MediaQuery.of(context).size;
     return Center(
       child: GestureDetector(
@@ -60,7 +61,7 @@ class MangaCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Hero(
-                            tag: manga.title.toString(),
+                            tag: manga.title.toString() + tag,
                             child: SizedBox(
                               height: orientation == Orientation.portrait
                                   ? screen.height / 6.5
@@ -146,14 +147,13 @@ class MangaCard extends StatelessWidget {
 class MangaGrid extends StatelessWidget {
   const MangaGrid({
     Key? key,
-    required List<Manga> listManga,
+    required this.listManga,
     required,
     this.save = false,
-  })  : _listManga = listManga,
-        super(key: key);
+  }) : super(key: key);
 
-  final List<Manga> _listManga;
   final bool save;
+  final List<MangaBuilder> listManga;
 
   @override
   Widget build(BuildContext context) {
@@ -171,14 +171,11 @@ class MangaGrid extends StatelessWidget {
           ),
           itemBuilder: ((context, index) {
             return MangaCard(
-              manga: _listManga[index],
-              mangaBuilder: mangasBuilder[_listManga[index].title.toString()] != null
-                  ? mangasBuilder[_listManga[index].title.toString()]!
-                  : MangaBuilder(),
+              mangaBuilder: listManga[index],
               save: save,
             );
           }),
-          itemCount: _listManga.length,
+          itemCount: listManga.length,
         );
       },
     );

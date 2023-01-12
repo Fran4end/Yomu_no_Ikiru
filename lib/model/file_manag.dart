@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:manga_app/model/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'manga.dart';
@@ -54,35 +54,37 @@ class FileManag {
     return await file.create(recursive: true);
   }
 
-  static Future<File> writeFile(String title) async {
+  static Future<File> writeFile(MangaBuilder builder) async {
     user = FirebaseAuth.instance.currentUser;
-    final builder = Utils.getMangaBuilderFromTitle(title);
-    builder.library = true;
     Manga manga = builder.build();
     Directory dir = await getApplicationDocumentsDirectory();
-    File jsonFile = File('${dir.path}/${user?.displayName}/$title.json');
+    File jsonFile = File('${dir.path}/${user?.displayName}/${builder.title}.json');
     bool fileExist = await jsonFile.exists();
-    Map<String, dynamic> jsonFileContent = manga.toJson();
+    Map<String, dynamic> jsonFileContent = manga.toJsonOnlyBookmark();
     if (!fileExist) {
-      jsonFile = await createFile(title);
+      jsonFile = await createFile(builder.title);
     }
     await jsonFile.writeAsString(jsonEncode(jsonFileContent));
     return jsonFile;
   }
 
-  static void deleteFile(String title, [String path = 'all']) async {
+  static void deleteFile(String title) async {
     user = FirebaseAuth.instance.currentUser;
     Directory dir = await getApplicationDocumentsDirectory();
     File jsonFile = File('${dir.path}/${user?.displayName}/$title.json');
     bool fileExist = await jsonFile.exists();
     if (user == null) {
-      print('user not logined');
+      if (kDebugMode) {
+        print('user not logined');
+      }
     } else {
-      final ref = FirebaseStorage.instance.ref('${user?.uid}/$path/$title.json');
+      final ref = FirebaseStorage.instance.ref('${user?.uid}/$title.json');
       try {
         await ref.delete();
       } catch (e) {
-        print(e);
+        if (kDebugMode) {
+          print(e);
+        }
       }
     }
     if (fileExist) {

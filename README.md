@@ -10,7 +10,6 @@ Applicazione per leggere manga
 
 ## Problemi Conoscuti 
 
-- Se un manga è nella libreria ma viene aperto da un'altra pagina non viene riconoscito il fatto che è nella libreria
 - Il conteinar del manga non sempre si adatta alla dimensione dello schermo
 - Se il manga non ha tanti capitoli, il primo capitolo rimane sotto ai pulsanti `resume` e `stato`
 

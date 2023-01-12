@@ -5,6 +5,7 @@ import 'package:manga_app/model/manga.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/mangaworld.dart';
 import 'package:manga_app/view/Pages/reader_page.dart';
+import 'package:manga_app/view/widgets/skeleton.dart';
 import '../../model/file_manag.dart';
 import '../../model/utils.dart';
 
@@ -12,18 +13,18 @@ class MangaPage extends StatefulWidget {
   const MangaPage({
     required this.mangaBuilder,
     required this.save,
+    this.tag = '',
     super.key,
   });
   final MangaBuilder mangaBuilder;
   final bool save;
+  final String tag;
 
   @override
   State<StatefulWidget> createState() => _MangaPageState();
 }
 
 class _MangaPageState extends State<MangaPage> {
-  late Image mangaImage;
-  late Manga manga;
   late MangaBuilder mangaBuilder = widget.mangaBuilder;
   Widget genres = const Center();
   Map fileContent = {};
@@ -33,17 +34,14 @@ class _MangaPageState extends State<MangaPage> {
   @override
   void initState() {
     super.initState();
-    manga = mangaBuilder.build();
-    mangaImage = Image.network(manga.image.toString());
-    if (manga.library) {
-      save = true;
-    }
     MangaWorld().getAllInfo(mangaBuilder).then((value) {
       mangaBuilder = value;
-      manga = mangaBuilder.build();
+      final manga = mangaBuilder.build();
       genres = GenresWrap(manga: manga);
       if (mounted) {
-        setState(() {});
+        setState(() {
+          save = mangaBuilder.save;
+        });
       }
     });
   }
@@ -51,15 +49,16 @@ class _MangaPageState extends State<MangaPage> {
   @override
   void dispose() {
     if (save) {
-      FileManag.writeFile(manga.title).then((file) => Utils.uploadJson(file, manga.title));
+      FileManag.writeFile(mangaBuilder).then((file) => Utils.uploadJson(file, mangaBuilder.title));
     } else {
-      FileManag.deleteFile(manga.title);
+      FileManag.deleteFile(mangaBuilder.title);
     }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final manga = mangaBuilder.build();
     final screen = MediaQuery.of(context).size;
     return Scaffold(
       body: OrientationBuilder(
@@ -71,7 +70,17 @@ class _MangaPageState extends State<MangaPage> {
                 SliverPersistentHeader(
                   delegate: CustomSliverAppBarDelegate(
                     manga: manga,
-                    mangaImage: mangaImage,
+                    tag: widget.tag,
+                    mangaImage: Image.network(
+                      manga.image,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        } else {
+                          return const Skeleton(color: Colors.white);
+                        }
+                      },
+                    ),
                     screen: screen,
                     expandedHeight: (screen.height / 2) + 55,
                     genres: genres,
@@ -86,7 +95,7 @@ class _MangaPageState extends State<MangaPage> {
                   ),
                   pinned: true,
                 ),
-                buildChapters(),
+                buildChapters(manga),
               ],
             ),
             Positioned(
@@ -117,21 +126,22 @@ class _MangaPageState extends State<MangaPage> {
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
-                manga.status == null ? 'Status' : manga.status.toString(),
+                manga.status.toString(),
                 style: titleGreenStyle(),
               ),
             ),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (manga.chapters.isNotEmpty) {
-                Navigator.of(context).push(
+                mangaBuilder = await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => Reader(
                       index: (manga.chapters.length - manga.index) - 1,
                       chapters: manga.chapters,
                       chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
                       pageIndex: manga.pageIndex,
+                      builder: mangaBuilder,
                     ),
                   ),
                 );
@@ -152,7 +162,7 @@ class _MangaPageState extends State<MangaPage> {
     );
   }
 
-  Widget buildChapters() => SliverList(
+  Widget buildChapters(Manga manga) => SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             return manga.chapters.isEmpty
@@ -169,16 +179,17 @@ class _MangaPageState extends State<MangaPage> {
                         manga.chapters[index].date.toString(),
                         style: miniStyle(),
                       ),
-                      onTap: () {
+                      onTap: () async {
                         int pIndex = 0;
                         if (manga.index == index) pIndex = manga.pageIndex;
-                        Navigator.of(context).push(
+                        mangaBuilder = await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => Reader(
                               index: index,
                               chapters: manga.chapters,
                               chapter: manga.chapters[index],
                               pageIndex: pIndex,
+                              builder: mangaBuilder,
                             ),
                           ),
                         );
@@ -198,6 +209,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final Widget genres;
   final bool save;
+  final String tag;
   final Function()? function;
   CustomSliverAppBarDelegate({
     required this.manga,
@@ -206,6 +218,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     required this.expandedHeight,
     required this.genres,
     required this.save,
+    required this.tag,
     required this.function,
   });
 
@@ -254,12 +267,12 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
                       ),
                       const SizedBox(width: defaultPadding / 2),
                       Text(
-                        manga.vote == null ? '0' : manga.vote.toString(),
+                        manga.vote.toString(),
                         style: subtitleStyle(),
                       ),
                       const SizedBox(width: defaultPadding / 2),
                       Text(
-                        manga.readings == null ? '(0)' : '(${manga.readings})',
+                        '(${manga.readings})',
                         style: miniStyle(),
                       )
                     ],
@@ -310,7 +323,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      manga.title == null ? 'Title' : manga.title.toString(),
+                      manga.title.toString(),
                       style: titleStyle(),
                       textAlign: TextAlign.center,
                     ),
@@ -319,7 +332,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Text(
-                          manga.author == null ? 'author' : manga.author.toString(),
+                          manga.author.toString(),
                           style: subtitleStyle(),
                         ),
                         const Padding(
@@ -330,7 +343,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
                           ),
                         ),
                         Text(
-                          manga.artist == null ? 'artist' : manga.artist.toString(),
+                          manga.artist.toString(),
                           style: subtitleStyle(),
                         ),
                       ],
@@ -344,7 +357,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
       );
 
   Widget buildBackground(double shrinkOffset, Size screen, Image image) => Hero(
-        tag: manga.title.toString(),
+        tag: manga.title.toString() + tag,
         child: Container(
           width: screen.width,
           decoration: BoxDecoration(

@@ -1,17 +1,36 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:manga_app/costants.dart';
-import 'package:manga_app/model/manga.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/model/utils.dart';
 
 class MangaWorld {
   Future<Document> getHomePageDocument() async {
-    http.Response res = await http.get(Uri.parse(baseUrl));
-    Document document = parse(res.body);
-
+    bool loaded = false;
+    Document document = Document();
+    while (!loaded) {
+      try {
+        http.Response res = await http.get(Uri.parse(baseUrl));
+        document = parse(res.body);
+        loaded = true;
+      } on TimeoutException catch (e) {
+        Utils.showSnackBar('Low connection');
+        if (kDebugMode) {
+          print(e);
+        }
+      } on SocketException catch (e) {
+        Utils.showSnackBar('No connection');
+        await Future.delayed(const Duration(seconds: 10));
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+    }
     return document;
   }
 
@@ -19,7 +38,6 @@ class MangaWorld {
     List<Element> latestElemets = document.querySelectorAll('.comics-grid > .entry');
     List<Element> popularElemets = document.querySelectorAll('.comics-flex > .entry');
 
-    print(popularElemets);
     final latests = await _getLatests(latestElemets);
     final populars = await _getPopulars(popularElemets);
 
@@ -33,11 +51,6 @@ class MangaWorld {
         ..titleImageLink = _getTitleImageLink(element)
         ..status = element.querySelector('.content > .status > a')?.text;
       latests.add(tmp);
-      mangasBuilder.update(
-        tmp.title.toString().trim(),
-        (value) => tmp,
-        ifAbsent: () => tmp,
-      );
     }
     return latests;
   }
@@ -53,26 +66,40 @@ class MangaWorld {
     return populars;
   }
 
-  static Future<List<Manga>> getResults(String keyworld) async {
-    List<Manga> tmp = [];
-    http.Response res =
-        await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyworld'));
-    if (res.statusCode == 200) {
+  static Future<List<MangaBuilder>> getResults(String keyworld) async {
+    List<MangaBuilder> tmp = [];
+    bool loaded = false;
+    http.Response? res;
+    while (!loaded) {
+      try {
+        res =
+            await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyworld'));
+        loaded = true;
+      } on TimeoutException catch (e) {
+        Utils.showSnackBar('Low connection');
+        if (kDebugMode) {
+          print(e);
+        }
+      } on SocketException catch (e) {
+        Utils.showSnackBar('No connection');
+        await Future.delayed(const Duration(seconds: 10));
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+    }
+    if (res!.statusCode == 200) {
       Document document = parse(res.body);
       var mangaList = document.querySelectorAll('.comics-grid > .entry');
       for (var element in mangaList) {
-        MangaBuilder builder = MangaBuilder()
-          ..status = element.querySelector('.content > .status > a')?.text
-          ..titleImageLink = _getTitleImageLink(element)
-          ..trama = element.querySelector('.content > .story')?.text
-          ..author = element.querySelector('.content > .author > a')?.text
-          ..artist = element.querySelector('.content > .artist > a')?.text
-          ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'))!;
-        tmp.add(builder.build());
-        mangasBuilder.update(
-          builder.title.toString(),
-          (value) => builder,
-          ifAbsent: () => builder,
+        tmp.add(
+          MangaBuilder()
+            ..status = element.querySelector('.content > .status > a')?.text
+            ..titleImageLink = _getTitleImageLink(element)
+            ..trama = element.querySelector('.content > .story')?.text
+            ..author = element.querySelector('.content > .author > a')?.text
+            ..artist = element.querySelector('.content > .artist > a')?.text
+            ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'))!,
         );
       }
     } else {
@@ -92,37 +119,34 @@ class MangaWorld {
   }
 
   Future<MangaBuilder> getAllInfo(MangaBuilder builder) async {
-    bool timeout = false;
-    print(builder.library);
-    final refs = await Utils.downloadJson();
-    for (var ref in refs) {}
-    do {
-      try {
-        Document document = await _getDetailedPageDocument(builder);
-        var info = document.querySelector('.info > .meta-data');
-        String? readings = info?.children[6].children[1].text;
-        builder
-          ..readingsVote = [
-            double.tryParse(readings.toString()),
-            double.tryParse(await _getVote(document.querySelector('.info > .references')))
-          ]
-          ..artist ??= info!.children[3].querySelector('a')!.text
-          ..author ??= info!.children[2].querySelector('a')!.text
-          ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
-          ..trama ??= document.querySelector('.comic-description > #noidungm')!.text;
-        if (builder.chapters.isEmpty) {
-          builder = await getChapters(builder);
-        }
-        timeout = false;
-      } catch (e, s) {
-        if (e.toString().contains('Connection reset by peer')) {
-          timeout = true;
-        }
-        if (kDebugMode) {
-          print('$e \n $s');
-        }
+    bool save = await Utils.isOnLibrary(builder.title);
+    try {
+      if (save) {
+        builder = await Utils.getBuilder(builder.title);
+        builder.save = true;
+      } else {
+        builder.save = false;
       }
-    } while (timeout);
+      Document document = await _getDetailedPageDocument(builder);
+      var info = document.querySelector('.info > .meta-data');
+      String? readings = info?.children[6].children[1].text;
+      builder
+        ..readingsVote = [
+          double.tryParse(readings.toString()),
+          double.tryParse(await _getVote(document.querySelector('.info > .references')))
+        ]
+        ..artist ??= info!.children[3].querySelector('a')!.text
+        ..author ??= info!.children[2].querySelector('a')!.text
+        ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
+        ..trama ??= document.querySelector('.comic-description > #noidungm')!.text;
+      if (builder.chapters.isEmpty) {
+        builder = await getChapters(builder);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
     return builder;
   }
 
@@ -152,11 +176,30 @@ class MangaWorld {
 
   Future<Document> _getDetailedPageDocument(MangaBuilder builder) async {
     final link = builder.link;
-    final res = await http.Client().get(Uri.parse(link.toString()));
-    Document document = parse(res.body);
+    bool loaded = false;
+    http.Response? res;
+    while (!loaded) {
+      try {
+        res = await http.Client().get(Uri.parse(link.toString()));
+        loaded = true;
+      } on TimeoutException catch (e) {
+        Utils.showSnackBar('Low connection');
+        if (kDebugMode) {
+          print(e);
+        }
+      } on SocketException catch (e) {
+        Utils.showSnackBar('No connection');
+        await Future.delayed(const Duration(seconds: 10));
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+    }
+    Document document = parse(res!.body);
     return document;
   }
 
+  //TODO implement a better algorithm for copertina
   Future<String> _getCopertina(String? link) async {
     if (link == null) {
       return 'null';

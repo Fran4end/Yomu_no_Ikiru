@@ -93,7 +93,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future _refresh() async {
-    setState(() => _mangas = null);
+    if (mounted) {
+      setState(() => _mangas = null);
+    }
     controller.text = '';
     getResult(controller.text);
   }

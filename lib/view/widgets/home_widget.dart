@@ -38,11 +38,10 @@ class Recents extends StatelessWidget {
                         itemCount: builders.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final manga = builders[index].build();
                           return SizedBox(
                             height: constraints.maxHeight * 0.2,
                             width: constraints.maxWidth * .5,
-                            child: MangaCard(manga: manga, mangaBuilder: builders[index]),
+                            child: MangaCard(mangaBuilder: builders[index], tag: 'recent'),
                           );
                         },
                       );
@@ -98,11 +97,10 @@ class Popular extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.only(top: defaultPadding / 2, left: defaultPadding),
                       itemBuilder: (_, index) {
-                        final manga = builders[index].build();
                         return SizedBox(
                           height: constraints.maxHeight,
                           width: constraints.maxWidth * .475,
-                          child: MangaCard(manga: manga, mangaBuilder: builders[index]),
+                          child: MangaCard(mangaBuilder: builders[index], tag: 'popular'),
                         );
                       },
                     );
