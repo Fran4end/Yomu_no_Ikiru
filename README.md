@@ -1,16 +1,21 @@
 # manga_app
 
-A new Flutter project.
+Applicazione per leggere manga
 
-## Getting Started
+## Screenshot
+#### Home page: ![Home page](./assets/screenshot/Home_page.jpg)
+#### Discover Page: ![Discover Page](./assets/screenshot/Discover_page.jpg)
+#### Library Page: ![Discover Page](./assets/screenshot/Library_page.jpg)
+#### User Page: ![Discover Page](./assets/screenshot/User_page.jpg)
 
-This project is a starting point for a Flutter application.
+## Problemi Conoscuti 
 
-A few resources to get you started if this is your first Flutter project:
+- Se un manga è nella libreria ma viene aperto da un'altra pagina non viene riconoscito il fatto che è nella libreria
+- Il conteinar del manga non sempre si adatta alla dimensione dello schermo
+- Se il manga non ha tanti capitoli, il primo capitolo rimane sotto ai pulsanti `resume` e `stato`
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Features mancanti
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- User page migliore
+- Home page migliore
+- Possibilità di avere le cartelle nella libreria
