@@ -10,8 +10,7 @@ Applicazione per leggere manga
 
 ## Problemi Conoscuti 
 
-- Il conteinar del manga non sempre si adatta alla dimensione dello schermo
-- Se il manga non ha tanti capitoli, il primo capitolo rimane sotto ai pulsanti `resume` e `stato`
+- Il primo capitolo rimane sotto ai pulsanti `resume` e `stato`
 
 ## Features mancanti
 

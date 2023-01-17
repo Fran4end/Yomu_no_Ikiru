@@ -6,23 +6,27 @@ const double defaultPadding = 16;
 final navigatorKey = GlobalKey<NavigatorState>();
 
 // * Text Style
-TextStyle titleStyle() {
-  return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18);
+TextStyle titleStyle({double fontsize = 18}) {
+  return GoogleFonts.sourceSansPro(
+      color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontsize);
 }
 
-TextStyle titleBlackStyle() {
-  return GoogleFonts.sourceSansPro(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18);
+TextStyle titleBlackStyle({double fontsize = 18}) {
+  return GoogleFonts.sourceSansPro(
+      color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontsize);
 }
 
-TextStyle titleGreenStyle() {
-  return GoogleFonts.sourceSansPro(color: greenColor, fontWeight: FontWeight.bold, fontSize: 18);
+TextStyle titleGreenStyle({double fontsize = 18}) {
+  return GoogleFonts.sourceSansPro(
+      color: greenColor, fontWeight: FontWeight.bold, fontSize: fontsize);
 }
 
-TextStyle subtitleStyle() {
-  return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14);
+TextStyle subtitleStyle({double fontsize = 14}) {
+  return GoogleFonts.sourceSansPro(
+      color: Colors.white, fontWeight: FontWeight.w300, fontSize: fontsize);
 }
 
-TextStyle miniStyle() {
+TextStyle miniStyle({double fontsize = 12}) {
   return GoogleFonts.sourceSansPro(color: Colors.white, fontSize: 12);
 }
 

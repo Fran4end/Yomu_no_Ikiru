@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/view/widgets/user_info_widget.dart';
 import '../../costants.dart';

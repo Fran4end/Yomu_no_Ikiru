@@ -17,39 +17,32 @@ class Recents extends StatelessWidget {
       child: OrientationBuilder(
         builder: (context, orientation) => Padding(
           padding: const EdgeInsets.only(top: defaultPadding),
-          child: AspectRatio(
-            aspectRatio: orientation == Orientation.portrait
-                ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 3)
-                : (MediaQuery.of(context).size.width / 3) / MediaQuery.of(context).size.height,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-                  child: Text(
-                    'Recently updated',
-                    style: titleStyle(),
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: defaultPadding, left: defaultPadding),
+                child: Text(
+                  'Recently updated',
+                  style: titleStyle().copyWith(fontWeight: FontWeight.bold),
                 ),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (_, constraints) {
-                      return ListView.builder(
-                        itemCount: builders.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return SizedBox(
-                            height: constraints.maxHeight * 0.2,
-                            width: constraints.maxWidth * .5,
-                            child: MangaCard(mangaBuilder: builders[index], tag: 'recent'),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  itemCount: builders.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return MangaCard(
+                      mangaBuilder: builders[index],
+                      tag: 'recent',
+                      iHeight: orientation == Orientation.portrait ? 160 : 370,
+                      iWidth: orientation == Orientation.portrait ? 140 : 320,
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -71,43 +64,39 @@ class Popular extends StatelessWidget {
       child: OrientationBuilder(
         builder: (context, orientation) => Padding(
           padding: const EdgeInsets.only(top: defaultPadding / 2),
-          child: AspectRatio(
-            aspectRatio: orientation == Orientation.portrait
-                ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 3)
-                : (MediaQuery.of(context).size.width / 3) / MediaQuery.of(context).size.height,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Populars',
-                          style: titleStyle().copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+                child: Row(
+                  children: [
+                    Text(
+                      'Populars',
+                      style: titleStyle().copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-                Expanded(child: LayoutBuilder(
-                  builder: (_, constraints) {
-                    return ListView.builder(
-                      itemCount: builders.length,
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.only(top: defaultPadding / 2, left: defaultPadding),
-                      itemBuilder: (_, index) {
-                        return SizedBox(
-                          height: constraints.maxHeight,
-                          width: constraints.maxWidth * .475,
-                          child: MangaCard(mangaBuilder: builders[index], tag: 'popular'),
-                        );
-                      },
+              ),
+              SizedBox(
+                height: 280,
+                child: ListView.builder(
+                  itemCount: builders.length,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.only(top: defaultPadding / 2, left: defaultPadding),
+                  itemBuilder: (_, index) {
+                    return MangaCard(
+                      mangaBuilder: builders[index],
+                      tag: 'popular',
+                      iHeight: orientation == Orientation.portrait ? 200 : 370,
+                      iWidth: orientation == Orientation.portrait ? 140 : 320,
+                      bottomText: 80,
+                      maxLineText: 3,
                     );
                   },
-                )),
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
@@ -30,6 +31,8 @@ class _MangaPageState extends State<MangaPage> {
   Map fileContent = {};
   final User? user = FirebaseAuth.instance.currentUser;
   late bool save = widget.save;
+  Timer? timer;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -39,7 +42,12 @@ class _MangaPageState extends State<MangaPage> {
       final manga = mangaBuilder.build();
       genres = GenresWrap(manga: manga);
       if (mounted) {
+        timer = Timer.periodic(
+          const Duration(seconds: 3),
+          (_) => saveBookmark(),
+        );
         setState(() {
+          isLoading = false;
           save = mangaBuilder.save;
         });
       }
@@ -48,12 +56,16 @@ class _MangaPageState extends State<MangaPage> {
 
   @override
   void dispose() {
+    saveBookmark();
+    super.dispose();
+  }
+
+  void saveBookmark() {
     if (save) {
       FileManag.writeFile(mangaBuilder).then((file) => Utils.uploadJson(file, mangaBuilder.title));
     } else {
       FileManag.deleteFile(mangaBuilder.title);
     }
-    super.dispose();
   }
 
   @override
@@ -132,21 +144,7 @@ class _MangaPageState extends State<MangaPage> {
             ),
           ),
           ElevatedButton(
-            onPressed: () async {
-              if (manga.chapters.isNotEmpty) {
-                mangaBuilder = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => Reader(
-                      index: (manga.chapters.length - manga.index) - 1,
-                      chapters: manga.chapters,
-                      chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
-                      pageIndex: manga.pageIndex,
-                      builder: mangaBuilder,
-                    ),
-                  ),
-                );
-              }
-            },
+            onPressed: () async => _resumeFunction(manga),
             style: ElevatedButton.styleFrom(
               fixedSize: Size((screen.width / 2) - 50, 45),
               elevation: 10,
@@ -162,42 +160,61 @@ class _MangaPageState extends State<MangaPage> {
     );
   }
 
-  Widget buildChapters(Manga manga) => SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return manga.chapters.isEmpty
-                ? null
-                : Card(
-                    elevation: 5,
-                    color: Colors.grey[900],
-                    child: ListTile(
-                      title: Text(
-                        manga.chapters[index].title,
-                        style: subtitleStyle(),
-                      ),
-                      subtitle: Text(
-                        manga.chapters[index].date.toString(),
-                        style: miniStyle(),
-                      ),
-                      onTap: () async {
-                        int pIndex = 0;
-                        if (manga.index == index) pIndex = manga.pageIndex;
-                        mangaBuilder = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => Reader(
-                              index: index,
-                              chapters: manga.chapters,
-                              chapter: manga.chapters[index],
-                              pageIndex: pIndex,
-                              builder: mangaBuilder,
+  _resumeFunction(Manga manga) async {
+    if (manga.chapters.isNotEmpty && !isLoading) {
+      mangaBuilder = await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Reader(
+            index: (manga.chapters.length - manga.index) - 1,
+            chapters: manga.chapters,
+            chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
+            pageIndex: manga.pageIndex,
+            builder: mangaBuilder,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget buildChapters(Manga manga) => SliverPadding(
+        padding: const EdgeInsets.only(bottom: 90),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              return manga.chapters.isEmpty
+                  ? null
+                  : Card(
+                      elevation: 5,
+                      color: Colors.grey[900],
+                      child: ListTile(
+                        title: Text(
+                          manga.chapters[index].title,
+                          style: subtitleStyle(),
+                        ),
+                        subtitle: Text(
+                          manga.chapters[index].date.toString(),
+                          style: miniStyle(),
+                        ),
+                        onTap: () async {
+                          int pIndex = 0;
+                          if (manga.index == index) pIndex = manga.pageIndex;
+                          mangaBuilder = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => Reader(
+                                index: index,
+                                chapters: manga.chapters,
+                                chapter: manga.chapters[index],
+                                pageIndex: pIndex,
+                                builder: mangaBuilder,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-          },
-          childCount: manga.chapters.length,
+                          );
+                        },
+                      ),
+                    );
+            },
+            childCount: manga.chapters.length,
+          ),
         ),
       );
 }

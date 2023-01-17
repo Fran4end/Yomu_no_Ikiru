@@ -42,7 +42,7 @@ class _LibraryPageState extends State<LibraryPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(defaultPadding),
+        padding: const EdgeInsets.only(top: defaultPadding),
         child: futureBuilders == null
             ? const SkeletonGrid()
             : FutureBuilder(

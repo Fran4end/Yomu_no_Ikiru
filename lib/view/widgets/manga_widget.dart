@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 import '../../costants.dart';
 import '../../model/manga.dart';
@@ -10,134 +10,100 @@ class MangaCard extends StatelessWidget {
   const MangaCard({
     Key? key,
     required this.mangaBuilder,
+    this.iHeight = 0,
+    this.iWidth = 0,
     this.save = false,
     this.tag = '',
+    this.bottomText = 20,
+    this.maxLineText = 1,
   }) : super(key: key);
 
   final MangaBuilder mangaBuilder;
   final bool save;
   final String tag;
+  final double bottomText, maxLineText, iHeight, iWidth;
 
   @override
   Widget build(BuildContext context) {
     Manga manga = mangaBuilder.build();
-    final screen = MediaQuery.of(context).size;
-    return Center(
-      child: GestureDetector(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MangaPage(
-            mangaBuilder: mangaBuilder,
-            save: save,
-          ),
-        )),
-        child: OrientationBuilder(
-          builder: (context, orientation) {
-            return Container(
-              width: orientation == Orientation.portrait ? screen.width / 2 : screen.width / 2,
-              height: orientation == Orientation.portrait ? screen.height / 4.5 : screen.height / 2,
-              alignment: Alignment.bottomCenter,
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                fit: StackFit.expand,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                children: [
-                  SizedBox(
-                    height: (screen.height / 2) - 10,
-                    child: Card(
-                      elevation: 10,
-                      margin: const EdgeInsets.all(defaultPadding),
-                      color: backgroundColor,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                  Positioned(
-                    top: screen.height - (screen.height * 1.005),
-                    child: Card(
-                      elevation: 10,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      child: Container(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Hero(
-                            tag: manga.title.toString() + tag,
-                            child: SizedBox(
-                              height: orientation == Orientation.portrait
-                                  ? screen.height / 6.5
-                                  : screen.height / 3,
-                              width: orientation == Orientation.portrait
-                                  ? screen.width / 3
-                                  : screen.width / 6.1,
-                              child: Image.network(
-                                manga.image,
-                                fit: BoxFit.cover,
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  bool timeout = false;
-                                  do {
-                                    try {
-                                      if (loadingProgress == null) {
-                                        timeout = false;
-                                        return child;
-                                      }
-                                      return Center(
-                                        child: SizedBox(
-                                          height: orientation == Orientation.portrait
-                                              ? screen.height / 6.1
-                                              : screen.height / 3,
-                                          width: orientation == Orientation.portrait
-                                              ? screen.width / 3
-                                              : screen.width / 6.1,
-                                          child: const Center(child: CircularProgressIndicator()),
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      timeout = true;
-                                      if (kDebugMode) {
-                                        print('manga 120: $e');
-                                      }
-                                    }
-                                  } while (timeout);
-                                },
-                              ),
-                            )),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: orientation == Orientation.portrait
-                        ? (screen.height / 4) - 200
-                        : (screen.height / 3) - 115,
-                    child: Container(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      width: orientation == Orientation.portrait
-                          ? (screen.width / 2) - 60
-                          : (screen.width / 4) - 60,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-                          child: FittedBox(
-                            fit: BoxFit.cover,
-                            child: Text(
-                              manga.title.toString().length > 20
-                                  ? '${manga.title.trim().characters.take(20)}...'
-                                  : manga.title.toString().trim(),
-                              overflow: TextOverflow.clip,
-                              textAlign: TextAlign.center,
-                              style: titleGreenStyle(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => MangaPage(
+          mangaBuilder: mangaBuilder,
+          save: save,
+        ),
+      )),
+      child: SizedBox(
+        height: iHeight * 1.5,
+        width: iWidth * 1.5,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            SizedBox(
+              height: iHeight * 1.5,
+              width: iWidth * 1.5,
+              child: Card(
+                elevation: 10,
+                margin: const EdgeInsets.all(defaultPadding),
+                color: backgroundColor,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-            );
-          },
+            ),
+            Positioned(
+              top: -5,
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                child: Container(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Hero(
+                    tag: manga.title.toString() + tag,
+                    child: SizedBox(
+                      height: iHeight,
+                      width: iWidth,
+                      child: Image.network(
+                        manga.image,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return const Center(child: CircularProgressIndicator());
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              child: Container(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: SizedBox(
+                    width: iWidth,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      child: AutoSizeText(
+                        manga.title,
+                        maxLines: maxLineText.toInt(),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: titleGreenStyle(fontsize: 15),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -160,19 +126,16 @@ class MangaGrid extends StatelessWidget {
     return OrientationBuilder(
       builder: (context, orientation) {
         return GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisExtent: 200,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: orientation == Orientation.portrait
-                ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 2)
-                : (MediaQuery.of(context).size.width / 2) / MediaQuery.of(context).size.height,
-            crossAxisSpacing: defaultPadding * 1.5,
-            mainAxisSpacing: orientation == Orientation.portrait ? defaultPadding / 2 : 2,
+            mainAxisSpacing: defaultPadding,
           ),
           itemBuilder: ((context, index) {
             return MangaCard(
               mangaBuilder: listManga[index],
               save: save,
+              iHeight: orientation == Orientation.portrait ? 160 : 370,
+              iWidth: orientation == Orientation.portrait ? 140 : 320,
             );
           }),
           itemCount: listManga.length,
