@@ -74,9 +74,12 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Future _refresh() async {
-    Utils.downloadJson()
-        .then((refs) => FileManag.downloadAllFile(refs).then((files) => setState(() {
+    Utils.downloadJson().then((refs) => FileManag.downloadAllFile(refs).then((files) {
+          if (mounted) {
+            setState(() {
               futureBuilders = FileManag.readAllFile(files);
-            })));
+            });
+          }
+        }));
   }
 }

@@ -29,7 +29,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: primaryColor,
         elevation: 0.0,
@@ -71,7 +71,12 @@ class _SearchPageState extends State<SearchPage> {
                     ? const SkeletonGrid()
                     : RefreshIndicator(
                         onRefresh: () => _refresh(),
-                        child: _mangas!,
+                        child: SingleChildScrollView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height - 230,
+                              child: _mangas!,
+                            )),
                       ),
               ),
             ],

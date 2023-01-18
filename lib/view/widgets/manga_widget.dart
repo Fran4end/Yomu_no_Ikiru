@@ -10,8 +10,8 @@ class MangaCard extends StatelessWidget {
   const MangaCard({
     Key? key,
     required this.mangaBuilder,
-    this.iHeight = 0,
-    this.iWidth = 0,
+    this.iHeight = 180,
+    this.iWidth = 140,
     this.save = false,
     this.tag = '',
     this.bottomText = 20,

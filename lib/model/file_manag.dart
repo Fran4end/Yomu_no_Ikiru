@@ -14,8 +14,12 @@ class FileManag {
   static Future<List<File>> downloadAllFile(List<Reference> refs) async {
     List<File> files = [];
     for (var ref in refs) {
-      final file = await downloadFile(ref);
-      files.add(file);
+      try {
+        final file = await downloadFile(ref);
+        files.add(file);
+      } on Exception catch (e) {
+        print(e);
+      }
     }
     return files;
   }

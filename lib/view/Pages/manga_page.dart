@@ -9,6 +9,7 @@ import 'package:manga_app/view/Pages/reader_page.dart';
 import 'package:manga_app/view/widgets/skeleton.dart';
 import '../../model/file_manag.dart';
 import '../../model/utils.dart';
+import '../widgets/top_buttons.dart';
 
 class MangaPage extends StatefulWidget {
   const MangaPage({
@@ -57,6 +58,7 @@ class _MangaPageState extends State<MangaPage> {
   @override
   void dispose() {
     saveBookmark();
+    timer?.cancel();
     super.dispose();
   }
 
@@ -72,49 +74,60 @@ class _MangaPageState extends State<MangaPage> {
   Widget build(BuildContext context) {
     final manga = mangaBuilder.build();
     final screen = MediaQuery.of(context).size;
-    return Scaffold(
-      body: OrientationBuilder(
-        builder: (context, orientation) => Stack(
-          fit: StackFit.expand,
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverPersistentHeader(
-                  delegate: CustomSliverAppBarDelegate(
-                    manga: manga,
-                    tag: widget.tag,
-                    mangaImage: Image.network(
-                      manga.image,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
+    return WillPopScope(
+      onWillPop: !isLoading
+          ? () async {
+              Navigator.pop(context);
+              return true;
+            }
+          : () async {
+              Utils.showSnackBar('Wait until contents loaded');
+              return false;
+            },
+      child: Scaffold(
+        body: OrientationBuilder(
+          builder: (context, orientation) => Stack(
+            fit: StackFit.expand,
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverPersistentHeader(
+                    delegate: CustomSliverAppBarDelegate(
+                      manga: manga,
+                      tag: widget.tag,
+                      mangaImage: Image.network(
+                        manga.image,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          } else {
+                            return const Skeleton(color: Colors.white);
+                          }
+                        },
+                      ),
+                      screen: screen,
+                      expandedHeight: (screen.height / 2) + 55,
+                      genres: genres,
+                      save: save,
+                      function: () {
+                        if (user != null) {
+                          setState(() => save = !save);
                         } else {
-                          return const Skeleton(color: Colors.white);
+                          Utils.showSnackBar('You need to login before save a manga');
                         }
                       },
                     ),
-                    screen: screen,
-                    expandedHeight: (screen.height / 2) + 55,
-                    genres: genres,
-                    save: save,
-                    function: () {
-                      if (user != null) {
-                        setState(() => save = !save);
-                      } else {
-                        Utils.showSnackBar('You need to login before save a manga');
-                      }
-                    },
+                    pinned: true,
                   ),
-                  pinned: true,
-                ),
-                buildChapters(manga),
-              ],
-            ),
-            Positioned(
-              bottom: 30,
-              child: buildBottomBar(screen, manga),
-            ),
-          ],
+                  buildChapters(manga),
+                ],
+              ),
+              Positioned(
+                bottom: 30,
+                child: buildBottomBar(screen, manga),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -421,41 +434,6 @@ class GenresWrap extends StatelessWidget {
                 child: Text(e),
               ));
         }).toList(),
-      ),
-    );
-  }
-}
-
-class TopButtonsFunctions extends StatelessWidget {
-  const TopButtonsFunctions({
-    Key? key,
-    required this.ic,
-    required this.function,
-  }) : super(key: key);
-
-  final Icon ic;
-  final Function()? function;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: function,
-      child: Container(
-        height: 45,
-        width: 45,
-        decoration: BoxDecoration(
-          color: primaryColor,
-          border: Border.all(
-            color: primaryColor,
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Icon(
-          ic.icon,
-          color: secondaryColor,
-          size: 17,
-        ),
       ),
     );
   }

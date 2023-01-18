@@ -2,7 +2,10 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:manga_app/model/google_signin_provider.dart';
 import 'package:manga_app/view/Pages/forgot_password_page.dart';
+import 'package:provider/provider.dart';
 import '../../costants.dart';
 import '../../model/utils.dart';
 
@@ -88,6 +91,15 @@ class _LoginWidgetState extends State<LoginWidget> {
                 style: TextStyle(color: Colors.white, fontSize: 25),
               ),
             ),
+            const SizedBox(height: 15),
+            ElevatedButton.icon(
+                onPressed: () {
+                  final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
+                  provider.googleLogin();
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+                icon: const FaIcon(FontAwesomeIcons.google, color: Colors.red),
+                label: const Text('Sign in with google')),
             const SizedBox(height: 50),
             RichText(
               text: TextSpan(

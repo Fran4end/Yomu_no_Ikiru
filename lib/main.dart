@@ -2,12 +2,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/costants.dart';
+import 'package:manga_app/model/google_signin_provider.dart';
 import 'package:manga_app/model/utils.dart';
 import 'package:manga_app/view/Pages/home_page.dart';
 import 'package:manga_app/view/Pages/library_page.dart';
 import 'package:manga_app/view/Pages/user_page.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:provider/provider.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,45 +56,48 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-            labelTextStyle: MaterialStateProperty.all(
-          const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        )),
-        child: NavigationBar(
-          selectedIndex: _selectpage,
-          height: 60,
-          animationDuration: const Duration(milliseconds: 400),
-          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-          onDestinationSelected: (value) => setState(() {
-            _selectpage = value;
-          }),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(CupertinoIcons.compass),
-              selectedIcon: Icon(Icons.search_outlined),
-              label: 'Search',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.my_library_books_outlined),
-              selectedIcon: Icon(Icons.my_library_books),
-              label: 'Library',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.account_box_outlined),
-              selectedIcon: Icon(Icons.account_box),
-              label: 'Account',
-            ),
-          ],
+    return ChangeNotifierProvider(
+      create: (context) => GoogleSignInProvider(),
+      child: Scaffold(
+        bottomNavigationBar: NavigationBarTheme(
+          data: NavigationBarThemeData(
+              labelTextStyle: MaterialStateProperty.all(
+            const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          )),
+          child: NavigationBar(
+            selectedIndex: _selectpage,
+            height: 60,
+            animationDuration: const Duration(milliseconds: 400),
+            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+            onDestinationSelected: (value) => setState(() {
+              _selectpage = value;
+            }),
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(CupertinoIcons.compass),
+                selectedIcon: Icon(Icons.search_outlined),
+                label: 'Search',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.my_library_books_outlined),
+                selectedIcon: Icon(Icons.my_library_books),
+                label: 'Library',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.account_box_outlined),
+                selectedIcon: Icon(Icons.account_box),
+                label: 'Account',
+              ),
+            ],
+          ),
         ),
+        body: _getPage(),
       ),
-      body: _getPage(),
     );
   }
 
