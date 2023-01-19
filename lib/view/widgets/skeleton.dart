@@ -42,55 +42,62 @@ class Skeleton extends StatelessWidget {
 
 class CardSkelton extends StatelessWidget {
   const CardSkelton({
+    this.maxLineText = 1,
+    this.iHeight = 180,
+    this.iWidth = 140,
     Key? key,
   }) : super(key: key);
 
+  final double maxLineText, iHeight, iWidth;
+
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
-    return Center(
-      child: Container(
-        width: screen.width / 2,
-        height: screen.height / 4.5,
+    return SizedBox(
+      height: iHeight * 1.5,
+      width: iWidth * 1.5,
+      child: Stack(
         alignment: Alignment.bottomCenter,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          fit: StackFit.expand,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          children: [
-            SizedBox(
-              height: (screen.height / 2) - 10,
-              child: Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(defaultPadding),
-                color: backgroundColor,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
+        children: [
+          SizedBox(
+            height: iHeight * 1.5,
+            width: iWidth * 1.5,
+            child: Card(
+              elevation: 10,
+              margin: const EdgeInsets.all(defaultPadding),
+              color: backgroundColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            Positioned(
-              top: screen.height - (screen.height * 1.005),
+          ),
+          Positioned(
+            top: -5,
+            child: Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               child: Container(
+                height: iHeight / 1.2,
+                width: iWidth,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Skeleton(
                   color: Colors.white,
-                  height: screen.height / 6.5,
-                  width: screen.width / 3,
+                  height: iHeight,
+                  width: iWidth,
                 ),
               ),
             ),
-            Positioned(
-              bottom: (screen.height / 4) - 200,
+          ),
+          Positioned(
+            bottom: 20,
+            child: Center(
               child: Skeleton(
                 color: Colors.white,
-                height: defaultPadding,
-                width: (screen.width / 2) - 60,
+                width: iWidth,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -106,13 +113,8 @@ class SkeletonGrid extends StatelessWidget {
     return OrientationBuilder(
         builder: (context, orientation) => GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 200,
                 crossAxisCount: 2,
-                childAspectRatio: orientation == Orientation.portrait
-                    ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 2)
-                    : (MediaQuery.of(context).size.width / 2) / MediaQuery.of(context).size.height,
                 crossAxisSpacing: defaultPadding * 1.5,
-                mainAxisSpacing: orientation == Orientation.portrait ? defaultPadding / 2 : 2,
               ),
               itemBuilder: (context, index) => const CardSkelton(),
             ));

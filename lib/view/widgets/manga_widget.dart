@@ -14,14 +14,13 @@ class MangaCard extends StatelessWidget {
     this.iWidth = 140,
     this.save = false,
     this.tag = '',
-    this.bottomText = 20,
     this.maxLineText = 1,
   }) : super(key: key);
 
   final MangaBuilder mangaBuilder;
   final bool save;
   final String tag;
-  final double bottomText, maxLineText, iHeight, iWidth;
+  final double maxLineText, iHeight, iWidth;
 
   @override
   Widget build(BuildContext context) {

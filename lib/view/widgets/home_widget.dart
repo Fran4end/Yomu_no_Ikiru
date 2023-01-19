@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/view/widgets/manga_widget.dart';
 import '../../costants.dart';
+import 'skeleton.dart';
 
 class Recents extends StatelessWidget {
   const Recents({
@@ -29,18 +30,26 @@ class Recents extends StatelessWidget {
               ),
               SizedBox(
                 height: 200,
-                child: ListView.builder(
-                  itemCount: builders.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return MangaCard(
-                      mangaBuilder: builders[index],
-                      tag: 'recent',
-                      iHeight: orientation == Orientation.portrait ? 160 : 370,
-                      iWidth: orientation == Orientation.portrait ? 140 : 320,
-                    );
-                  },
-                ),
+                child: builders.isEmpty
+                    ? ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) => CardSkelton(
+                          iHeight: orientation == Orientation.portrait ? 160 : 370,
+                          iWidth: orientation == Orientation.portrait ? 140 : 320,
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: builders.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return MangaCard(
+                            mangaBuilder: builders[index],
+                            tag: 'recent',
+                            iHeight: orientation == Orientation.portrait ? 160 : 370,
+                            iWidth: orientation == Orientation.portrait ? 140 : 320,
+                          );
+                        },
+                      ),
               ),
             ],
           ),
@@ -80,21 +89,29 @@ class Popular extends StatelessWidget {
               ),
               SizedBox(
                 height: 280,
-                child: ListView.builder(
-                  itemCount: builders.length,
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(top: defaultPadding / 2, left: defaultPadding),
-                  itemBuilder: (_, index) {
-                    return MangaCard(
-                      mangaBuilder: builders[index],
-                      tag: 'popular',
-                      iHeight: orientation == Orientation.portrait ? 200 : 370,
-                      iWidth: orientation == Orientation.portrait ? 140 : 320,
-                      bottomText: 80,
-                      maxLineText: 3,
-                    );
-                  },
-                ),
+                child: builders.isEmpty
+                    ? ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) => CardSkelton(
+                          iHeight: orientation == Orientation.portrait ? 200 : 370,
+                          iWidth: orientation == Orientation.portrait ? 140 : 320,
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: builders.length,
+                        scrollDirection: Axis.horizontal,
+                        padding:
+                            const EdgeInsets.only(top: defaultPadding / 2, left: defaultPadding),
+                        itemBuilder: (_, index) {
+                          return MangaCard(
+                            mangaBuilder: builders[index],
+                            tag: 'popular',
+                            iHeight: orientation == Orientation.portrait ? 200 : 370,
+                            iWidth: orientation == Orientation.portrait ? 140 : 320,
+                            maxLineText: 3,
+                          );
+                        },
+                      ),
               ),
             ],
           ),

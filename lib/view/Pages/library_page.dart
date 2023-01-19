@@ -56,15 +56,14 @@ class _LibraryPageState extends State<LibraryPage> {
                         return const Center(child: Text('Something went wrong'));
                       } else {
                         final builders = snapshot.data!;
-                        if (builders.isEmpty) {
-                          return const Center(child: Text('Nothig added to library'));
-                        }
                         return RefreshIndicator(
                           onRefresh: _refresh,
-                          child: MangaGrid(
-                            listManga: builders,
-                            save: true,
-                          ),
+                          child: builders.isEmpty
+                              ? const Center(child: Text('Nothig added to library'))
+                              : MangaGrid(
+                                  listManga: builders,
+                                  save: true,
+                                ),
                         );
                       }
                   }

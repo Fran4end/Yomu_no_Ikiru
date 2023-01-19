@@ -69,14 +69,15 @@ class _SearchPageState extends State<SearchPage> {
               Expanded(
                 child: _mangas == null
                     ? const SkeletonGrid()
-                    : RefreshIndicator(
-                        onRefresh: () => _refresh(),
-                        child: SingleChildScrollView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height - 230,
-                              child: _mangas!,
-                            )),
+                    : SingleChildScrollView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        child: RefreshIndicator(
+                          onRefresh: () => _refresh(),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height - 230,
+                            child: _mangas!,
+                          ),
+                        ),
                       ),
               ),
             ],
