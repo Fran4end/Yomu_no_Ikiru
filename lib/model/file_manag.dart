@@ -52,9 +52,21 @@ class FileManag {
     return builder;
   }
 
+  static Future<List<MangaBuilder>> readAllLocalFile() async {
+    Directory dir = await getApplicationDocumentsDirectory();
+    try {
+      List<File> files =
+          Directory("${dir.path}/${user?.uid}").listSync().map((e) => (e as File)).toList();
+      return readAllFile(files);
+    } on Exception catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
   static Future<File> createFile(String title) async {
     Directory dir = await getApplicationDocumentsDirectory();
-    File file = File('${dir.path}/${user?.displayName}/$title.json');
+    File file = File('${dir.path}/${user?.uid}/$title.json');
     return await file.create(recursive: true);
   }
 
@@ -62,9 +74,9 @@ class FileManag {
     user = FirebaseAuth.instance.currentUser;
     Manga manga = builder.build();
     Directory dir = await getApplicationDocumentsDirectory();
-    File jsonFile = File('${dir.path}/${user?.displayName}/${builder.title}.json');
+    File jsonFile = File('${dir.path}/${user?.uid}/${builder.title}.json');
     bool fileExist = await jsonFile.exists();
-    Map<String, dynamic> jsonFileContent = manga.toJsonOnlyBookmark();
+    Map<String, dynamic> jsonFileContent = manga.toJson();
     if (!fileExist) {
       jsonFile = await createFile(builder.title);
     }
@@ -75,7 +87,7 @@ class FileManag {
   static void deleteFile(String title) async {
     user = FirebaseAuth.instance.currentUser;
     Directory dir = await getApplicationDocumentsDirectory();
-    File jsonFile = File('${dir.path}/${user?.displayName}/$title.json');
+    File jsonFile = File('${dir.path}/${user?.uid}/$title.json');
     bool fileExist = await jsonFile.exists();
     if (user == null) {
       if (kDebugMode) {

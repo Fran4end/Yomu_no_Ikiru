@@ -53,6 +53,7 @@ dependencies:
   auto_size_text: ^3.0.0
   font_awesome_flutter: ^10.3.0
   provider: ^6.0.5
+  sqflite: ^2.2.6
 
 dev_dependencies:
   flutter_test:

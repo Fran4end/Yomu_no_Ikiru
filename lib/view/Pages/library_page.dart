@@ -20,13 +20,14 @@ class _LibraryPageState extends State<LibraryPage> {
   @override
   void initState() {
     super.initState();
-    Utils.downloadJson().then((refs) => FileManag.downloadAllFile(refs).then((files) {
-          if (mounted) {
-            setState(() {
-              futureBuilders = FileManag.readAllFile(files);
-            });
-          }
-        }));
+    futureBuilders = FileManag.readAllLocalFile();
+    // Utils.downloadJson().then((refs) => FileManag.downloadAllFile(refs).then((files) {
+    //       if (mounted) {
+    //         setState(() {
+    //           futureBuilders = FileManag.readAllFile(files);
+    //         });
+    //       }
+    //     }));
   }
 
   @override
