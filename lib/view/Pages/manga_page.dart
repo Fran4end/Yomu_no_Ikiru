@@ -45,11 +45,12 @@ class _MangaPageState extends State<MangaPage> {
       if (mounted) {
         timer = Timer.periodic(
           const Duration(seconds: 3),
-          (_) => saveBookmark(),
+          (_) {
+            saveBookmark();
+          },
         );
         setState(() {
           isLoading = false;
-          save = mangaBuilder.save;
         });
       }
     });
@@ -57,16 +58,15 @@ class _MangaPageState extends State<MangaPage> {
 
   @override
   void dispose() {
-    saveBookmark();
+    if (!isLoading) saveBookmark();
     timer?.cancel();
     super.dispose();
   }
 
   void saveBookmark() {
     if (save) {
-      FileManag.writeFile(mangaBuilder).then((file) => Utils.uploadJson(file, mangaBuilder.title));
-    } else {
-      FileManag.deleteFile(mangaBuilder.title);
+      FileManager.writeFile(
+          mangaBuilder); //.then((file) => Utils.uploadJson(file, mangaBuilder.title));
     }
   }
 
@@ -74,60 +74,49 @@ class _MangaPageState extends State<MangaPage> {
   Widget build(BuildContext context) {
     final manga = mangaBuilder.build();
     final screen = MediaQuery.of(context).size;
-    return WillPopScope(
-      onWillPop: !isLoading
-          ? () async {
-              Navigator.pop(context);
-              return true;
-            }
-          : () async {
-              Utils.showSnackBar('Wait until contents loaded');
-              return false;
-            },
-      child: Scaffold(
-        body: OrientationBuilder(
-          builder: (context, orientation) => Stack(
-            fit: StackFit.expand,
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverPersistentHeader(
-                    delegate: CustomSliverAppBarDelegate(
-                      manga: manga,
-                      tag: widget.tag,
-                      mangaImage: Image.network(
-                        manga.image,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          } else {
-                            return const Skeleton(color: Colors.white);
-                          }
-                        },
-                      ),
-                      screen: screen,
-                      expandedHeight: (screen.height / 2) + 55,
-                      genres: genres,
-                      save: save,
-                      function: () {
-                        if (user != null) {
-                          setState(() => save = !save);
+    return Scaffold(
+      body: OrientationBuilder(
+        builder: (context, orientation) => Stack(
+          fit: StackFit.expand,
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverPersistentHeader(
+                  delegate: CustomSliverAppBarDelegate(
+                    manga: manga,
+                    tag: widget.tag,
+                    mangaImage: Image.network(
+                      manga.image,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
                         } else {
-                          Utils.showSnackBar('You need to login before save a manga');
+                          return const Skeleton(color: Colors.white);
                         }
                       },
                     ),
-                    pinned: true,
+                    screen: screen,
+                    expandedHeight: (screen.height / 2) + 55,
+                    genres: genres,
+                    save: save,
+                    function: () {
+                      if (user != null) {
+                        setState(() => save = !save);
+                      } else {
+                        Utils.showSnackBar('You need to login before save a manga');
+                      }
+                    },
                   ),
-                  buildChapters(manga),
-                ],
-              ),
-              Positioned(
-                bottom: 30,
-                child: buildBottomBar(screen, manga),
-              ),
-            ],
-          ),
+                  pinned: true,
+                ),
+                buildChapters(manga),
+              ],
+            ),
+            Positioned(
+              bottom: 30,
+              child: buildBottomBar(screen, manga),
+            ),
+          ],
         ),
       ),
     );
@@ -261,9 +250,9 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
       clipBehavior: Clip.none,
       children: [
         buildBackground(shrinkOffset, screen, mangaImage),
-        builAppBar(shrinkOffset, context, function),
+        buildAppBar(shrinkOffset, context, function),
         Positioned(
-          top: top,
+          bottom: expandedHeight - top - size,
           child: buildDetail(screen, shrinkOffset),
         ),
       ],
@@ -274,7 +263,6 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return Opacity(
       opacity: disappear(shrinkOffset),
       child: SizedBox(
-        height: 140,
         width: screen.width - 20,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -316,7 +304,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     );
   }
 
-  Widget builAppBar(double shrinkOffset, BuildContext context, Function()? function) => Opacity(
+  Widget buildAppBar(double shrinkOffset, BuildContext context, Function()? function) => Opacity(
         opacity: 0.8,
         child: AppBar(
           centerTitle: true,

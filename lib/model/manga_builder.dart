@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:manga_app/model/manga.dart';
 import 'package:manga_app/model/chaper.dart';
 import 'package:manga_app/model/utils.dart';
@@ -51,11 +52,33 @@ class MangaBuilder {
     ));
   }
 
+  set fromJson(Map json) {
+    try {
+      titleImageLink = [json['title'], json['image'], json['link']];
+      status = json['status'];
+      index = json['index'];
+      pageIndex = json['pageIndex'];
+      author = json['author'];
+      artist = json['artist'];
+      readings = json['readings'];
+      trama = json['trama'];
+      vote = json['vote'];
+      genres = json['genres'].map<String>((e) => e.toString()).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      titleImageLink = [json['title'], json['image'], json['link']];
+      index = json['index'];
+      pageIndex = json['pageIndex'];
+    }
+  }
+
   Manga build() {
     artist ??= 'No artist found';
     author ??= 'No author found';
     readings ??= 0;
-    status ??= 'Unknow status';
+    status ??= 'Unknown status';
     trama ??= 'No trama found';
     vote ??= 0;
     return Manga(
@@ -73,5 +96,10 @@ class MangaBuilder {
       trama: trama!,
       vote: vote!,
     );
+  }
+
+  @override
+  String toString() {
+    return build().toString();
   }
 }

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:manga_app/model/file_manag.dart';
+import 'package:path/path.dart';
 import 'package:manga_app/model/manga_builder.dart';
 
 class Utils {
@@ -19,46 +20,54 @@ class Utils {
       ..showSnackBar(snackBar);
   }
 
-  static Future uploadJson(File file, String title) async {
+  static Future uploadJson(File file) async {
     user = FirebaseAuth.instance.currentUser;
-    if (user == null || title == '') {
+    if (user == null) {
       if (kDebugMode) {
-        print('user not logined or file not valid');
+        print('user not logged or file not valid');
       }
       return;
     } else {
       if (file.existsSync()) {
-        final ref = FirebaseStorage.instance.ref().child('${user?.uid}/$title.json');
-        ref.putFile(file);
+        String title = basename(file.path);
+        print(title);
+        final ref = FirebaseStorage.instance.ref().child('${user?.uid}/$title');
+        ref.getDownloadURL().then((value) {
+          //TODO: pop up for choose loacal update or remote
+        }).onError((e, stackTrace) {
+          if (kDebugMode) {
+            print(e);
+          }
+          ref.putFile(file);
+        });
       }
     }
   }
 
-  static Future<MangaBuilder> getBuilder(String title) async {
-    user = FirebaseAuth.instance.currentUser;
-    if (user == null || title == '') {
-      if (kDebugMode) {
-        print('user not logined or file not valid');
-      }
-    } else {
-      final ref = FirebaseStorage.instance.ref('${user?.uid}/$title.json');
-      final builder = await FileManag.readFile(await FileManag.downloadFile(ref));
-      return builder;
-    }
-    return MangaBuilder();
-  }
+  // static Future<MangaBuilder> getBuilder(String title) async {
+  //   user = FirebaseAuth.instance.currentUser;
+  //   if (user == null || title == '') {
+  //     if (kDebugMode) {
+  //       print('user not logined or file not valid');
+  //     }
+  //   } else {
+  //     final ref = FirebaseStorage.instance.ref('${user?.uid}/$title.json');
+  //     final builder = await FileManag.readFile(await FileManag.downloadFile(ref));
+  //     return builder;
+  //   }
+  //   return MangaBuilder();
+  // }
 
-  static Future<bool> isOnLibrary(String title) async {
+  static Future isOnLibrary(String title) async {
     user = FirebaseAuth.instance.currentUser;
     if (user == null || title == '') {
       if (kDebugMode) {
-        print('user not logined or file not valid');
+        print('user not logged or file not valid');
       }
     } else {
-      final ref = FirebaseStorage.instance.ref('${user?.uid}/$title.json');
+      List<MangaBuilder> builders = await FileManager.readAllLocalFile();
       try {
-        final data = await ref.getMetadata();
-        return true;
+        return builders.firstWhere((element) => element.title == title);
       } catch (e) {
         if (kDebugMode) {
           print(e);
@@ -73,7 +82,7 @@ class Utils {
     user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       if (kDebugMode) {
-        print('user not logined');
+        print('user not logged');
       }
       return [];
     } else {

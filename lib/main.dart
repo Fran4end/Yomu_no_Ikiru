@@ -8,17 +8,11 @@ import 'package:manga_app/view/Pages/home_page.dart';
 import 'package:manga_app/view/Pages/library_page.dart';
 import 'package:manga_app/view/Pages/user_page.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:provider/provider.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseAppCheck.instance.activate(
-    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
-    androidProvider: AndroidProvider.debug,
-  );
-
   runApp(const MyApp());
 }
 

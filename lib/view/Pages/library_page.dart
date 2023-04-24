@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/model/file_manag.dart';
 import 'package:manga_app/model/manga_builder.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../costants.dart';
 import '../../model/utils.dart';
@@ -20,7 +24,7 @@ class _LibraryPageState extends State<LibraryPage> {
   @override
   void initState() {
     super.initState();
-    futureBuilders = FileManag.readAllLocalFile();
+    futureBuilders = FileManager.readAllLocalFile();
     // Utils.downloadJson().then((refs) => FileManag.downloadAllFile(refs).then((files) {
     //       if (mounted) {
     //         setState(() {
@@ -41,6 +45,39 @@ class _LibraryPageState extends State<LibraryPage> {
           'Library',
           style: titleStyle(),
         ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              User? user = FirebaseAuth.instance.currentUser;
+              if (user != null) {
+                Directory dir = await getApplicationDocumentsDirectory();
+                try {
+                  List<File> files = Directory("${dir.path}/${user.uid}")
+                      .listSync()
+                      .map((e) => (e as File))
+                      .toList();
+                  for (var file in files) {
+                    Utils.uploadJson(file);
+                  }
+                } on Exception catch (e) {
+                  if (kDebugMode) {
+                    print(e);
+                  }
+                }
+                Utils.downloadJson().then((refs) => FileManager.downloadAllFile(refs).then((files) {
+                      if (mounted) {
+                        setState(() {
+                          futureBuilders = FileManager.readAllLocalFile();
+                        });
+                      }
+                    }));
+              } else {
+                Utils.showSnackBar('You need to login before sync all manga');
+              }
+            },
+            icon: const Icon(Icons.cloud_sync_rounded),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: defaultPadding),
@@ -74,12 +111,8 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Future _refresh() async {
-    Utils.downloadJson().then((refs) => FileManag.downloadAllFile(refs).then((files) {
-          if (mounted) {
-            setState(() {
-              futureBuilders = FileManag.readAllFile(files);
-            });
-          }
-        }));
+    setState(() {
+      futureBuilders = FileManager.readAllLocalFile();
+    });
   }
 }

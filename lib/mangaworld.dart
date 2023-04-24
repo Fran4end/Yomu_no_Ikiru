@@ -119,13 +119,11 @@ class MangaWorld {
   }
 
   Future<MangaBuilder> getAllInfo(MangaBuilder builder) async {
-    bool save = await Utils.isOnLibrary(builder.title);
+    final saveBuilder = await Utils.isOnLibrary(builder.title);
     try {
-      if (save) {
-        builder = await Utils.getBuilder(builder.title);
+      if (saveBuilder.runtimeType == MangaBuilder) {
+        builder = saveBuilder;
         builder.save = true;
-      } else {
-        builder.save = false;
       }
       Document document = await _getDetailedPageDocument(builder);
       var info = document.querySelector('.info > .meta-data');
@@ -197,17 +195,6 @@ class MangaWorld {
     }
     Document document = parse(res!.body);
     return document;
-  }
-
-  //TODO implement a better algorithm for copertina
-  Future<String> _getCopertina(String? link) async {
-    if (link == null) {
-      return 'null';
-    }
-    http.Response res = await http.get(Uri.parse(link));
-    Document document = parse(res.body);
-    String image = document.querySelector('#page > #page-0')!.attributes["src"]!;
-    return image;
   }
 
   static List<String>? _getGenres(var elements) {

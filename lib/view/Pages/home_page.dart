@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manga_app/mangaworld.dart';
 import 'package:manga_app/model/manga_builder.dart';
-import 'package:manga_app/view/widgets/skeleton.dart';
 
 import '../../costants.dart';
 import '../widgets/home_widget.dart';
