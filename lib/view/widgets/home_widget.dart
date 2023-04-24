@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/view/widgets/manga_widget.dart';
-import '../../costants.dart';
+import '../../constants.dart';
 import 'skeleton.dart';
 
-class Recents extends StatelessWidget {
-  const Recents({
+class Recent extends StatelessWidget {
+  const Recent({
     Key? key,
     required this.builders,
   }) : super(key: key);
@@ -81,7 +81,7 @@ class Popular extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      'Populars',
+                      'Popular',
                       style: titleStyle().copyWith(fontWeight: FontWeight.bold),
                     ),
                   ],

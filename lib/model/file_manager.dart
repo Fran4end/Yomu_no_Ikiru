@@ -93,6 +93,20 @@ class FileManager {
     Directory dir = await getApplicationDocumentsDirectory();
     File jsonFile = File('${dir.path}/${user?.uid}/$title.json');
     bool fileExist = await jsonFile.exists();
+    if (user == null) {
+      if (kDebugMode) {
+        print('user not logged');
+      }
+    } else {
+      final ref = FirebaseStorage.instance.ref('${user?.uid}/$title.json');
+      try {
+        await ref.delete();
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+    }
     if (fileExist) {
       await jsonFile.delete();
     }

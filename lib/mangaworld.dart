@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
-import 'package:manga_app/costants.dart';
+import 'package:manga_app/constants.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/model/utils.dart';
 
@@ -35,13 +35,13 @@ class MangaWorld {
   }
 
   Future<Map<String, List<MangaBuilder>>> all(Document document) async {
-    List<Element> latestElemets = document.querySelectorAll('.comics-grid > .entry');
-    List<Element> popularElemets = document.querySelectorAll('.comics-flex > .entry');
+    List<Element> latestElements = document.querySelectorAll('.comics-grid > .entry');
+    List<Element> popularElements = document.querySelectorAll('.comics-flex > .entry');
 
-    final latests = await _getLatests(latestElemets);
-    final populars = await _getPopulars(popularElemets);
+    final latests = await _getLatests(latestElements);
+    final popular = await _getPopular(popularElements);
 
-    return {'latests': latests, 'populars': populars};
+    return {'latests': latests, 'popular': popular};
   }
 
   Future<List<MangaBuilder>> _getLatests(var elements) async {
@@ -55,25 +55,25 @@ class MangaWorld {
     return latests;
   }
 
-  Future<List<MangaBuilder>> _getPopulars(var elements) async {
-    List<MangaBuilder> populars = [];
+  Future<List<MangaBuilder>> _getPopular(var elements) async {
+    List<MangaBuilder> popular = [];
     for (var element in elements) {
       var tmp = MangaBuilder()
         ..titleImageLink = _getTitleImageLink(element)
         ..status = 'In corso';
-      populars.add(tmp);
+      popular.add(tmp);
     }
-    return populars;
+    return popular;
   }
 
-  static Future<List<MangaBuilder>> getResults(String keyworld) async {
+  static Future<List<MangaBuilder>> getResults(String keyword) async {
     List<MangaBuilder> tmp = [];
     bool loaded = false;
     http.Response? res;
     while (!loaded) {
       try {
         res =
-            await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyworld'));
+            await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyword'));
         loaded = true;
       } on TimeoutException catch (e) {
         Utils.showSnackBar('Low connection');
@@ -96,7 +96,7 @@ class MangaWorld {
           MangaBuilder()
             ..status = element.querySelector('.content > .status > a')?.text
             ..titleImageLink = _getTitleImageLink(element)
-            ..trama = element.querySelector('.content > .story')?.text
+            ..plot = element.querySelector('.content > .story')?.text
             ..author = element.querySelector('.content > .author > a')?.text
             ..artist = element.querySelector('.content > .artist > a')?.text
             ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'))!,
@@ -136,7 +136,7 @@ class MangaWorld {
         ..artist ??= info!.children[3].querySelector('a')!.text
         ..author ??= info!.children[2].querySelector('a')!.text
         ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
-        ..trama ??= document.querySelector('.comic-description > #noidungm')!.text;
+        ..plot ??= document.querySelector('.comic-description > #noidungm')!.text;
       if (builder.chapters.isEmpty) {
         builder = await getChapters(builder);
       }

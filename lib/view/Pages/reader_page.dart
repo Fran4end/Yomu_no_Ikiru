@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html/parser.dart';
-import 'package:manga_app/costants.dart';
-import 'package:manga_app/model/chaper.dart';
+import 'package:manga_app/constants.dart';
+import 'package:manga_app/model/chapter.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:http/http.dart' as http;
 import 'package:manga_app/model/manga_builder.dart';
@@ -216,9 +216,9 @@ class _ReaderState extends State<Reader> {
                                           borderRadius: BorderRadius.circular(20.0)),
                                       backgroundColor: secondaryColor,
                                     ),
-                                    child: Row(
+                                    child: const Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: const [
+                                      children: [
                                         Text('Previous Chapter'),
                                         Icon(Icons.forward),
                                       ],

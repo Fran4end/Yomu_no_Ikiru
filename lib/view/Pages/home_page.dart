@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manga_app/mangaworld.dart';
 import 'package:manga_app/model/manga_builder.dart';
 
-import '../../costants.dart';
+import '../../constants.dart';
 import '../widgets/home_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
         MangaWorld().all(document).then((value) {
           if (mounted) {
             setState(() {
-              popular = value['populars']!;
+              popular = value['popular']!;
               recent = value['latests']!;
             });
           }
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
         child: CustomScrollView(
           slivers: [
             Popular(builders: popular.isEmpty ? [] : popular),
-            Recents(builders: recent.isEmpty ? [] : recent)
+            Recent(builders: recent.isEmpty ? [] : recent)
           ],
         ),
       ),

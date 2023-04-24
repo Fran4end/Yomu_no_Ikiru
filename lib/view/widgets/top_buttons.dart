@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../costants.dart';
+import '../../constants.dart';
 
 class TopButtonsFunctions extends StatelessWidget {
   const TopButtonsFunctions({

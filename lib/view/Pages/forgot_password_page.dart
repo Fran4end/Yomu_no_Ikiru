@@ -2,17 +2,17 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../costants.dart';
+import '../../constants.dart';
 import '../../model/utils.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _ForgotPasswordPagetState();
+  State<StatefulWidget> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPagetState extends State<ForgotPasswordPage> {
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
 

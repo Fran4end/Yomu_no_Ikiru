@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:manga_app/model/manga.dart';
-import 'package:manga_app/model/chaper.dart';
+import 'package:manga_app/model/chapter.dart';
 import 'package:manga_app/model/utils.dart';
 
 class MangaBuilder {
@@ -10,7 +10,7 @@ class MangaBuilder {
   String? status;
   String? author;
   String? artist;
-  String? trama;
+  String? plot;
   double? vote;
   double? readings;
   List<String> genres = [];
@@ -61,7 +61,7 @@ class MangaBuilder {
       author = json['author'];
       artist = json['artist'];
       readings = json['readings'];
-      trama = json['trama'];
+      plot = json['plot'];
       vote = json['vote'];
       genres = json['genres'].map<String>((e) => e.toString()).toList();
     } catch (e) {
@@ -79,7 +79,7 @@ class MangaBuilder {
     author ??= 'No author found';
     readings ??= 0;
     status ??= 'Unknown status';
-    trama ??= 'No trama found';
+    plot ??= 'No trama found';
     vote ??= 0;
     return Manga(
       artist: artist!,
@@ -93,7 +93,7 @@ class MangaBuilder {
       readings: readings!,
       status: status!,
       title: title,
-      trama: trama!,
+      plot: plot!,
       vote: vote!,
     );
   }

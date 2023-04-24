@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:manga_app/costants.dart';
-import 'package:manga_app/model/google_signin_provider.dart';
+import 'package:manga_app/constants.dart';
+import 'package:manga_app/model/google_sign_in_provider.dart';
 import 'package:manga_app/model/utils.dart';
 import 'package:manga_app/view/Pages/home_page.dart';
 import 'package:manga_app/view/Pages/library_page.dart';

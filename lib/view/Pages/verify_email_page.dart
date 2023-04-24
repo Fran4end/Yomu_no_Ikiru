@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/view/widgets/user_info_widget.dart';
-import '../../costants.dart';
+import '../../constants.dart';
 import '../../model/utils.dart';
 
 class VerifyEmailPage extends StatefulWidget {
@@ -62,7 +62,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   Widget build(BuildContext context) {
     return isEmailVerified
-        ? UserInfoWidget()
+        ? const UserInfoWidget()
         : Scaffold(
             appBar: AppBar(
               title: const Text('Verify Email'),

@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:manga_app/costants.dart';
+import 'package:manga_app/constants.dart';
 import 'package:manga_app/model/manga.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/mangaworld.dart';
 import 'package:manga_app/view/Pages/reader_page.dart';
 import 'package:manga_app/view/widgets/skeleton.dart';
-import '../../model/file_manag.dart';
+import '../../model/file_manager.dart';
 import '../../model/utils.dart';
 import '../widgets/top_buttons.dart';
 
@@ -51,6 +51,9 @@ class _MangaPageState extends State<MangaPage> {
         );
         setState(() {
           isLoading = false;
+          if (mangaBuilder.save != save) {
+            save = mangaBuilder.save;
+          }
         });
       }
     });
@@ -65,8 +68,7 @@ class _MangaPageState extends State<MangaPage> {
 
   void saveBookmark() {
     if (save) {
-      FileManager.writeFile(
-          mangaBuilder); //.then((file) => Utils.uploadJson(file, mangaBuilder.title));
+      FileManager.writeFile(mangaBuilder);
     }
   }
 
@@ -101,6 +103,9 @@ class _MangaPageState extends State<MangaPage> {
                     save: save,
                     function: () {
                       if (user != null) {
+                        if (save) {
+                          FileManager.deleteFile(manga.title);
+                        }
                         setState(() => save = !save);
                       } else {
                         Utils.showSnackBar('You need to login before save a manga');

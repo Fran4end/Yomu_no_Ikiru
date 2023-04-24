@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manga_app/costants.dart';
+import 'package:manga_app/constants.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Skeleton extends StatelessWidget {
@@ -112,7 +112,7 @@ class SkeletonGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return OrientationBuilder(
         builder: (context, orientation) => GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: defaultPadding * 1.5,
               ),

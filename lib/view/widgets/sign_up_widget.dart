@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 
-import '../../costants.dart';
+import '../../constants.dart';
 import '../../model/utils.dart';
 
 class SignUpWidget extends StatefulWidget {

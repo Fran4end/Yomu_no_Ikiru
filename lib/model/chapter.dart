@@ -1,6 +1,6 @@
 class Chapter {
   final String? date;
-  final String? copertina;
+  final String? cover;
   final String title;
   final int? volume;
   final String? link;
@@ -9,18 +9,18 @@ class Chapter {
     required this.date,
     required this.title,
     required this.link,
-    this.copertina,
+    this.cover,
     this.volume,
   });
 
-  set volumeCopertina(List value) {}
+  set volumeCover(List value) {}
 
   Chapter.fromJson(Map<String, dynamic> json)
       : title = json['title'],
         link = json['link'],
         date = json['date'],
         volume = json['volume'],
-        copertina = json['copertina'];
+        cover = json['cover'];
 
   Map<String, dynamic> toJson() => {
         'title': title,

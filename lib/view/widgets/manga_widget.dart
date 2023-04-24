@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
-import '../../costants.dart';
+import '../../constants.dart';
 import '../../model/manga.dart';
 import '../../model/manga_builder.dart';
 import '../Pages/manga_page.dart';
@@ -95,7 +95,7 @@ class MangaCard extends StatelessWidget {
                         maxLines: maxLineText.toInt(),
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: titleGreenStyle(fontsize: 15),
+                        style: titleGreenStyle(fontSize: 15),
                       ),
                     ),
                   ),

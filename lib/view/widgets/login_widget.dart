@@ -3,10 +3,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:manga_app/model/google_signin_provider.dart';
+import 'package:manga_app/model/google_sign_in_provider.dart';
 import 'package:manga_app/view/Pages/forgot_password_page.dart';
 import 'package:provider/provider.dart';
-import '../../costants.dart';
+import '../../constants.dart';
 import '../../model/utils.dart';
 
 class LoginWidget extends StatefulWidget {

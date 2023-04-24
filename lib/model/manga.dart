@@ -1,11 +1,11 @@
-import 'package:manga_app/model/chaper.dart';
+import 'package:manga_app/model/chapter.dart';
 
 class Manga {
   final String title;
   final String author;
   final String artist;
   final String status;
-  final String trama;
+  final String plot;
   final String image;
   final String link;
   final double vote;
@@ -20,7 +20,7 @@ class Manga {
     required this.author,
     required this.artist,
     required this.status,
-    required this.trama,
+    required this.plot,
     required this.image,
     required this.link,
     required this.vote,
@@ -35,7 +35,7 @@ class Manga {
       : title = json['title'],
         image = json['image'],
         link = json['link'],
-        trama = json['trama'],
+        plot = json['plot'],
         status = json['status'],
         artist = json['artist'],
         author = json['author'],
@@ -50,7 +50,7 @@ class Manga {
         'title': title,
         'image': image,
         'link': link,
-        'trama': trama,
+        'plot': plot,
         'status': status,
         'artist': artist,
         'author': author,
@@ -72,6 +72,6 @@ class Manga {
 
   @override
   String toString() {
-    return '$title -> ($author, $artist): $status ($vote, $readings) \n[$trama] $genres\n$image\n$link\n\n';
+    return '$title -> ($author, $artist): $status ($vote, $readings) \n[$plot] $genres\n$image\n$link\n\n';
   }
 }

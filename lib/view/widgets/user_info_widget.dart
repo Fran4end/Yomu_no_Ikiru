@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/view/widgets/top_buttons.dart';
 
-import '../../costants.dart';
+import '../../constants.dart';
 
 class UserInfoWidget extends StatefulWidget {
   const UserInfoWidget({super.key});
@@ -80,12 +80,12 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           children: [
             Text(
               (user.displayName!).toString(),
-              style: titleStyle(fontsize: 26),
+              style: titleStyle(fontSize: 26),
             ),
             const SizedBox(height: defaultPadding / 2),
             Text(
               (user.email!).toString(),
-              style: subtitleStyle(fontsize: 20),
+              style: subtitleStyle(fontSize: 20),
             ),
           ],
         ),

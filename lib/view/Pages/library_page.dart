@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:manga_app/model/file_manag.dart';
+import 'package:manga_app/model/file_manager.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../costants.dart';
+import '../../constants.dart';
 import '../../model/utils.dart';
 import '../widgets/manga_widget.dart';
 import '../widgets/skeleton.dart';
@@ -25,13 +25,6 @@ class _LibraryPageState extends State<LibraryPage> {
   void initState() {
     super.initState();
     futureBuilders = FileManager.readAllLocalFile();
-    // Utils.downloadJson().then((refs) => FileManag.downloadAllFile(refs).then((files) {
-    //       if (mounted) {
-    //         setState(() {
-    //           futureBuilders = FileManag.readAllFile(files);
-    //         });
-    //       }
-    //     }));
   }
 
   @override
@@ -97,7 +90,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         return RefreshIndicator(
                           onRefresh: _refresh,
                           child: builders.isEmpty
-                              ? const Center(child: Text('Nothig added to library'))
+                              ? const Center(child: Text('Nothing added to library'))
                               : MangaGrid(
                                   listManga: builders,
                                   save: true,

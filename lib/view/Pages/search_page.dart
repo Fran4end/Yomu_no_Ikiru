@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../costants.dart';
+import '../../constants.dart';
 import '../../mangaworld.dart';
 import '../widgets/skeleton.dart';
 import '../widgets/manga_widget.dart';
 
-Widget? _mangas;
+Widget? _manga;
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -19,7 +19,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   void initState() {
-    if (_mangas == null) {
+    if (_manga == null) {
       super.initState();
       controller.text = '';
       getResult(controller.text);
@@ -67,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
               Expanded(
-                child: _mangas == null
+                child: _manga == null
                     ? const SkeletonGrid()
                     : SingleChildScrollView(
                         physics: const NeverScrollableScrollPhysics(),
@@ -75,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
                           onRefresh: () => _refresh(),
                           child: SizedBox(
                             height: MediaQuery.of(context).size.height - 230,
-                            child: _mangas!,
+                            child: _manga!,
                           ),
                         ),
                       ),
@@ -90,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
   getResult(String query) {
     MangaWorld.getResults(query).then(
       (value) {
-        _mangas = MangaGrid(listManga: value);
+        _manga = MangaGrid(listManga: value);
         if (mounted) {
           setState(() {});
         }
@@ -100,7 +100,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Future _refresh() async {
     if (mounted) {
-      setState(() => _mangas = null);
+      setState(() => _manga = null);
     }
     controller.text = '';
     getResult(controller.text);

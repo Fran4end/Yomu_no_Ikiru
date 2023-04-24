@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:manga_app/model/file_manag.dart';
+import 'package:manga_app/model/file_manager.dart';
 import 'package:path/path.dart';
 import 'package:manga_app/model/manga_builder.dart';
 
@@ -30,7 +30,6 @@ class Utils {
     } else {
       if (file.existsSync()) {
         String title = basename(file.path);
-        print(title);
         final ref = FirebaseStorage.instance.ref().child('${user?.uid}/$title');
         ref.getDownloadURL().then((value) {
           //TODO: pop up for choose loacal update or remote
@@ -43,20 +42,6 @@ class Utils {
       }
     }
   }
-
-  // static Future<MangaBuilder> getBuilder(String title) async {
-  //   user = FirebaseAuth.instance.currentUser;
-  //   if (user == null || title == '') {
-  //     if (kDebugMode) {
-  //       print('user not logined or file not valid');
-  //     }
-  //   } else {
-  //     final ref = FirebaseStorage.instance.ref('${user?.uid}/$title.json');
-  //     final builder = await FileManag.readFile(await FileManag.downloadFile(ref));
-  //     return builder;
-  //   }
-  //   return MangaBuilder();
-  // }
 
   static Future isOnLibrary(String title) async {
     user = FirebaseAuth.instance.currentUser;

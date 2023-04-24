@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manga_app/view/widgets/login_widget.dart';
-import 'package:manga_app/view/widgets/signup_widget.dart';
+import 'package:manga_app/view/widgets/sign_up_widget.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
