@@ -17,7 +17,6 @@ class Skeleton extends StatelessWidget {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
-      loop: 3,
       child: Card(
         margin: const EdgeInsets.all(defaultPadding / 2),
         elevation: 10,
@@ -70,31 +69,27 @@ class CardSkelton extends StatelessWidget {
           ),
           Positioned(
             top: -5,
-            child: Card(
-              elevation: 10,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Container(
-                height: iHeight / 1.2,
-                width: iWidth,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    height: iHeight / 1.2,
+                    width: iWidth,
+                    child: Skeleton(
+                      color: Colors.white,
+                      height: iHeight,
+                      width: iWidth,
+                    ),
+                  ),
                 ),
-                child: Skeleton(
-                  color: Colors.white,
-                  height: iHeight,
-                  width: iWidth,
+                Center(
+                  child: Skeleton(
+                    color: Colors.white,
+                    width: iWidth,
+                  ),
                 ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            child: Center(
-              child: Skeleton(
-                color: Colors.white,
-                width: iWidth,
-              ),
+              ],
             ),
           ),
         ],

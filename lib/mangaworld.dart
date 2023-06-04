@@ -1,34 +1,37 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:manga_app/constants.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/model/utils.dart';
 
 class MangaWorld {
-  Future<Document> getHomePageDocument() async {
-    bool loaded = false;
-    Document document = Document();
-    while (!loaded) {
-      try {
-        http.Response res = await http.get(Uri.parse(baseUrl));
-        document = parse(res.body);
-        loaded = true;
-      } on TimeoutException catch (e) {
-        Utils.showSnackBar('Low connection');
-        if (kDebugMode) {
-          print(e);
-        }
-      } on SocketException catch (e) {
-        Utils.showSnackBar('No connection');
-        await Future.delayed(const Duration(seconds: 10));
-        if (kDebugMode) {
-          print(e);
-        }
+  static final Dio dio = Dio(BaseOptions(baseUrl: baseUrl));
+
+  MangaWorld() {
+    dio.interceptors.add(RetryInterceptor(
+      dio: dio,
+      logPrint: print,
+      retries: 2,
+      retryDelays: const [
+        Duration(seconds: 10),
+        Duration(seconds: 10),
+      ],
+    ));
+  }
+
+  Future<Document?> getHomePageDocument() async {
+    Document? document;
+    try {
+      Response res = await dio.get("");
+      document = parse(res.data);
+    } on DioError catch (e) {
+      Utils.showSnackBar("Network problem");
+      if (kDebugMode) {
+        print("riga 34: $e");
       }
     }
     return document;
@@ -68,28 +71,20 @@ class MangaWorld {
 
   static Future<List<MangaBuilder>> getResults(String keyword) async {
     List<MangaBuilder> tmp = [];
-    bool loaded = false;
-    http.Response? res;
-    while (!loaded) {
-      try {
-        res =
-            await http.Client().get(Uri.parse('$baseUrl/archive?sort=most_read&keyword=$keyword'));
-        loaded = true;
-      } on TimeoutException catch (e) {
-        Utils.showSnackBar('Low connection');
-        if (kDebugMode) {
-          print(e);
-        }
-      } on SocketException catch (e) {
-        Utils.showSnackBar('No connection');
-        await Future.delayed(const Duration(seconds: 10));
-        if (kDebugMode) {
-          print(e);
-        }
+
+    Response res = Response(requestOptions: RequestOptions());
+    try {
+      res = await dio.get('/archive', queryParameters: {'sort': 'most_read', 'keyword': keyword});
+    } on DioError catch (e) {
+      Utils.showSnackBar("Network problem");
+      if (kDebugMode) {
+        print("riga 81: $e");
       }
+      return [];
     }
-    if (res!.statusCode == 200) {
-      Document document = parse(res.body);
+
+    if (res.statusCode == 200) {
+      Document document = parse(res.data);
       var mangaList = document.querySelectorAll('.comics-grid > .entry');
       for (var element in mangaList) {
         tmp.add(
@@ -103,9 +98,7 @@ class MangaWorld {
         );
       }
     } else {
-      if (kDebugMode) {
-        print(throw Exception);
-      }
+      Utils.showSnackBar("Network problem");
     }
     return tmp;
   }
@@ -125,7 +118,10 @@ class MangaWorld {
         builder = saveBuilder;
         builder.save = true;
       }
-      Document document = await _getDetailedPageDocument(builder);
+      Document? document = await _getDetailedPageDocument(builder);
+      if (document == null) {
+        return builder;
+      }
       var info = document.querySelector('.info > .meta-data');
       String? readings = info?.children[6].children[1].text;
       builder
@@ -138,7 +134,7 @@ class MangaWorld {
         ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
         ..plot ??= document.querySelector('.comic-description > #noidungm')!.text;
       if (builder.chapters.isEmpty) {
-        builder = await getChapters(builder);
+        builder = await getChapters(builder, document);
       }
     } catch (e) {
       if (kDebugMode) {
@@ -148,8 +144,7 @@ class MangaWorld {
     return builder;
   }
 
-  Future<MangaBuilder> getChapters(MangaBuilder builder) async {
-    Document document = await _getDetailedPageDocument(builder);
+  Future<MangaBuilder> getChapters(MangaBuilder builder, Document document) async {
     List<Element> chaptersElement =
         document.querySelector('.chapters-wrapper')!.querySelectorAll('.chapter > .chap');
     for (var chap in chaptersElement) {
@@ -172,28 +167,19 @@ class MangaWorld {
     return builder;
   }
 
-  Future<Document> _getDetailedPageDocument(MangaBuilder builder) async {
+  Future<Document?> _getDetailedPageDocument(MangaBuilder builder) async {
     final link = builder.link;
-    bool loaded = false;
-    http.Response? res;
-    while (!loaded) {
-      try {
-        res = await http.Client().get(Uri.parse(link.toString()));
-        loaded = true;
-      } on TimeoutException catch (e) {
-        Utils.showSnackBar('Low connection');
-        if (kDebugMode) {
-          print(e);
-        }
-      } on SocketException catch (e) {
-        Utils.showSnackBar('No connection');
-        await Future.delayed(const Duration(seconds: 10));
-        if (kDebugMode) {
-          print(e);
-        }
+    Response res = Response(requestOptions: RequestOptions());
+    Document? document;
+    try {
+      res = await dio.get(link.toString());
+      document = parse(res.data);
+    } on DioError catch (e) {
+      Utils.showSnackBar("Network problem");
+      if (kDebugMode) {
+        print(e);
       }
     }
-    Document document = parse(res!.body);
     return document;
   }
 
@@ -221,9 +207,9 @@ class MangaWorld {
     if (att == '') {
       return '0';
     }
-    final res = await http.Client().get(Uri.parse(att));
+    final res = await dio.get(att);
     if (res.statusCode == 200) {
-      var page = parse(res.body);
+      var page = parse(res.data);
       var ret = page.getElementsByClassName('score-label')[0].text;
       if (ret == 'N/A') {
         return '0';

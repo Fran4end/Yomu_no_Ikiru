@@ -1,11 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:manga_app/model/manga_builder.dart';
 import '../../constants.dart';
 import '../../mangaworld.dart';
 import '../widgets/skeleton.dart';
 import '../widgets/manga_widget.dart';
-
-Widget? _manga;
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,20 +14,21 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final controller = TextEditingController();
+  late String search;
+  List<MangaBuilder>? builders;
 
   @override
   void initState() {
-    if (_manga == null) {
-      super.initState();
-      controller.text = '';
-      getResult(controller.text);
-    }
+    super.initState();
+    controller.text = '';
+    search = "";
+    fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: primaryColor,
         elevation: 0.0,
@@ -39,70 +38,48 @@ class _SearchPageState extends State<SearchPage> {
           style: titleStyle(),
         ),
       ),
-      body: Center(
-        child: OrientationBuilder(builder: (context, orientation) {
-          return Column(
-            children: [
-              Container(
-                height: 50,
-                margin: EdgeInsets.all(
-                    orientation == Orientation.portrait ? defaultPadding : defaultPadding / 2),
-                child: TextField(
-                  controller: controller,
-                  decoration: InputDecoration(
-                    labelText: "Search",
-                    prefixIcon: const Icon(Icons.search),
-                    border: const OutlineInputBorder(),
-                    suffix: IconButton(
-                        onPressed: () {
-                          controller.text = '';
-                          getResult(controller.text);
-                        },
-                        icon: const Icon(Icons.clear_rounded)),
-                  ),
-                  onChanged: (query) {
-                    String search = query.trim().toLowerCase();
-                    getResult(search);
-                  },
+      body: RefreshIndicator(
+        onRefresh: fetchData,
+        child: Column(
+          children: [
+            Container(
+              height: 50,
+              margin: const EdgeInsets.all(defaultPadding),
+              child: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: "Search",
+                  prefixIcon: const Icon(Icons.search),
+                  border: const OutlineInputBorder(),
+                  suffix: IconButton(
+                      onPressed: () {
+                        controller.text = '';
+                        search = "";
+                        fetchData();
+                      },
+                      icon: const Icon(Icons.clear_rounded)),
                 ),
+                onChanged: (query) {
+                  search = query.trim().toLowerCase();
+                  fetchData();
+                },
               ),
-              Expanded(
-                child: _manga == null
-                    ? const SkeletonGrid()
-                    : SingleChildScrollView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        child: RefreshIndicator(
-                          onRefresh: () => _refresh(),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height - 230,
-                            child: _manga!,
-                          ),
-                        ),
-                      ),
-              ),
-            ],
-          );
-        }),
+            ),
+            Expanded(
+              child: builders == null ? const SkeletonGrid() : MangaGrid(listManga: builders!),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  getResult(String query) {
-    MangaWorld.getResults(query).then(
-      (value) {
-        _manga = MangaGrid(listManga: value);
-        if (mounted) {
-          setState(() {});
-        }
-      },
-    );
-  }
+  Future fetchData() async {
+    final content = await MangaWorld.getResults(search);
+    builders = content;
 
-  Future _refresh() async {
     if (mounted) {
-      setState(() => _manga = null);
+      setState(() {});
     }
-    controller.text = '';
-    getResult(controller.text);
   }
 }

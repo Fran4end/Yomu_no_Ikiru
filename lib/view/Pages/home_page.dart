@@ -13,24 +13,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<MangaBuilder> popular = [];
-  List<MangaBuilder> recent = [];
+  List<MangaBuilder>? popular = [];
+  List<MangaBuilder>? recent = [];
 
   @override
   void initState() {
     super.initState();
-    MangaWorld().getHomePageDocument().then(
-      (document) async {
-        MangaWorld().all(document).then((value) {
-          if (mounted) {
-            setState(() {
-              popular = value['popular']!;
-              recent = value['latests']!;
-            });
-          }
-        });
-      },
-    );
+    popular = [];
+    recent = [];
+    fetchData();
   }
 
   @override
@@ -46,13 +37,33 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            Popular(builders: popular.isEmpty ? [] : popular),
-            Recent(builders: recent.isEmpty ? [] : recent)
-          ],
+        child: RefreshIndicator(
+          onRefresh: fetchData,
+          child: CustomScrollView(
+            slivers: [
+              Popular(builders: popular),
+              Recent(builders: recent),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future fetchData() async {
+    final doc = await MangaWorld().getHomePageDocument();
+
+    if (doc != null) {
+      final content = await MangaWorld().all(doc);
+      popular = content['popular']!;
+      recent = content['latests']!;
+    } else {
+      popular = null;
+      recent = null;
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

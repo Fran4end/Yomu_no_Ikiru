@@ -46,7 +46,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectpage = 0;
+  int _selectPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
             const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           )),
           child: NavigationBar(
-            selectedIndex: _selectpage,
+            selectedIndex: _selectPage,
             height: 60,
             animationDuration: const Duration(milliseconds: 400),
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
             onDestinationSelected: (value) => setState(() {
-              _selectpage = value;
+              _selectPage = value;
             }),
             destinations: const [
               NavigationDestination(
@@ -90,25 +90,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: _getPage(),
+        body: IndexedStack(
+          index: _selectPage,
+          children: const [
+            HomePage(),
+            SearchPage(),
+            LibraryPage(),
+            UserPage(),
+          ],
+        ),
       ),
     );
-  }
-
-  Widget _getPage() {
-    switch (_selectpage) {
-      case 0:
-        return const HomePage();
-      case 1:
-        return const SearchPage();
-      case 2:
-        return const LibraryPage();
-      case 3:
-        return const UserPage();
-      default:
-        return const Center(
-          child: Text('A'),
-        );
-    }
   }
 }

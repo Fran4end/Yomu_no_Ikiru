@@ -10,7 +10,7 @@ class Recent extends StatelessWidget {
     required this.builders,
   }) : super(key: key);
 
-  final List<MangaBuilder> builders;
+  final List<MangaBuilder>? builders;
 
   @override
   Widget build(BuildContext context) {
@@ -30,26 +30,35 @@ class Recent extends StatelessWidget {
               ),
               SizedBox(
                 height: 200,
-                child: builders.isEmpty
-                    ? ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) => CardSkelton(
-                          iHeight: orientation == Orientation.portrait ? 160 : 370,
-                          iWidth: orientation == Orientation.portrait ? 140 : 320,
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: builders.length,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (builders != null && builders!.isNotEmpty) {
+                      return ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: builders!.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           return MangaCard(
-                            mangaBuilder: builders[index],
+                            mangaBuilder: builders![index],
                             tag: 'recent',
                             iHeight: orientation == Orientation.portrait ? 160 : 370,
                             iWidth: orientation == Orientation.portrait ? 140 : 320,
                           );
                         },
-                      ),
+                      );
+                    } else if (builders != null) {
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) => CardSkelton(
+                          iHeight: orientation == Orientation.portrait ? 160 : 370,
+                          iWidth: orientation == Orientation.portrait ? 140 : 320,
+                        ),
+                      );
+                    } else {
+                      return const Center();
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -65,7 +74,7 @@ class Popular extends StatelessWidget {
     required this.builders,
   }) : super(key: key);
 
-  final List<MangaBuilder> builders;
+  final List<MangaBuilder>? builders;
 
   @override
   Widget build(BuildContext context) {
@@ -89,29 +98,38 @@ class Popular extends StatelessWidget {
               ),
               SizedBox(
                 height: 280,
-                child: builders.isEmpty
-                    ? ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) => CardSkelton(
-                          iHeight: orientation == Orientation.portrait ? 200 : 370,
-                          iWidth: orientation == Orientation.portrait ? 140 : 320,
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: builders.length,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (builders != null && builders!.isNotEmpty) {
+                      return ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: builders!.length,
                         scrollDirection: Axis.horizontal,
                         padding:
                             const EdgeInsets.only(top: defaultPadding / 2, left: defaultPadding),
                         itemBuilder: (_, index) {
                           return MangaCard(
-                            mangaBuilder: builders[index],
+                            mangaBuilder: builders![index],
                             tag: 'popular',
                             iHeight: orientation == Orientation.portrait ? 200 : 370,
                             iWidth: orientation == Orientation.portrait ? 140 : 320,
                             maxLineText: 3,
                           );
                         },
-                      ),
+                      );
+                    } else if (builders != null) {
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) => CardSkelton(
+                          iHeight: orientation == Orientation.portrait ? 200 : 370,
+                          iWidth: orientation == Orientation.portrait ? 140 : 320,
+                        ),
+                      );
+                    } else {
+                      return const Center();
+                    }
+                  },
+                ),
               ),
             ],
           ),
