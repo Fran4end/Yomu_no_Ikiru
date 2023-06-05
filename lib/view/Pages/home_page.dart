@@ -13,14 +13,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<MangaBuilder>? popular = [];
-  List<MangaBuilder>? recent = [];
+  List<MangaBuilder>? popular;
+  List<MangaBuilder>? recent;
 
   @override
   void initState() {
     super.initState();
-    popular = [];
-    recent = [];
     fetchData();
   }
 
@@ -58,8 +56,8 @@ class _HomePageState extends State<HomePage> {
       popular = content['popular']!;
       recent = content['latests']!;
     } else {
-      popular = null;
-      recent = null;
+      popular ??= [];
+      recent ??= [];
     }
 
     if (mounted) {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/constants.dart';
@@ -15,7 +16,7 @@ class MangaPage extends StatefulWidget {
   const MangaPage({
     required this.mangaBuilder,
     required this.save,
-    this.tag = '',
+    required this.tag,
     super.key,
   });
   final MangaBuilder mangaBuilder;
@@ -38,6 +39,7 @@ class _MangaPageState extends State<MangaPage> {
   @override
   void initState() {
     super.initState();
+    print(widget.tag);
     MangaWorld().getAllInfo(mangaBuilder).then((value) {
       mangaBuilder = value;
       final manga = mangaBuilder.build();
@@ -87,16 +89,7 @@ class _MangaPageState extends State<MangaPage> {
                   delegate: CustomSliverAppBarDelegate(
                     manga: manga,
                     tag: widget.tag,
-                    mangaImage: Image.network(
-                      manga.image,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        } else {
-                          return const Skeleton(color: Colors.white);
-                        }
-                      },
-                    ),
+                    mangaImage: manga.image,
                     screen: screen,
                     expandedHeight: (screen.height / 2) + 55,
                     genres: genres,
@@ -228,7 +221,7 @@ class _MangaPageState extends State<MangaPage> {
 
 class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final Manga manga;
-  final Image mangaImage;
+  final String mangaImage;
   final Size screen;
   final double expandedHeight;
   final Widget genres;
@@ -379,18 +372,18 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         ),
       );
 
-  Widget buildBackground(double shrinkOffset, Size screen, Image image) => Hero(
-        tag: manga.title.toString() + tag,
-        child: Container(
-          width: screen.width,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: image.image,
-              fit: BoxFit.cover,
-            ),
-          ),
+  Widget buildBackground(double shrinkOffset, Size screen, String image) => Hero(
+      tag: tag,
+      child: SizedBox(
+        width: screen.width,
+        child: CachedNetworkImage(
+          imageUrl: image,
+          fit: BoxFit.cover,
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              const Center(child: Skeleton(color: Colors.white)),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
-      );
+      ));
 
   double disappear(double shrinkOffset) => 1 - shrinkOffset / expandedHeight;
 

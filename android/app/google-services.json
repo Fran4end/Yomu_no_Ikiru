@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "331308178402-hrmg55sundna6bp8p4pi67ah07cd1fic.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.manga_app",
+            "certificate_hash": "bbc008d968832cdc570fcdd4131c5a64789d2250"
+          }
+        },
+        {
           "client_id": "331308178402-d9peqv0b2o3olfg6dcoqs2383uhh6rcv.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -37,6 +45,13 @@
             {
               "client_id": "331308178402-d9peqv0b2o3olfg6dcoqs2383uhh6rcv.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "331308178402-4eckq378mduijjpste4l308v520j8v7j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mangaApp"
+              }
             }
           ]
         }

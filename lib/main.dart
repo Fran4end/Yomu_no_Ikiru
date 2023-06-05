@@ -9,10 +9,13 @@ import 'package:manga_app/view/Pages/library_page.dart';
 import 'package:manga_app/view/Pages/user_page.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

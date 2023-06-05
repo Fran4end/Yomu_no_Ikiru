@@ -17,22 +17,16 @@ class Skeleton extends StatelessWidget {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
-      child: Card(
-        margin: const EdgeInsets.all(defaultPadding / 2),
-        elevation: 10,
-        color: color,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Center(
-          child: Container(
-            height: height,
-            width: width,
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-              color: Colors.transparent,
-            ),
-            //child: child,
+      child: Center(
+        child: Container(
+          height: height,
+          width: width,
+          padding: const EdgeInsets.all(8),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+            color: Colors.transparent,
           ),
+          //child: child,
         ),
       ),
     );
@@ -42,58 +36,38 @@ class Skeleton extends StatelessWidget {
 class CardSkelton extends StatelessWidget {
   const CardSkelton({
     this.maxLineText = 1,
-    this.iHeight = 180,
-    this.iWidth = 140,
     Key? key,
   }) : super(key: key);
 
-  final double maxLineText, iHeight, iWidth;
+  final double maxLineText;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: iHeight * 1.5,
-      width: iWidth * 1.5,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          SizedBox(
-            height: iHeight * 1.5,
-            width: iWidth * 1.5,
-            child: Card(
-              elevation: 10,
-              margin: const EdgeInsets.all(defaultPadding),
-              color: backgroundColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-          ),
-          Positioned(
-            top: -5,
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox(
-                    height: iHeight / 1.2,
-                    width: iWidth,
-                    child: Skeleton(
-                      color: Colors.white,
-                      height: iHeight,
-                      width: iWidth,
-                    ),
-                  ),
+    return Stack(
+      children: [
+        Card(
+          elevation: 10,
+          margin: const EdgeInsets.all(defaultPadding),
+          color: backgroundColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        Positioned(
+          top: -5,
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: const Skeleton(
+                  color: Colors.white,
                 ),
-                Center(
-                  child: Skeleton(
-                    color: Colors.white,
-                    width: iWidth,
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const Skeleton(
+                color: Colors.white,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

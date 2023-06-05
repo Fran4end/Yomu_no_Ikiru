@@ -75,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future fetchData() async {
-    final content = await MangaWorld.getResults(search);
+    final content = await MangaWorld.getResults(search, builders == null ? [] : builders!);
     builders = content;
 
     if (mounted) {

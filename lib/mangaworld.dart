@@ -4,23 +4,32 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:manga_app/constants.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/model/utils.dart';
 
 class MangaWorld {
   static final Dio dio = Dio(BaseOptions(baseUrl: baseUrl));
+  final cacheOptions = CacheOptions(
+    store: MemCacheStore(),
+    hitCacheOnErrorExcept: [401, 403],
+    maxStale: const Duration(hours: 12),
+  );
+  final retryOptions = RetryInterceptor(
+    dio: dio,
+    logPrint: print,
+    retries: 2,
+    retryDelays: const [
+      Duration(seconds: 10),
+      Duration(seconds: 10),
+    ],
+  );
 
   MangaWorld() {
-    dio.interceptors.add(RetryInterceptor(
-      dio: dio,
-      logPrint: print,
-      retries: 2,
-      retryDelays: const [
-        Duration(seconds: 10),
-        Duration(seconds: 10),
-      ],
-    ));
+    dio.interceptors
+      ..add(retryOptions)
+      ..add(DioCacheInterceptor(options: cacheOptions));
   }
 
   Future<Document?> getHomePageDocument() async {
@@ -69,9 +78,8 @@ class MangaWorld {
     return popular;
   }
 
-  static Future<List<MangaBuilder>> getResults(String keyword) async {
-    List<MangaBuilder> tmp = [];
-
+  static Future<List<MangaBuilder>> getResults(String keyword,
+      [List<MangaBuilder> results = const []]) async {
     Response res = Response(requestOptions: RequestOptions());
     try {
       res = await dio.get('/archive', queryParameters: {'sort': 'most_read', 'keyword': keyword});
@@ -80,14 +88,14 @@ class MangaWorld {
       if (kDebugMode) {
         print("riga 81: $e");
       }
-      return [];
+      return results;
     }
 
     if (res.statusCode == 200) {
       Document document = parse(res.data);
       var mangaList = document.querySelectorAll('.comics-grid > .entry');
       for (var element in mangaList) {
-        tmp.add(
+        results.add(
           MangaBuilder()
             ..status = element.querySelector('.content > .status > a')?.text
             ..titleImageLink = _getTitleImageLink(element)
@@ -100,7 +108,7 @@ class MangaWorld {
     } else {
       Utils.showSnackBar("Network problem");
     }
-    return tmp;
+    return results;
   }
 
   static List<String?> _getTitleImageLink(var element) {
