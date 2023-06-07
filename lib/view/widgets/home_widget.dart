@@ -38,7 +38,7 @@ class Recent extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return AspectRatio(
-                          aspectRatio: 0.9,
+                          aspectRatio: .9,
                           child: MangaCard(
                             mangaBuilder: builders![index],
                             tag: 'recent$index',
@@ -46,10 +46,12 @@ class Recent extends StatelessWidget {
                         );
                       },
                     );
-                  } else if (builders != null) {
+                  } else if (builders == null) {
                     return ListView.builder(
+                      physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) => const CardSkelton(),
+                      itemBuilder: (context, index) =>
+                          const AspectRatio(aspectRatio: .9, child: CardSkelton(aspectRatio: .9)),
                     );
                   } else {
                     return const Center();
@@ -103,7 +105,7 @@ class Popular extends StatelessWidget {
                       padding: const EdgeInsets.only(top: defaultPadding / 2, left: defaultPadding),
                       itemBuilder: (_, index) {
                         return AspectRatio(
-                          aspectRatio: 0.7,
+                          aspectRatio: .7,
                           child: MangaCard(
                             mangaBuilder: builders![index],
                             tag: 'popular$index',
@@ -113,10 +115,11 @@ class Popular extends StatelessWidget {
                         );
                       },
                     );
-                  } else if (builders != null) {
+                  } else if (builders == null) {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) => const CardSkelton(),
+                      itemBuilder: (context, index) =>
+                          const AspectRatio(aspectRatio: .7, child: CardSkelton(aspectRatio: .7)),
                     );
                   } else {
                     return const Center();

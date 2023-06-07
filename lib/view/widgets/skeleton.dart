@@ -17,17 +17,14 @@ class Skeleton extends StatelessWidget {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
-      child: Center(
-        child: Container(
-          height: height,
-          width: width,
-          padding: const EdgeInsets.all(8),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-            color: Colors.transparent,
-          ),
-          //child: child,
+      child: Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: const BorderRadius.all(Radius.circular(16)),
         ),
+        //child: child,
       ),
     );
   }
@@ -35,36 +32,36 @@ class Skeleton extends StatelessWidget {
 
 class CardSkelton extends StatelessWidget {
   const CardSkelton({
-    this.maxLineText = 1,
     Key? key,
+    required this.aspectRatio,
   }) : super(key: key);
 
-  final double maxLineText;
+  final double aspectRatio;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.none,
       children: [
-        Card(
-          elevation: 10,
-          margin: const EdgeInsets.all(defaultPadding),
-          color: backgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        Positioned.fill(
+          child: Card(
+            elevation: 10,
+            margin: const EdgeInsets.all(defaultPadding),
+            color: backgroundColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
         ),
-        Positioned(
-          top: -5,
-          child: Column(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: const Skeleton(
-                  color: Colors.white,
-                ),
-              ),
-              const Skeleton(
+        Container(
+          color: Colors.transparent,
+          margin: const EdgeInsets.symmetric(horizontal: defaultPadding * 1.5),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: AspectRatio(
+              aspectRatio: aspectRatio,
+              child: const Skeleton(
                 color: Colors.white,
               ),
-            ],
+            ),
           ),
         ),
       ],
@@ -75,17 +72,20 @@ class CardSkelton extends StatelessWidget {
 class SkeletonGrid extends StatelessWidget {
   const SkeletonGrid({
     Key? key,
+    this.axisCount = 2,
   }) : super(key: key);
+
+  final int axisCount;
 
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-        builder: (context, orientation) => GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: defaultPadding * 1.5,
-              ),
-              itemBuilder: (context, index) => const CardSkelton(),
-            ));
+    return GridView.builder(
+      physics: const BouncingScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: axisCount,
+        childAspectRatio: .9,
+      ),
+      itemBuilder: (context, index) => const CardSkelton(aspectRatio: .9),
+    );
   }
 }

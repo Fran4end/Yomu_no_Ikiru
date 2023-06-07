@@ -216,9 +216,9 @@ class _ReaderState extends State<Reader> {
                                           borderRadius: BorderRadius.circular(20.0)),
                                       backgroundColor: secondaryColor,
                                     ),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
+                                      children: const [
                                         Text('Previous Chapter'),
                                         Icon(Icons.forward),
                                       ],

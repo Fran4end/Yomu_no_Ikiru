@@ -10,6 +10,7 @@ import 'package:manga_app/view/Pages/user_page.dart';
 import 'package:manga_app/view/Pages/search_page.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'package:rive/rive.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,9 +31,11 @@ class MyApp extends StatelessWidget {
       scaffoldMessengerKey: Utils.messengerKey,
       title: 'Manga!',
       theme: ThemeData(
+        useMaterial3: true,
         brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
+        useMaterial3: true,
         brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.system,
@@ -50,6 +53,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectPage = 0;
+
+  late SMIBool homeTrigger;
 
   @override
   Widget build(BuildContext context) {
@@ -69,12 +74,32 @@ class _MyHomePageState extends State<MyHomePage> {
             onDestinationSelected: (value) => setState(() {
               _selectPage = value;
             }),
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: 'Home',
+            destinations: [
+              GestureDetector(
+                onTap: () {
+                  homeTrigger.change(true);
+                  Future.delayed(
+                    const Duration(seconds: 1),
+                    () {
+                      homeTrigger.change(false);
+                    },
+                  );
+                },
+                child: RiveAnimation.asset(
+                  "assets/RiveAssets/icons.riv",
+                  artboard: "HOME",
+                  onInit: (artboard) {
+                    StateMachineController controller = RiveUtils.getRiveController(artboard,
+                        stateMachineName: "HOME_interactivity");
+                    homeTrigger = controller.findSMI("active") as SMIBool;
+                  },
+                ),
               ),
+              // NavigationDestination(
+              //   icon: Icon(Icons.home_outlined),
+              //   selectedIcon: Icon(Icons.home),
+              //   label: 'Home',
+              // ),
               NavigationDestination(
                 icon: Icon(CupertinoIcons.compass),
                 selectedIcon: Icon(Icons.search_outlined),

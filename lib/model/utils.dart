@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:manga_app/model/file_manager.dart';
 import 'package:path/path.dart';
 import 'package:manga_app/model/manga_builder.dart';
+import 'package:rive/rive.dart';
 
 class Utils {
   static final messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -79,5 +80,15 @@ class Utils {
       }
       return [];
     }
+  }
+}
+
+class RiveUtils {
+  static StateMachineController getRiveController(Artboard artboard,
+      {stateMachineName = "State Machine 1"}) {
+    StateMachineController? controller =
+        StateMachineController.fromArtboard(artboard, stateMachineName);
+    artboard.addController(controller!);
+    return controller;
   }
 }

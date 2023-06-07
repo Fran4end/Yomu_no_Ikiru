@@ -92,6 +92,7 @@ class MangaWorld {
     }
 
     if (res.statusCode == 200) {
+      results = [];
       Document document = parse(res.data);
       var mangaList = document.querySelectorAll('.comics-grid > .entry');
       for (var element in mangaList) {
