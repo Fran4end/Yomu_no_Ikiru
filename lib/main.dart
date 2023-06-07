@@ -54,7 +54,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectPage = 0;
 
-  late SMIBool homeTrigger;
+  SMIBool? trigger;
+  late StateMachineController homeController;
+  late StateMachineController searchController;
+  late StateMachineController libraryController;
+  late StateMachineController userController;
 
   @override
   Widget build(BuildContext context) {
@@ -71,35 +75,75 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 60,
             animationDuration: const Duration(milliseconds: 400),
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-            onDestinationSelected: (value) => setState(() {
-              _selectPage = value;
-            }),
+            onDestinationSelected: (value) {
+              setState(() {
+                _selectPage = value;
+                trig();
+              });
+            },
             destinations: [
-              GestureDetector(
-                onTap: () {
-                  homeTrigger.change(true);
-                  Future.delayed(
-                    const Duration(seconds: 1),
-                    () {
-                      homeTrigger.change(false);
+              NavigationDestination(
+                icon: SizedBox(
+                  height: 30,
+                  child: RiveAnimation.asset(
+                    "assets/RiveAssets/icons.riv",
+                    artboard: "HOME",
+                    onInit: (artboard) {
+                      homeController = RiveUtils.getRiveController(artboard,
+                          stateMachineName: "HOME_interactivity");
                     },
-                  );
-                },
-                child: RiveAnimation.asset(
-                  "assets/RiveAssets/icons.riv",
-                  artboard: "HOME",
-                  onInit: (artboard) {
-                    StateMachineController controller = RiveUtils.getRiveController(artboard,
-                        stateMachineName: "HOME_interactivity");
-                    homeTrigger = controller.findSMI("active") as SMIBool;
-                  },
+                  ),
                 ),
+                label: 'Home',
               ),
-              // NavigationDestination(
-              //   icon: Icon(Icons.home_outlined),
-              //   selectedIcon: Icon(Icons.home),
-              //   label: 'Home',
-              // ),
+              NavigationDestination(
+                icon: SizedBox(
+                  height: 30,
+                  child: RiveAnimation.asset(
+                    "assets/RiveAssets/icons.riv",
+                    artboard: "HOME",
+                    onInit: (artboard) {
+                      searchController = RiveUtils.getRiveController(artboard,
+                          stateMachineName: "HOME_interactivity");
+                    },
+                  ),
+                ),
+                label: 'Search',
+              ),
+              NavigationDestination(
+                icon: SizedBox(
+                  height: 30,
+                  child: RiveAnimation.asset(
+                    "assets/RiveAssets/icons.riv",
+                    artboard: "HOME",
+                    onInit: (artboard) {
+                      libraryController = RiveUtils.getRiveController(artboard,
+                          stateMachineName: "HOME_interactivity");
+                    },
+                  ),
+                ),
+                label: 'Library',
+              ),
+              NavigationDestination(
+                icon: SizedBox(
+                  height: 30,
+                  child: RiveAnimation.asset(
+                    "assets/RiveAssets/icons.riv",
+                    artboard: "HOME",
+                    onInit: (artboard) {
+                      userController = RiveUtils.getRiveController(artboard,
+                          stateMachineName: "HOME_interactivity");
+                    },
+                  ),
+                ),
+                label: 'Account',
+              ),
+
+              /*NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: 'Home',
+              ),
               NavigationDestination(
                 icon: Icon(CupertinoIcons.compass),
                 selectedIcon: Icon(Icons.search_outlined),
@@ -114,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: Icon(Icons.account_box_outlined),
                 selectedIcon: Icon(Icons.account_box),
                 label: 'Account',
-              ),
+              ),*/
             ],
           ),
         ),
@@ -129,5 +173,33 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  void trig() {
+    switch (_selectPage) {
+      case 0:
+        trigger = homeController.findSMI("active") as SMIBool;
+        break;
+      case 1:
+        trigger = searchController.findSMI("active") as SMIBool;
+        break;
+      case 2:
+        trigger = libraryController.findSMI("active") as SMIBool;
+        break;
+      case 3:
+        trigger = userController.findSMI("active") as SMIBool;
+        break;
+      default:
+        trigger = null;
+    }
+    if (trigger != null) {
+      trigger!.change(true);
+      Future.delayed(
+        const Duration(seconds: 1),
+        () {
+          trigger!.change(false);
+        },
+      );
+    }
   }
 }
