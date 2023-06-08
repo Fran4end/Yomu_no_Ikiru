@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'model/utils.dart';
 
 const String baseUrl = "https://www.mangaworld.so";
 const double defaultPadding = 16;
 final navigatorKey = GlobalKey<NavigatorState>();
+final List<RiveAsset> bottomNavigators = [
+  RiveAsset("assets/RiveAssets/icons.riv",
+      artboard: "HOME", stateMachineName: "HOME_interactivity", title: "Home"),
+  RiveAsset("assets/RiveAssets/icons.riv",
+      artboard: "SEARCH", stateMachineName: "SEARCH_Interactivity", title: "Search"),
+  RiveAsset("assets/RiveAssets/icons.riv",
+      artboard: "LIKE/STAR", stateMachineName: "STAR_Interactivity", title: "Library"),
+  RiveAsset("assets/RiveAssets/icons.riv",
+      artboard: "USER", stateMachineName: "USER_Interactivity", title: "Account"),
+];
 
 // * Text Style
 TextStyle titleStyle({double? fontSize = 18}) {

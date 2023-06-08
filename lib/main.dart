@@ -1,5 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/constants.dart';
 import 'package:manga_app/model/google_sign_in_provider.dart';
@@ -39,127 +38,77 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.system,
-      home: const MyHomePage(),
+      home: const NavigationBarWidget(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class NavigationBarWidget extends StatefulWidget {
+  const NavigationBarWidget({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<NavigationBarWidget> createState() => _NavigationBarWidgetState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _NavigationBarWidgetState extends State<NavigationBarWidget> {
   int _selectPage = 0;
 
-  SMIBool? trigger;
-  late StateMachineController homeController;
-  late StateMachineController searchController;
-  late StateMachineController libraryController;
-  late StateMachineController userController;
+  RiveAsset selectedButton = bottomNavigators.first;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => GoogleSignInProvider(),
       child: Scaffold(
-        bottomNavigationBar: NavigationBarTheme(
-          data: NavigationBarThemeData(
-              labelTextStyle: MaterialStateProperty.all(
-            const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          )),
-          child: NavigationBar(
-            selectedIndex: _selectPage,
-            height: 60,
-            animationDuration: const Duration(milliseconds: 400),
-            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-            onDestinationSelected: (value) {
-              setState(() {
-                _selectPage = value;
-                trig();
-              });
-            },
-            destinations: [
-              NavigationDestination(
-                icon: SizedBox(
-                  height: 30,
-                  child: RiveAnimation.asset(
-                    "assets/RiveAssets/icons.riv",
-                    artboard: "HOME",
-                    onInit: (artboard) {
-                      homeController = RiveUtils.getRiveController(artboard,
-                          stateMachineName: "HOME_interactivity");
-                    },
+        bottomNavigationBar: SafeArea(
+          child: NavigationBarTheme(
+            data: NavigationBarThemeData(
+                labelTextStyle: MaterialStateProperty.all(
+              const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            )),
+            child: NavigationBar(
+              selectedIndex: _selectPage,
+              height: 60,
+              animationDuration: const Duration(milliseconds: 400),
+              labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+              onDestinationSelected: (value) {
+                bottomNavigators[value].input!.change(true);
+                Future.delayed(
+                  const Duration(seconds: 1),
+                  () {
+                    bottomNavigators[value].input!.change(false);
+                  },
+                );
+                setState(() {
+                  selectedButton = bottomNavigators[value];
+                  _selectPage = value;
+                });
+              },
+              destinations: [
+                ...List.generate(
+                  bottomNavigators.length,
+                  (index) => NavigationDestination(
+                    icon: SizedBox(
+                      height: 36,
+                      width: 36,
+                      child: Opacity(
+                        opacity: bottomNavigators[index] == selectedButton ? 1 : .5,
+                        child: RiveAnimation.asset(
+                          bottomNavigators.first.src,
+                          artboard: bottomNavigators[index].artboard,
+                          onInit: (artboard) {
+                            StateMachineController controller = Utils.getRiveController(artboard,
+                                stateMachineName: bottomNavigators[index].stateMachineName);
+                            bottomNavigators[index].input = controller.findSMI("active");
+                          },
+                        ),
+                      ),
+                    ),
+                    label: bottomNavigators[index].title,
                   ),
                 ),
-                label: 'Home',
-              ),
-              NavigationDestination(
-                icon: SizedBox(
-                  height: 30,
-                  child: RiveAnimation.asset(
-                    "assets/RiveAssets/icons.riv",
-                    artboard: "HOME",
-                    onInit: (artboard) {
-                      searchController = RiveUtils.getRiveController(artboard,
-                          stateMachineName: "HOME_interactivity");
-                    },
-                  ),
-                ),
-                label: 'Search',
-              ),
-              NavigationDestination(
-                icon: SizedBox(
-                  height: 30,
-                  child: RiveAnimation.asset(
-                    "assets/RiveAssets/icons.riv",
-                    artboard: "HOME",
-                    onInit: (artboard) {
-                      libraryController = RiveUtils.getRiveController(artboard,
-                          stateMachineName: "HOME_interactivity");
-                    },
-                  ),
-                ),
-                label: 'Library',
-              ),
-              NavigationDestination(
-                icon: SizedBox(
-                  height: 30,
-                  child: RiveAnimation.asset(
-                    "assets/RiveAssets/icons.riv",
-                    artboard: "HOME",
-                    onInit: (artboard) {
-                      userController = RiveUtils.getRiveController(artboard,
-                          stateMachineName: "HOME_interactivity");
-                    },
-                  ),
-                ),
-                label: 'Account',
-              ),
-
-              /*NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              NavigationDestination(
-                icon: Icon(CupertinoIcons.compass),
-                selectedIcon: Icon(Icons.search_outlined),
-                label: 'Search',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.my_library_books_outlined),
-                selectedIcon: Icon(Icons.my_library_books),
-                label: 'Library',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.account_box_outlined),
-                selectedIcon: Icon(Icons.account_box),
-                label: 'Account',
-              ),*/
-            ],
+              ],
+            ),
           ),
         ),
         body: IndexedStack(
@@ -173,33 +122,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
-  }
-
-  void trig() {
-    switch (_selectPage) {
-      case 0:
-        trigger = homeController.findSMI("active") as SMIBool;
-        break;
-      case 1:
-        trigger = searchController.findSMI("active") as SMIBool;
-        break;
-      case 2:
-        trigger = libraryController.findSMI("active") as SMIBool;
-        break;
-      case 3:
-        trigger = userController.findSMI("active") as SMIBool;
-        break;
-      default:
-        trigger = null;
-    }
-    if (trigger != null) {
-      trigger!.change(true);
-      Future.delayed(
-        const Duration(seconds: 1),
-        () {
-          trigger!.change(false);
-        },
-      );
-    }
   }
 }

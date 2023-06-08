@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manga_app/constants.dart';
@@ -7,10 +6,9 @@ import 'package:manga_app/model/manga.dart';
 import 'package:manga_app/model/manga_builder.dart';
 import 'package:manga_app/mangaworld.dart';
 import 'package:manga_app/view/Pages/reader_page.dart';
-import 'package:manga_app/view/widgets/skeleton.dart';
 import '../../model/file_manager.dart';
 import '../../model/utils.dart';
-import '../widgets/top_buttons.dart';
+import '../widgets/manga_page_widget.dart';
 
 class MangaPage extends StatefulWidget {
   const MangaPage({
@@ -29,7 +27,6 @@ class MangaPage extends StatefulWidget {
 
 class _MangaPageState extends State<MangaPage> {
   late MangaBuilder mangaBuilder = widget.mangaBuilder;
-  Widget genres = const Center();
   Map fileContent = {};
   final User? user = FirebaseAuth.instance.currentUser;
   late bool save = widget.save;
@@ -39,11 +36,8 @@ class _MangaPageState extends State<MangaPage> {
   @override
   void initState() {
     super.initState();
-    print(widget.tag);
     MangaWorld().getAllInfo(mangaBuilder).then((value) {
       mangaBuilder = value;
-      final manga = mangaBuilder.build();
-      genres = GenresWrap(manga: manga);
       if (mounted) {
         timer = Timer.periodic(
           const Duration(seconds: 3),
@@ -91,10 +85,9 @@ class _MangaPageState extends State<MangaPage> {
                     tag: widget.tag,
                     mangaImage: manga.image,
                     screen: screen,
-                    expandedHeight: (screen.height / 2) + 55,
-                    genres: genres,
+                    expandedHeight: 450,
                     save: save,
-                    function: () {
+                    rightButtonFunction: () {
                       if (user != null) {
                         if (save) {
                           FileManager.deleteFile(manga.title);
@@ -144,7 +137,21 @@ class _MangaPageState extends State<MangaPage> {
             ),
           ),
           ElevatedButton(
-            onPressed: () async => _resumeFunction(manga),
+            onPressed: () async {
+              if (manga.chapters.isNotEmpty && !isLoading) {
+                mangaBuilder = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => Reader(
+                      index: (manga.chapters.length - manga.index) - 1,
+                      chapters: manga.chapters,
+                      chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
+                      pageIndex: manga.pageIndex,
+                      builder: mangaBuilder,
+                    ),
+                  ),
+                );
+              }
+            },
             style: ElevatedButton.styleFrom(
               fixedSize: Size((screen.width / 2) - 50, 45),
               elevation: 10,
@@ -158,22 +165,6 @@ class _MangaPageState extends State<MangaPage> {
         ],
       ),
     );
-  }
-
-  _resumeFunction(Manga manga) async {
-    if (manga.chapters.isNotEmpty && !isLoading) {
-      mangaBuilder = await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Reader(
-            index: (manga.chapters.length - manga.index) - 1,
-            chapters: manga.chapters,
-            chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
-            pageIndex: manga.pageIndex,
-            builder: mangaBuilder,
-          ),
-        ),
-      );
-    }
   }
 
   Widget buildChapters(Manga manga) => SliverPadding(
@@ -217,210 +208,4 @@ class _MangaPageState extends State<MangaPage> {
           ),
         ),
       );
-}
-
-class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  final Manga manga;
-  final String mangaImage;
-  final Size screen;
-  final double expandedHeight;
-  final Widget genres;
-  final bool save;
-  final String tag;
-  final Function()? function;
-  CustomSliverAppBarDelegate({
-    required this.manga,
-    required this.mangaImage,
-    required this.screen,
-    required this.expandedHeight,
-    required this.genres,
-    required this.save,
-    required this.tag,
-    required this.function,
-  });
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    const double size = 130;
-    final top = expandedHeight - shrinkOffset - size;
-    return Stack(
-      fit: StackFit.expand,
-      clipBehavior: Clip.none,
-      children: [
-        buildBackground(shrinkOffset, screen, mangaImage),
-        buildAppBar(shrinkOffset, context, function),
-        Positioned(
-          bottom: expandedHeight - top - size,
-          child: buildDetail(screen, shrinkOffset),
-        ),
-      ],
-    );
-  }
-
-  Widget buildDetail(Size screen, double shrinkOffset) {
-    return Opacity(
-      opacity: disappear(shrinkOffset),
-      child: SizedBox(
-        width: screen.width - 20,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            genres,
-            Container(
-              padding: const EdgeInsets.all(defaultPadding),
-              width: (screen.width - 20) / 2,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.star,
-                        color: Colors.orange,
-                        size: 22.0,
-                      ),
-                      const SizedBox(width: defaultPadding / 2),
-                      Text(
-                        manga.vote.toString(),
-                        style: subtitleStyle(),
-                      ),
-                      const SizedBox(width: defaultPadding / 2),
-                      Text(
-                        '(${manga.readings})',
-                        style: miniStyle(),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildAppBar(double shrinkOffset, BuildContext context, Function()? function) => Opacity(
-        opacity: 0.8,
-        child: AppBar(
-          centerTitle: true,
-          titleTextStyle: titleStyle(),
-          leading: Padding(
-            padding: const EdgeInsets.all(defaultPadding / 2),
-            child: TopButtonsFunctions(
-              ic: const Icon(Icons.arrow_back_ios_new_rounded),
-              function: () => Navigator.of(context).pop(),
-            ),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(defaultPadding / 2),
-              child: TopButtonsFunctions(
-                ic: save
-                    ? const Icon(Icons.favorite_rounded)
-                    : const Icon(Icons.favorite_outline_rounded),
-                function: function,
-              ),
-            ),
-            const SizedBox(
-              width: defaultPadding / 2,
-            ),
-          ],
-          title: FittedBox(
-            fit: BoxFit.contain,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      manga.title.toString(),
-                      style: titleStyle(),
-                      textAlign: TextAlign.center,
-                    ),
-                    Wrap(
-                      direction: Axis.horizontal,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Text(
-                          manga.author.toString(),
-                          style: subtitleStyle(),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-                          child: CircleAvatar(
-                            radius: 3,
-                            backgroundColor: Colors.black,
-                          ),
-                        ),
-                        Text(
-                          manga.artist.toString(),
-                          style: subtitleStyle(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-
-  Widget buildBackground(double shrinkOffset, Size screen, String image) => Hero(
-      tag: tag,
-      child: SizedBox(
-        width: screen.width,
-        child: CachedNetworkImage(
-          imageUrl: image,
-          fit: BoxFit.cover,
-          progressIndicatorBuilder: (context, url, downloadProgress) =>
-              const Center(child: Skeleton(color: Colors.white)),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-        ),
-      ));
-
-  double disappear(double shrinkOffset) => 1 - shrinkOffset / expandedHeight;
-
-  @override
-  double get maxExtent => expandedHeight;
-
-  @override
-  double get minExtent => kToolbarHeight + 30;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
-}
-
-class GenresWrap extends StatelessWidget {
-  const GenresWrap({
-    Key? key,
-    required this.manga,
-  }) : super(key: key);
-
-  final Manga manga;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        direction: Axis.horizontal,
-        children: manga.genres.map((e) {
-          return Card(
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(defaultPadding / 2),
-                child: Text(e),
-              ));
-        }).toList(),
-      ),
-    );
-  }
 }

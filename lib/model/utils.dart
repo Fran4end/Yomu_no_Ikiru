@@ -81,14 +81,32 @@ class Utils {
       return [];
     }
   }
+
+  static StateMachineController getRiveController(Artboard artboard, {required stateMachineName}) {
+    StateMachineController? controller;
+    controller = StateMachineController.fromArtboard(artboard, stateMachineName);
+    if (controller != null) {
+      artboard.addController(controller);
+      return controller;
+    } else {
+      return StateMachineController(StateMachine());
+    }
+  }
 }
 
-class RiveUtils {
-  static StateMachineController getRiveController(Artboard artboard,
-      {stateMachineName = "State Machine 1"}) {
-    StateMachineController? controller =
-        StateMachineController.fromArtboard(artboard, stateMachineName);
-    artboard.addController(controller!);
-    return controller;
+class RiveAsset {
+  final String artboard, stateMachineName, title, src;
+  late SMIBool? input;
+
+  RiveAsset(
+    this.src, {
+    required this.artboard,
+    required this.stateMachineName,
+    required this.title,
+    this.input,
+  });
+
+  set setInput(SMIBool status) {
+    input = status;
   }
 }
