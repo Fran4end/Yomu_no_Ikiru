@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:manga_app/view/widgets/genres_wrap.dart';
 import 'package:manga_app/view/widgets/skeleton.dart';
 import 'package:manga_app/view/widgets/top_buttons.dart';
+import 'package:expandable/expandable.dart';
 
 import '../../constants.dart';
 import '../../model/manga.dart';
@@ -54,10 +55,9 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
             GenresWrap(manga: manga),
             Container(
               padding: const EdgeInsets.all(defaultPadding),
-              width: (screen.width - 20) / 2,
-              child: Column(
-                children: [
-                  Row(
+              child: ExpandableNotifier(
+                child: ExpandablePanel(
+                  header: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
@@ -76,8 +76,19 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
                         style: miniStyle(),
                       )
                     ],
-                  )
-                ],
+                  ),
+                  collapsed: Text(
+                    manga.plot.substring(0, 100),
+                    overflow: TextOverflow.fade,
+                  ),
+                  expanded: Text(manga.plot),
+                  theme: const ExpandableThemeData(
+                    hasIcon: false,
+                    headerAlignment: ExpandablePanelHeaderAlignment.center,
+                    tapBodyToCollapse: true,
+                    tapBodyToExpand: true,
+                  ),
+                ),
               ),
             ),
           ],

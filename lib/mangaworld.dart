@@ -100,7 +100,6 @@ class MangaWorld {
           MangaBuilder()
             ..status = element.querySelector('.content > .status > a')?.text
             ..titleImageLink = _getTitleImageLink(element)
-            ..plot = element.querySelector('.content > .story')?.text
             ..author = element.querySelector('.content > .author > a')?.text
             ..artist = element.querySelector('.content > .artist > a')?.text
             ..genres = _getGenres(element.querySelectorAll('.content > .genres > a'))!,

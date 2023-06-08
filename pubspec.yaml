@@ -56,6 +56,7 @@ dependencies:
   dio_smart_retry: ^5.0.0
   dio_cache_interceptor: ^3.4.2
   rive: ^0.11.2
+  expandable: ^5.0.1
 
 dev_dependencies:
   flutter_test:
