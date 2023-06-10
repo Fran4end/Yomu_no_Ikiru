@@ -87,6 +87,7 @@ class _MangaPageState extends State<MangaPage> {
                     screen: screen,
                     expandedHeight: 450,
                     save: save,
+                    isLoading: isLoading,
                     rightButtonFunction: () {
                       if (user != null) {
                         if (save) {

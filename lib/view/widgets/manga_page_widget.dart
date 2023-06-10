@@ -15,6 +15,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final bool save;
   final String tag;
+  final bool isLoading;
   final Function()? rightButtonFunction;
   CustomSliverAppBarDelegate({
     required this.manga,
@@ -23,6 +24,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     required this.expandedHeight,
     required this.save,
     required this.tag,
+    required this.isLoading,
     required this.rightButtonFunction,
   });
 
@@ -43,58 +45,62 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 
   Widget buildDetail(Size screen, double shrinkOffset) {
-    return Opacity(
-      opacity: disappear(shrinkOffset).isNegative ? 0 : disappear(shrinkOffset),
-      child: SizedBox(
-        width: screen.width - 20,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            GenresWrap(manga: manga),
-            Container(
-              padding: const EdgeInsets.all(defaultPadding),
-              child: ExpandableNotifier(
-                child: ExpandablePanel(
-                  header: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.star,
-                        color: Colors.orange,
-                        size: 22.0,
-                      ),
-                      const SizedBox(width: defaultPadding / 2),
-                      Text(
-                        manga.vote.toString(),
-                        style: subtitleStyle(),
-                      ),
-                      const SizedBox(width: defaultPadding / 2),
-                      Text(
-                        '(${manga.readings})',
-                        style: miniStyle(),
-                      )
-                    ],
-                  ),
-                  collapsed: Text(
-                    manga.plot.substring(0, 100),
-                    overflow: TextOverflow.fade,
-                  ),
-                  expanded: Text(manga.plot),
-                  theme: const ExpandableThemeData(
-                    hasIcon: false,
-                    headerAlignment: ExpandablePanelHeaderAlignment.center,
-                    tapBodyToCollapse: true,
-                    tapBodyToExpand: true,
+    if (!isLoading) {
+      return Opacity(
+        opacity: disappear(shrinkOffset).isNegative ? 0 : disappear(shrinkOffset),
+        child: SizedBox(
+          width: screen.width - 20,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GenresWrap(manga: manga),
+              Container(
+                padding: const EdgeInsets.all(defaultPadding),
+                child: ExpandableNotifier(
+                  child: ExpandablePanel(
+                    header: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.star,
+                          color: Colors.orange,
+                          size: 22.0,
+                        ),
+                        const SizedBox(width: defaultPadding / 2),
+                        Text(
+                          manga.vote.toString(),
+                          style: subtitleStyle(),
+                        ),
+                        const SizedBox(width: defaultPadding / 2),
+                        Text(
+                          '(${manga.readings})',
+                          style: miniStyle(),
+                        )
+                      ],
+                    ),
+                    collapsed: Text(
+                      manga.plot.substring(0, 100),
+                      overflow: TextOverflow.fade,
+                    ),
+                    expanded: Text(manga.plot),
+                    theme: const ExpandableThemeData(
+                      hasIcon: false,
+                      headerAlignment: ExpandablePanelHeaderAlignment.center,
+                      tapBodyToCollapse: true,
+                      tapBodyToExpand: true,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return const Center();
+    }
   }
 
   Widget buildAppBar(double shrinkOffset, BuildContext context, Function()? function) => Opacity(
