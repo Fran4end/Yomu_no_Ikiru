@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:manga_app/view/Pages/auth_page.dart';
-import 'package:manga_app/view/Pages/verify_email_page.dart';
+
+import 'auth_page.dart';
+import 'verify_email_page.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});

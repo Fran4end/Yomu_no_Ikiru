@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:manga_app/model/manga_builder.dart';
-import 'package:manga_app/view/widgets/manga_widget.dart';
 import '../../constants.dart';
+import '../../model/manga_builder.dart';
+import 'manga_widget.dart';
 import 'skeleton.dart';
 
 class Recent extends StatelessWidget {

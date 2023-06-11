@@ -1,15 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:manga_app/constants.dart';
-import 'package:manga_app/model/google_sign_in_provider.dart';
-import 'package:manga_app/model/utils.dart';
-import 'package:manga_app/view/Pages/home_page.dart';
-import 'package:manga_app/view/Pages/library_page.dart';
-import 'package:manga_app/view/Pages/user_page.dart';
-import 'package:manga_app/view/Pages/search_page.dart';
 import 'package:provider/provider.dart';
+import 'constants.dart';
 import 'firebase_options.dart';
 import 'package:rive/rive.dart';
+
+import 'view/Pages/user_page.dart';
+import 'model/google_sign_in_provider.dart';
+import 'model/utils.dart';
+import 'view/Pages/home_page.dart';
+import 'view/Pages/library_page.dart';
+import 'view/Pages/search_page.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();

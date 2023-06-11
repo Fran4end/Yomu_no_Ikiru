@@ -1,4 +1,5 @@
-import 'package:manga_app/model/chapter.dart';
+
+import 'chapter.dart';
 
 class Manga {
   final String title;
@@ -56,7 +57,7 @@ class Manga {
         'author': author,
         'genres': genres,
         'vote': vote,
-        'chapters': chapters,
+        'chapters': chapters.map((e) => e.toJson()).toList(),
         'readings': readings,
         'index': index,
         'pageIndex': pageIndex,

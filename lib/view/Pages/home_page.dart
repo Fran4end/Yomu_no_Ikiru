@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:manga_app/mangaworld.dart';
-import 'package:manga_app/model/manga_builder.dart';
 
 import '../../constants.dart';
+import '../../mangaworld.dart';
+import '../../model/manga_builder.dart';
 import '../widgets/home_widget.dart';
 
 class HomePage extends StatefulWidget {

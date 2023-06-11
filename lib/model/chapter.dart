@@ -15,12 +15,11 @@ class Chapter {
 
   set volumeCover(List value) {}
 
-  Chapter.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        link = json['link'],
-        date = json['date'],
-        volume = json['volume'],
-        cover = json['cover'];
+  factory Chapter.fromJson(Map<String, dynamic> json) {
+    return Chapter(date: json['date'], title: json['title'], link: json['link']);
+  }
+  // volume = json['volume'],
+  // cover = json['cover'];
 
   Map<String, dynamic> toJson() => {
         'title': title,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:manga_app/view/widgets/skeleton.dart';
 
 import '../../constants.dart';
 import '../../model/manga.dart';
 import '../../model/manga_builder.dart';
 import '../Pages/manga_page.dart';
+import 'skeleton.dart';
 
 class MangaCard extends StatelessWidget {
   const MangaCard({
@@ -97,11 +97,13 @@ class MangaGrid extends StatelessWidget {
     required this.listManga,
     this.axisCount = 2,
     this.save = false,
+    this.tag = "grid",
   }) : super(key: key);
 
   final bool save;
   final List<MangaBuilder> listManga;
   final int axisCount;
+  final String tag;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +117,7 @@ class MangaGrid extends StatelessWidget {
         return MangaCard(
           mangaBuilder: listManga[index],
           save: save,
-          tag: "grid$index",
+          tag: "$tag$index",
         );
       }),
       itemCount: listManga.length,

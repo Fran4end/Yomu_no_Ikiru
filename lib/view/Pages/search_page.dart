@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:manga_app/model/manga_builder.dart';
 import '../../constants.dart';
 import '../../mangaworld.dart';
+import '../../model/manga_builder.dart';
 import '../widgets/skeleton.dart';
 import '../widgets/manga_widget.dart';
 

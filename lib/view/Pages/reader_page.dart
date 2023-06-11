@@ -3,15 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html/parser.dart';
-import 'package:manga_app/constants.dart';
-import 'package:manga_app/model/chapter.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:http/http.dart' as http;
-import 'package:manga_app/model/manga_builder.dart';
 import 'package:photo_view/photo_view.dart';
 import 'dart:math';
 
 import 'package:photo_view/photo_view_gallery.dart';
+
+import '../../constants.dart';
+import '../../model/chapter.dart';
+import '../../model/manga_builder.dart';
 
 class Reader extends StatefulWidget {
   const Reader({

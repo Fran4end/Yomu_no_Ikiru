@@ -5,9 +5,10 @@ import 'package:html/parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:manga_app/constants.dart';
-import 'package:manga_app/model/manga_builder.dart';
-import 'package:manga_app/model/utils.dart';
+
+import 'constants.dart';
+import 'model/manga_builder.dart';
+import 'model/utils.dart';
 
 class MangaWorld {
   static final Dio dio = Dio(BaseOptions(baseUrl: baseUrl));
@@ -37,7 +38,7 @@ class MangaWorld {
     try {
       Response res = await dio.get("");
       document = parse(res.data);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       Utils.showSnackBar("Network problem");
       if (kDebugMode) {
         print("riga 34: $e");
@@ -83,7 +84,7 @@ class MangaWorld {
     Response res = Response(requestOptions: RequestOptions());
     try {
       res = await dio.get('/archive', queryParameters: {'sort': 'most_read', 'keyword': keyword});
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       Utils.showSnackBar("Network problem");
       if (kDebugMode) {
         print("riga 81: $e");
@@ -119,7 +120,10 @@ class MangaWorld {
     ];
   }
 
-  Future<MangaBuilder> getAllInfo(MangaBuilder builder) async {
+  Future<MangaBuilder> getAllInfo(MangaBuilder builder, bool reloadChapters) async {
+    if (builder.alreadyLoaded) {
+      return builder;
+    }
     final saveBuilder = await Utils.isOnLibrary(builder.title);
     try {
       if (saveBuilder.runtimeType == MangaBuilder) {
@@ -132,6 +136,11 @@ class MangaWorld {
       }
       var info = document.querySelector('.info > .meta-data');
       String? readings = info?.children[6].children[1].text;
+      if (builder.artist == "No artist found") {
+        builder
+          ..artist = null
+          ..author = null;
+      }
       builder
         ..readingsVote = [
           double.tryParse(readings.toString()),
@@ -140,19 +149,23 @@ class MangaWorld {
         ..artist ??= info!.children[3].querySelector('a')!.text
         ..author ??= info!.children[2].querySelector('a')!.text
         ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
-        ..plot ??= document.querySelector('.comic-description > #noidungm')!.text;
-      if (builder.chapters.isEmpty) {
+        ..plot = document.querySelector('#noidungm')!.text;
+      if (builder.chapters.isEmpty || reloadChapters) {
+        print("Chap");
         builder = await getChapters(builder, document);
       }
+      builder.alreadyLoaded = true;
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+
     return builder;
   }
 
   Future<MangaBuilder> getChapters(MangaBuilder builder, Document document) async {
+    builder.chapters.clear();
     List<Element> chaptersElement =
         document.querySelector('.chapters-wrapper')!.querySelectorAll('.chapter > .chap');
     for (var chap in chaptersElement) {
@@ -170,7 +183,7 @@ class MangaWorld {
         chap.querySelector('i')!.text,
         link,
       ];
-      builder.chap = data;
+      builder.newChapters = data;
     }
     return builder;
   }
@@ -182,7 +195,7 @@ class MangaWorld {
     try {
       res = await dio.get(link.toString());
       document = parse(res.data);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       Utils.showSnackBar("Network problem");
       if (kDebugMode) {
         print(e);

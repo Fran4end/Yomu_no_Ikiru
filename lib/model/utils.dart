@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:manga_app/model/file_manager.dart';
 import 'package:path/path.dart';
-import 'package:manga_app/model/manga_builder.dart';
 import 'package:rive/rive.dart';
+import 'file_manager.dart';
+import 'manga_builder.dart';
 
 class Utils {
   static final messengerKey = GlobalKey<ScaffoldMessengerState>();

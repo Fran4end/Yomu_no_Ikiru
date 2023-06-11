@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:manga_app/view/widgets/top_buttons.dart';
 
 import '../../constants.dart';
+import 'top_buttons.dart';
 
 class UserInfoWidget extends StatefulWidget {
   const UserInfoWidget({super.key});

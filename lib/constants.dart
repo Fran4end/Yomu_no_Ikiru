@@ -32,13 +32,12 @@ TextStyle titleGreenStyle({double? fontSize = 18}) {
       color: greenColor, fontWeight: FontWeight.bold, fontSize: fontSize);
 }
 
-TextStyle subtitleStyle({double? fontSize = 14}) {
-  return GoogleFonts.sourceSansPro(
-      color: Colors.white, fontWeight: FontWeight.w300, fontSize: fontSize);
+TextStyle subtitleStyle({double? fontSize = 14, FontWeight fontWeight = FontWeight.w300}) {
+  return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: fontWeight, fontSize: fontSize);
 }
 
-TextStyle miniStyle({double? fontSize = 12}) {
-  return GoogleFonts.sourceSansPro(color: Colors.white, fontSize: fontSize);
+TextStyle miniStyle({double? fontSize = 12, Color color = Colors.white}) {
+  return GoogleFonts.sourceSansPro(color: color, fontSize: fontSize);
 }
 
 const backgroundColor = Color(0xffe5f0f4);

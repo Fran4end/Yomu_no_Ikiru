@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:manga_app/model/manga.dart';
-import 'package:manga_app/model/chapter.dart';
-import 'package:manga_app/model/utils.dart';
+import 'package:yomu_no_ikiru/model/utils.dart';
+
+import 'chapter.dart';
+import 'manga.dart';
+
 
 class MangaBuilder {
   String title = '';
@@ -18,6 +20,7 @@ class MangaBuilder {
   int index = 0;
   int pageIndex = 0;
   bool save = false;
+  bool alreadyLoaded = false;
 
   set readingsVote(List<double?> value) {
     readings = value[0];
@@ -44,7 +47,7 @@ class MangaBuilder {
     }
   }
 
-  set chap(List<String> value) {
+  set newChapters(List<String> value) {
     chapters.add(Chapter(
       title: value[0].replaceAll("Scan ITA", ""),
       date: value[1],
@@ -64,6 +67,7 @@ class MangaBuilder {
       plot = json['plot'];
       vote = json['vote'];
       genres = json['genres'].map<String>((e) => e.toString()).toList();
+      chapters = json["chapters"].map<Chapter>((e) => Chapter.fromJson(e)).toSet();
     } catch (e) {
       if (kDebugMode) {
         print(e);
