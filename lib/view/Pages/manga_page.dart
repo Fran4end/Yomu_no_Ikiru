@@ -7,6 +7,7 @@ import '../../mangaworld.dart';
 import '../../model/file_manager.dart';
 import '../../model/manga.dart';
 import '../../model/manga_builder.dart';
+import '../../model/utils.dart';
 import '../widgets/manga_page_appBar.dart';
 import '../widgets/manga_page_detail.dart';
 import 'reader_page.dart';
@@ -82,6 +83,16 @@ class _MangaPageState extends State<MangaPage> {
                     manga: manga,
                     screen: screen,
                     tag: widget.tag,
+                    rightButtonFunction: () {
+                      if (user != null) {
+                        if (save) {
+                          FileManager.deleteFile(manga.title);
+                        }
+                        setState(() => save = !save);
+                      } else {
+                        Utils.showSnackBar('You need to login before save a manga');
+                      }
+                    },
                   ),
                   SliverToBoxAdapter(child: MangaPlot(manga: manga)),
                   buildChapters(manga),
@@ -113,6 +124,27 @@ class _MangaPageState extends State<MangaPage> {
                   chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
                   pageIndex: manga.pageIndex,
                   builder: mangaBuilder,
+                  axis: Axis.horizontal,
+                  icon: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const Align(
+                        alignment: Alignment.center,
+                        child: Icon(FontAwesomeIcons.mobileScreenButton),
+                      ),
+                      Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 2),
+                            child: const Icon(
+                              FontAwesomeIcons.arrowLeft,
+                              size: 7,
+                            ),
+                          )),
+                    ],
+                  ),
+                  reverse: true,
+                  onScope: (builder) => setState(() => mangaBuilder = builder),
                 ),
               ),
             );
@@ -157,7 +189,7 @@ class _MangaPageState extends State<MangaPage> {
                         onTap: () async {
                           int pIndex = 0;
                           if (manga.index == index) pIndex = manga.pageIndex;
-                          mangaBuilder = await Navigator.of(context).push(
+                          Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => Reader(
                                 index: index,
@@ -165,6 +197,27 @@ class _MangaPageState extends State<MangaPage> {
                                 chapter: manga.chapters[index],
                                 pageIndex: pIndex,
                                 builder: mangaBuilder,
+                                axis: Axis.horizontal,
+                                icon: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    const Align(
+                                      alignment: Alignment.center,
+                                      child: Icon(FontAwesomeIcons.mobileScreenButton),
+                                    ),
+                                    Align(
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          margin: const EdgeInsets.only(bottom: 2),
+                                          child: const Icon(
+                                            FontAwesomeIcons.arrowLeft,
+                                            size: 7,
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                                reverse: true,
+                                onScope: (builder) => setState(() => mangaBuilder = builder),
                               ),
                             ),
                           );

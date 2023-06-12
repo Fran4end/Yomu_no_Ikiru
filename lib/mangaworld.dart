@@ -5,6 +5,7 @@ import 'package:html/parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:yomu_no_ikiru/controller/firebase_controller.dart';
 
 import 'constants.dart';
 import 'model/manga_builder.dart';
@@ -124,7 +125,7 @@ class MangaWorld {
     if (builder.alreadyLoaded) {
       return builder;
     }
-    final saveBuilder = await Utils.isOnLibrary(builder.title);
+    final saveBuilder = await FirebaseController.isOnLibrary(builder.title);
     try {
       if (saveBuilder.runtimeType == MangaBuilder) {
         builder = saveBuilder;

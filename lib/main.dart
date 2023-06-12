@@ -5,6 +5,7 @@ import 'constants.dart';
 import 'firebase_options.dart';
 import 'package:rive/rive.dart';
 
+import 'model/rive_assets.dart';
 import 'view/Pages/user_page.dart';
 import 'model/google_sign_in_provider.dart';
 import 'model/utils.dart';

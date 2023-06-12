@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../constants.dart';
+import '../../controller/firebase_controller.dart';
 import '../../model/file_manager.dart';
 import '../../model/manga_builder.dart';
 import '../../model/utils.dart';
@@ -49,20 +50,21 @@ class _LibraryPageState extends State<LibraryPage> {
                       .map((e) => (e as File))
                       .toList();
                   for (var file in files) {
-                    Utils.uploadJson(file);
+                    FirebaseController.uploadJson(file);
                   }
                 } on Exception catch (e) {
                   if (kDebugMode) {
                     print(e);
                   }
                 }
-                Utils.downloadJson().then((refs) => FileManager.downloadAllFile(refs).then((files) {
-                      if (mounted) {
-                        setState(() {
-                          futureBuilders = FileManager.readAllLocalFile();
-                        });
-                      }
-                    }));
+                FirebaseController.downloadJson()
+                    .then((refs) => FileManager.downloadAllFile(refs).then((files) {
+                          if (mounted) {
+                            setState(() {
+                              futureBuilders = FileManager.readAllLocalFile();
+                            });
+                          }
+                        }));
               } else {
                 Utils.showSnackBar('You need to login before sync all manga');
               }
