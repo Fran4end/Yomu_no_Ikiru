@@ -5,13 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "MangaApp",
+      "name": "yomu no ikiru",
       "request": "launch",
       "type": "dart",
       "args": ["--web-browser-flag", "--disable-web-security"]
     },
     {
-      "name": "MangaApp (release mode)",
+      "name": "yomu no ikiru (release mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"

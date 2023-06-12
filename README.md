@@ -1,4 +1,4 @@
-# manga_app
+# Yomu bo ikiru
 
 Applicazione per leggere manga
 

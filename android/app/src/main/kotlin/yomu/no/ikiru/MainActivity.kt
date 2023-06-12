@@ -1,4 +1,4 @@
-package com.example.manga_app
+package yomu.no.ikiru
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:331308178402:android:eb9305521ea07502b737bb",
         "android_client_info": {
-          "package_name": "com.example.manga_app"
+          "package_name": "yomu.no.ikiru"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "331308178402-cakce5747rsr5h9gglir16484h23qqlg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.manga_app",
+            "package_name": "yomu.no.ikiru",
             "certificate_hash": "64768fedbded7ea2ae3a613efec96e967bce4bf2"
           }
         },
@@ -25,7 +25,7 @@
           "client_id": "331308178402-hrmg55sundna6bp8p4pi67ah07cd1fic.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.manga_app",
+            "package_name": "yomu.no.ikiru",
             "certificate_hash": "bbc008d968832cdc570fcdd4131c5a64789d2250"
           }
         },
@@ -50,7 +50,7 @@
               "client_id": "331308178402-4eckq378mduijjpste4l308v520j8v7j.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.mangaApp"
+                "bundle_id": "yomu.no.ikiru"
               }
             }
           ]
