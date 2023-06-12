@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:yomu_no_ikiru/model/utils.dart';
+import 'package:yomu_no_ikiru/controller/utils.dart';
 
 import 'chapter.dart';
 import 'manga.dart';

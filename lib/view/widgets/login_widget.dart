@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../constants.dart';
-import '../../model/google_sign_in_provider.dart';
-import '../../model/utils.dart';
+import '../../controller/google_sign_in_provider.dart';
+import '../../controller/utils.dart';
 import '../Pages/forgot_password_page.dart';
 
 class LoginWidget extends StatefulWidget {

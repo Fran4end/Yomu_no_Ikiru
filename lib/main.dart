@@ -7,8 +7,8 @@ import 'package:rive/rive.dart';
 
 import 'model/rive_assets.dart';
 import 'view/Pages/user_page.dart';
-import 'model/google_sign_in_provider.dart';
-import 'model/utils.dart';
+import 'controller/google_sign_in_provider.dart';
+import 'controller/utils.dart';
 import 'view/Pages/home_page.dart';
 import 'view/Pages/library_page.dart';
 import 'view/Pages/search_page.dart';

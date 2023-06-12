@@ -6,9 +6,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../constants.dart';
 import '../../controller/firebase_controller.dart';
-import '../../model/file_manager.dart';
+import '../../controller/file_manager.dart';
 import '../../model/manga_builder.dart';
-import '../../model/utils.dart';
+import '../../controller/utils.dart';
 import '../widgets/manga_widget.dart';
 import '../widgets/skeleton.dart';
 

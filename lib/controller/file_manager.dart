@@ -5,8 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'manga.dart';
-import 'manga_builder.dart';
+import '../model/manga.dart';
+import '../model/manga_builder.dart';
 
 class FileManager {
   static User? user = FirebaseAuth.instance.currentUser;

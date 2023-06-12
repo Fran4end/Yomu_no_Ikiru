@@ -4,9 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 
-import '../model/file_manager.dart';
+import 'file_manager.dart';
 import '../model/manga_builder.dart';
-import '../model/utils.dart';
+import 'utils.dart';
 
 class FirebaseController {
   static User? user = FirebaseAuth.instance.currentUser;

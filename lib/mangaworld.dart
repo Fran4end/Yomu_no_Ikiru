@@ -9,7 +9,7 @@ import 'package:yomu_no_ikiru/controller/firebase_controller.dart';
 
 import 'constants.dart';
 import 'model/manga_builder.dart';
-import 'model/utils.dart';
+import 'controller/utils.dart';
 
 class MangaWorld {
   static final Dio dio = Dio(BaseOptions(baseUrl: baseUrl));

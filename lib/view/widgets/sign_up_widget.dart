@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 
 import '../../constants.dart';
-import '../../model/utils.dart';
+import '../../controller/utils.dart';
 
 class SignUpWidget extends StatefulWidget {
   final Function() onClickedSignIn;
