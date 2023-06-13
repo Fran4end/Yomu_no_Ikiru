@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'model/firebase_options.dart';
@@ -18,6 +19,7 @@ main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
   runApp(const MyApp());
 }
 
@@ -53,11 +55,12 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => GoogleSignInProvider(),
-      child: Scaffold(
-        bottomNavigationBar: SafeArea(
-          child: NavigationBarTheme(
+    return SafeArea(
+      top: false,
+      child: ChangeNotifierProvider(
+        create: (context) => GoogleSignInProvider(),
+        child: Scaffold(
+          bottomNavigationBar: NavigationBarTheme(
             data: Theme.of(context).navigationBarTheme,
             child: NavigationBar(
               selectedIndex: _selectPage,
@@ -103,15 +106,15 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
               ],
             ),
           ),
-        ),
-        body: IndexedStack(
-          index: _selectPage,
-          children: const [
-            HomePage(),
-            SearchPage(),
-            LibraryPage(),
-            UserPage(),
-          ],
+          body: IndexedStack(
+            index: _selectPage,
+            children: const [
+              HomePage(),
+              SearchPage(),
+              LibraryPage(),
+              UserPage(),
+            ],
+          ),
         ),
       ),
     );

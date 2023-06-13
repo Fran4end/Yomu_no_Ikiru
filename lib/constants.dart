@@ -19,12 +19,11 @@ final List<RiveAsset> bottomNavigators = [
 final ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
-  textTheme: GoogleFonts.sourceCodeProTextTheme(),
+  textTheme: GoogleFonts.sourceCodeProTextTheme(Typography.blackCupertino),
   appBarTheme: const AppBarTheme(
     elevation: 5,
-    color: Colors.black54,
     centerTitle: true,
-    titleTextStyle: TextStyle(color: Colors.white, fontSize: 28),
+    titleTextStyle: TextStyle(color: Color(0xff0D0D0D), fontSize: 28),
   ),
   navigationBarTheme: NavigationBarThemeData(
     elevation: 5,
@@ -39,13 +38,20 @@ final ThemeData lightTheme = ThemeData(
     tertiary: Color(0xffF78C25),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ButtonStyle(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xfff6f5f5),
       alignment: Alignment.center,
-      iconSize: MaterialStateProperty.all(35),
-      textStyle: MaterialStateProperty.all(
-        GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
-      ),
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      disabledBackgroundColor: const Color(0x33f6f5f5),
+      textStyle: GoogleFonts.sourceSansPro(
+          color: const Color(0xff0D0D0D), fontWeight: FontWeight.w300, fontSize: 14),
     ),
+  ),
+  iconTheme: const IconThemeData(
+    color: Color(0xff0D0D0D),
+    size: 20,
+    opacity: 1,
   ),
 );
 
@@ -59,6 +65,7 @@ final ThemeData darkTheme = ThemeData(
     centerTitle: true,
     titleTextStyle: TextStyle(color: Colors.white, fontSize: 28),
   ),
+  
   navigationBarTheme: NavigationBarThemeData(
     elevation: 5,
     backgroundColor: const Color(0xff2d2d2d),
@@ -89,7 +96,7 @@ final ThemeData darkTheme = ThemeData(
       alignment: Alignment.center,
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      disabledBackgroundColor: const Color(0xffB8672F),
+      disabledBackgroundColor: const Color(0x55B8672F),
       textStyle: GoogleFonts.sourceSansPro(
           color: const Color(0xff0D0D0D), fontWeight: FontWeight.w300, fontSize: 14),
     ),

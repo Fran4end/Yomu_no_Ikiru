@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:yomu_no_ikiru/constants.dart';
 import 'package:yomu_no_ikiru/controller/reader_page_controller.dart';
 
 import '../../model/chapter.dart';
@@ -73,7 +74,6 @@ class _ReaderState extends State<Reader> {
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         onScope(builder);
@@ -82,6 +82,7 @@ class _ReaderState extends State<Reader> {
       child: SafeArea(
         top: false,
         child: Scaffold(
+          backgroundColor: Colors.transparent,
           appBar: !_showAppBar
               ? null
               : AppBar(
@@ -109,6 +110,102 @@ class _ReaderState extends State<Reader> {
                     )
                   ],
                 ),
+          bottomNavigationBar: !_showAppBar
+              ? null
+              : Container(
+                  margin: const EdgeInsets.all(defaultPadding / 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton.filled(
+                        icon: const Icon(FontAwesomeIcons.backwardStep),
+                        style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                              fixedSize: const MaterialStatePropertyAll(Size(20, 20)),
+                            ),
+                        tooltip: !reverse ? "Previous chapter" : "Next chapter",
+                        onPressed: reverse
+                            ? widget.index - 1 >= 0
+                                ? () => ReaderPageController.nextChapter(
+                                    context: context,
+                                    builder: builder,
+                                    chapters: widget.chapters,
+                                    index: widget.index,
+                                    axis: axis,
+                                    icon: icon,
+                                    reverse: reverse,
+                                    onScope: onScope)
+                                : null
+                            : widget.index + 1 < widget.chapters.length
+                                ? () => ReaderPageController.previousChapter(
+                                    context: context,
+                                    builder: builder,
+                                    chapters: widget.chapters,
+                                    index: widget.index,
+                                    axis: axis,
+                                    icon: icon,
+                                    reverse: reverse,
+                                    onScope: onScope)
+                                : null,
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 1, left: 5, right: 5),
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[900],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Slider.adaptive(
+                            value: pageIndex + 1,
+                            divisions: imageUrls.length,
+                            label: (pageIndex + 1).toString(),
+                            min: 1,
+                            max: imageUrls.length.toDouble(),
+                            onChanged: (value) {
+                              setState(() {
+                                pageIndex = value.toInt() - 1;
+                                pageController.animateToPage(pageIndex,
+                                    duration: const Duration(milliseconds: 1),
+                                    curve: Curves.bounceInOut);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      IconButton.filled(
+                        onPressed: !reverse
+                            ? widget.index - 1 >= 0
+                                ? () => ReaderPageController.nextChapter(
+                                    context: context,
+                                    builder: builder,
+                                    chapters: widget.chapters,
+                                    index: widget.index,
+                                    axis: axis,
+                                    icon: icon,
+                                    reverse: reverse,
+                                    onScope: onScope)
+                                : null
+                            : widget.index + 1 < widget.chapters.length
+                                ? () => ReaderPageController.previousChapter(
+                                    context: context,
+                                    builder: builder,
+                                    chapters: widget.chapters,
+                                    index: widget.index,
+                                    axis: axis,
+                                    icon: icon,
+                                    reverse: reverse,
+                                    onScope: onScope)
+                                : null,
+                        tooltip: reverse ? "Previous chapter" : "Next chapter",
+                        icon: const Icon(FontAwesomeIcons.forwardStep),
+                        style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                              fixedSize: const MaterialStatePropertyAll(Size(20, 20)),
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
           body: imageUrls.isNotEmpty
               ? Stack(
                   alignment: Alignment.center,
@@ -132,7 +229,8 @@ class _ReaderState extends State<Reader> {
                               if (_showAppBar) {
                                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
                               } else {
-                                SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                                    overlays: [SystemUiOverlay.top]);
                               }
                               _showAppBar = !_showAppBar;
                             });
@@ -140,119 +238,6 @@ class _ReaderState extends State<Reader> {
                         );
                       },
                     ),
-                    Positioned(
-                        right: -1,
-                        bottom: 60,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "${pageIndex + 1} / ${imageUrls.length}",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        )),
-                    !_showAppBar
-                        ? const Center()
-                        : Positioned(
-                            bottom: 10,
-                            child: SizedBox(
-                              height: 50,
-                              width: screen.width,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  IconButton.filled(
-                                    icon: const Icon(FontAwesomeIcons.backwardStep),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20.0)),
-                                    ),
-                                    tooltip: !reverse ? "Previous chapter" : "Next chapter",
-                                    onPressed: reverse
-                                        ? widget.index - 1 >= 0
-                                            ? () => ReaderPageController.nextChapter(
-                                                context: context,
-                                                builder: builder,
-                                                chapters: widget.chapters,
-                                                index: widget.index,
-                                                axis: axis,
-                                                icon: icon,
-                                                reverse: reverse,
-                                                onScope: onScope)
-                                            : null
-                                        : widget.index + 1 < widget.chapters.length
-                                            ? () => ReaderPageController.previousChapter(
-                                                context: context,
-                                                builder: builder,
-                                                chapters: widget.chapters,
-                                                index: widget.index,
-                                                axis: axis,
-                                                icon: icon,
-                                                reverse: reverse,
-                                                onScope: onScope)
-                                            : null,
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      margin: const EdgeInsets.only(bottom: 1, left: 5, right: 5),
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[900],
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Slider.adaptive(
-                                        value: pageIndex + 1,
-                                        divisions: imageUrls.length,
-                                        label: (pageIndex + 1).toString(),
-                                        min: 1,
-                                        max: imageUrls.length.toDouble(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            pageIndex = value.toInt() - 1;
-                                            pageController.animateToPage(pageIndex,
-                                                duration: const Duration(milliseconds: 1),
-                                                curve: Curves.bounceInOut);
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton.filled(
-                                    onPressed: !reverse
-                                        ? widget.index - 1 >= 0
-                                            ? () => ReaderPageController.nextChapter(
-                                                context: context,
-                                                builder: builder,
-                                                chapters: widget.chapters,
-                                                index: widget.index,
-                                                axis: axis,
-                                                icon: icon,
-                                                reverse: reverse,
-                                                onScope: onScope)
-                                            : null
-                                        : widget.index + 1 < widget.chapters.length
-                                            ? () => ReaderPageController.previousChapter(
-                                                context: context,
-                                                builder: builder,
-                                                chapters: widget.chapters,
-                                                index: widget.index,
-                                                axis: axis,
-                                                icon: icon,
-                                                reverse: reverse,
-                                                onScope: onScope)
-                                            : null,
-                                    tooltip: reverse ? "Previous chapter" : "Next chapter",
-                                    icon: const Icon(FontAwesomeIcons.forwardStep),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20.0)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
                   ],
                 )
               : const Center(),

@@ -38,7 +38,7 @@ class CustomSliverAppBar extends StatelessWidget {
       expandedHeight: expandedHeight,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
-        collapseMode: CollapseMode.pin,
+        collapseMode: CollapseMode.parallax,
         titlePadding: const EdgeInsets.symmetric(
             horizontal: defaultPadding * 4, vertical: defaultPadding / 2),
         title: FittedBox(
@@ -54,6 +54,7 @@ class CustomSliverAppBar extends StatelessWidget {
                   Text(
                     manga.title.toString(),
                     textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold),
                   ),
                   Wrap(
                     direction: Axis.horizontal,
@@ -61,7 +62,8 @@ class CustomSliverAppBar extends StatelessWidget {
                     children: [
                       Text(
                         manga.author.toString(),
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.greenAccent, fontWeight: FontWeight.w200),
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
@@ -72,7 +74,8 @@ class CustomSliverAppBar extends StatelessWidget {
                       ),
                       Text(
                         manga.artist.toString(),
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.greenAccent, fontWeight: FontWeight.w200),
                       ),
                     ],
                   ),
