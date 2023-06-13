@@ -16,35 +16,92 @@ final List<RiveAsset> bottomNavigators = [
       artboard: "USER", stateMachineName: "USER_Interactivity", title: "Account"),
 ];
 
+ThemeData lightTheme = ThemeData(
+  useMaterial3: true,
+  brightness: Brightness.light,
+  textTheme: GoogleFonts.sourceCodeProTextTheme(),
+  appBarTheme: const AppBarTheme(
+    elevation: 5,
+    color: Colors.black54,
+    centerTitle: true,
+    titleTextStyle: TextStyle(color: Colors.white, fontSize: 28),
+  ),
+  navigationBarTheme: NavigationBarThemeData(
+    elevation: 5,
+    backgroundColor: Colors.black54,
+    labelTextStyle:
+        MaterialStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+  ),
+  colorScheme: const ColorScheme.light(
+    background: Color(0xfff6f5f5),
+    primary: Color(0xff9f5023),
+    secondary: Color(0xffF78C25),
+    tertiary: Color(0xffF78C25),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      alignment: Alignment.center,
+      iconSize: MaterialStateProperty.all(35),
+      textStyle: MaterialStateProperty.all(
+        GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
+      ),
+    ),
+  ),
+);
+
+ThemeData darkTheme = ThemeData(
+  useMaterial3: true,
+  brightness: Brightness.dark,
+  textTheme: GoogleFonts.sourceCodeProTextTheme(Typography.whiteCupertino),
+  appBarTheme: const AppBarTheme(
+    elevation: 5,
+    color: Color(0xff2d2d2d),
+    centerTitle: true,
+    titleTextStyle: TextStyle(color: Colors.white, fontSize: 28),
+  ),
+  navigationBarTheme: NavigationBarThemeData(
+    elevation: 5,
+    backgroundColor: const Color(0xff2d2d2d),
+    labelTextStyle:
+        MaterialStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+  ),
+  colorScheme: const ColorScheme.dark(
+    background: Color(0xff0D0D0D),
+    primary: Color(0xff9F5023),
+    secondary: Color(0xffD96A29),
+    tertiary: Color(0xffB8672F),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      alignment: Alignment.center,
+      iconSize: MaterialStateProperty.all(35),
+      textStyle: MaterialStateProperty.all(
+        GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
+      ),
+    ),
+  ),
+);
+
 // * Text Style
-TextStyle titleStyle({double? fontSize = 18}) {
-  return GoogleFonts.sourceSansPro(
-      color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontSize);
-}
+// TextStyle titleStyle({double? fontSize = 18}) {
+//   return GoogleFonts.sourceSansPro(
+//       color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontSize);
+// }
 
-TextStyle titleBlackStyle({double? fontSize = 18}) {
-  return GoogleFonts.sourceSansPro(
-      color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
-}
+// TextStyle titleBlackStyle({double? fontSize = 18}) {
+//   return GoogleFonts.sourceSansPro(
+//       color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
+// }
 
-TextStyle titleGreenStyle({double? fontSize = 18}) {
-  return GoogleFonts.sourceSansPro(
-      color: greenColor, fontWeight: FontWeight.bold, fontSize: fontSize);
-}
+// TextStyle titleGreenStyle({double? fontSize = 18}) {
+//   return GoogleFonts.sourceSansPro(
+//       color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontSize);
+// }
 
-TextStyle subtitleStyle({double? fontSize = 14, FontWeight fontWeight = FontWeight.w300}) {
-  return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: fontWeight, fontSize: fontSize);
-}
+// TextStyle subtitleStyle({double? fontSize = 14, FontWeight fontWeight = FontWeight.w300}) {
+//   return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: fontWeight, fontSize: fontSize);
+// }
 
-TextStyle miniStyle({double? fontSize = 12, Color color = Colors.white}) {
-  return GoogleFonts.sourceSansPro(color: color, fontSize: fontSize);
-}
-
-const backgroundColor = Color(0xffe5f0f4);
-const primaryColor = Colors.teal;
-const secondaryColor = Color(0xff7bc496);
-
-const blueColor = Color(0xff85a4e7);
-const purpleColor = Color(0xffb084d1);
-const redColor = Color(0xffd17db8);
-const greenColor = Color(0xff4ba2b6);
+// TextStyle miniStyle({double? fontSize = 12, Color color = Colors.white}) {
+//   return GoogleFonts.sourceSansPro(color: color, fontSize: fontSize);
+// }

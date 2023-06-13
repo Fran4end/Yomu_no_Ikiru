@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../constants.dart';
 import '../../mangaworld.dart';
 import '../../controller/file_manager.dart';
 import '../../model/manga.dart';
@@ -152,15 +151,14 @@ class _MangaPageState extends State<MangaPage> {
         },
         style: ElevatedButton.styleFrom(
           elevation: 10,
-          backgroundColor: primaryColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
         icon: const Icon(
           FontAwesomeIcons.play,
           size: 15,
         ),
-        label: Center(
-          child: Text('Resume', style: titleStyle()),
+        label: const Center(
+          child: Text('Resume'),
         ),
       ),
     );
@@ -176,15 +174,13 @@ class _MangaPageState extends State<MangaPage> {
                   ? null
                   : Card(
                       elevation: 5,
-                      color: Colors.grey[900],
                       child: ListTile(
                         title: Text(
-                          manga.chapters[index].title,
-                          style: subtitleStyle(fontWeight: FontWeight.normal),
+                          manga.chapters[index].title
+                              .substring(manga.chapters[index].title.indexOf("Cap")),
                         ),
                         subtitle: Text(
                           manga.chapters[index].date.toString(),
-                          style: miniStyle(color: Colors.white.withOpacity(0.5)),
                         ),
                         onTap: () async {
                           int pIndex = 0;

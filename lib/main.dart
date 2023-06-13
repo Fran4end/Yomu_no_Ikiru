@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
-import 'firebase_options.dart';
+import 'model/firebase_options.dart';
 import 'package:rive/rive.dart';
 
 import 'model/rive_assets.dart';
@@ -31,14 +31,8 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       scaffoldMessengerKey: Utils.messengerKey,
       title: 'Manga!',
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
       themeMode: ThemeMode.system,
       home: const NavigationBarWidget(),
     );
@@ -64,10 +58,7 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
       child: Scaffold(
         bottomNavigationBar: SafeArea(
           child: NavigationBarTheme(
-            data: NavigationBarThemeData(
-                labelTextStyle: MaterialStateProperty.all(
-              const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            )),
+            data: Theme.of(context).navigationBarTheme,
             child: NavigationBar(
               selectedIndex: _selectPage,
               height: 60,

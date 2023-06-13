@@ -111,7 +111,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
               const SizedBox(height: 50),
               RichText(
                 text: TextSpan(
-                  style: subtitleStyle(),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
                   text: 'Already have an account?  ',
                   children: [
                     TextSpan(
@@ -119,7 +119,6 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       text: 'Sign In',
                       style: const TextStyle(
                         decoration: TextDecoration.underline,
-                        color: secondaryColor,
                       ),
                     )
                   ],

@@ -41,7 +41,6 @@ class MangaCard extends StatelessWidget {
             child: Card(
               elevation: 10,
               margin: const EdgeInsets.all(defaultPadding),
-              color: backgroundColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
           ),
@@ -80,7 +79,7 @@ class MangaCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   minFontSize: 16,
-                  style: titleGreenStyle(),
+                  style: const TextStyle(color: Colors.green),
                 ),
               ),
             ],

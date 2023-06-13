@@ -30,12 +30,8 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: primaryColor,
-        elevation: 0.0,
-        centerTitle: true,
-        title: Text(
+        title: const Text(
           'Discover',
-          style: titleStyle(),
         ),
       ),
       body: RefreshIndicator(

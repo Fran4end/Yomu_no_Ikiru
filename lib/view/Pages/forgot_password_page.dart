@@ -37,10 +37,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const SizedBox(height: 40),
-              Text(
+              const Text(
                 'Receive an email to\nreset your password',
                 textAlign: TextAlign.center,
-                style: titleStyle(),
               ),
               const SizedBox(height: 20),
               Padding(

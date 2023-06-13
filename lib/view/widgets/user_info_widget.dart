@@ -44,7 +44,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
               child: TopButtonsFunctions(
                 ic: const Icon(Icons.logout_rounded),
                 function: () => FirebaseAuth.instance.signOut(),
-                color: purpleColor,
+                color: Theme.of(context).colorScheme.tertiary,
               ),
             )),
         Positioned(
@@ -80,12 +80,12 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           children: [
             Text(
               (user.displayName!).toString(),
-              style: titleStyle(fontSize: 26),
+              style: const TextStyle(fontSize: 26),
             ),
             const SizedBox(height: defaultPadding / 2),
             Text(
               (user.email!).toString(),
-              style: subtitleStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
             ),
           ],
         ),

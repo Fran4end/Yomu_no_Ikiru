@@ -72,9 +72,8 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "A verification email has been sent to your mail.\nIf you haven't received it, check your spam",
-                    style: titleStyle(),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: defaultPadding),
@@ -84,16 +83,14 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                       minimumSize: const Size.fromHeight(50),
                     ),
                     icon: const Icon(Icons.email),
-                    label: Text(
+                    label: const Text(
                       'Resent Email',
-                      style: titleStyle(),
                     ),
                   ),
                   TextButton(
                     onPressed: () => FirebaseAuth.instance.signOut(),
-                    child: Text(
+                    child: const Text(
                       'Cancel',
-                      style: titleGreenStyle(),
                     ),
                   )
                 ],

@@ -20,11 +20,11 @@ class Recent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: defaultPadding, left: defaultPadding),
+            const Padding(
+              padding: EdgeInsets.only(bottom: defaultPadding, left: defaultPadding),
               child: Text(
                 'Recently updated',
-                style: titleStyle().copyWith(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
             SizedBox(
@@ -82,13 +82,13 @@ class Popular extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: defaultPadding),
               child: Row(
                 children: [
                   Text(
                     'Popular',
-                    style: titleStyle().copyWith(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

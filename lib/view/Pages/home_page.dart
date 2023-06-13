@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
 import '../../mangaworld.dart';
 import '../../model/manga_builder.dart';
 import '../widgets/home_widget.dart';
@@ -26,12 +25,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primaryColor,
-        elevation: 0.0,
-        centerTitle: true,
-        title: Text(
+        title: const Text(
           'Home Page',
-          style: titleStyle(),
         ),
       ),
       body: SafeArea(

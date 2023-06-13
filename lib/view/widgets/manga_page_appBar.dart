@@ -32,6 +32,7 @@ class CustomSliverAppBar extends StatelessWidget {
         child: TopButtonsFunctions(
           ic: const Icon(Icons.arrow_back_ios_new_rounded),
           function: () => Navigator.of(context).pop(),
+          color: Theme.of(context).colorScheme.secondary,
         ),
       ),
       expandedHeight: expandedHeight,
@@ -52,7 +53,6 @@ class CustomSliverAppBar extends StatelessWidget {
                 children: [
                   Text(
                     manga.title.toString(),
-                    style: titleStyle(),
                     textAlign: TextAlign.center,
                   ),
                   Wrap(
@@ -61,7 +61,7 @@ class CustomSliverAppBar extends StatelessWidget {
                     children: [
                       Text(
                         manga.author.toString(),
-                        style: subtitleStyle(),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
@@ -72,7 +72,7 @@ class CustomSliverAppBar extends StatelessWidget {
                       ),
                       Text(
                         manga.artist.toString(),
-                        style: subtitleStyle(),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
                       ),
                     ],
                   ),
@@ -87,7 +87,7 @@ class CustomSliverAppBar extends StatelessWidget {
           children: [
             MangaPageBackground(manga: manga),
             Positioned(
-              top: kToolbarHeight + 40,
+              top: kToolbarHeight + 50,
               child: MangaPageDetailAppBar(
                 manga: manga,
                 expandedHeight: expandedHeight,
@@ -106,6 +106,7 @@ class CustomSliverAppBar extends StatelessWidget {
                 ? const Icon(Icons.favorite_rounded)
                 : const Icon(Icons.favorite_outline_rounded),
             function: rightButtonFunction,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
         const SizedBox(

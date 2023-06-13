@@ -32,12 +32,12 @@ class MangaPlot extends StatelessWidget {
               const SizedBox(width: defaultPadding / 2),
               Text(
                 manga.vote.toString(),
-                style: subtitleStyle(),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
               ),
               const SizedBox(width: defaultPadding / 2),
               Text(
                 '(${manga.readings})',
-                style: miniStyle(),
+                style: const TextStyle(fontSize: 12),
               )
             ],
           ),
@@ -54,7 +54,6 @@ class MangaPlot extends StatelessWidget {
                 bottom: -10,
                 child: Icon(
                   Icons.keyboard_arrow_down,
-                  color: Colors.white,
                   size: 25,
                 ),
               ),
@@ -71,7 +70,6 @@ class MangaPlot extends StatelessWidget {
                 bottom: -10,
                 child: Icon(
                   Icons.keyboard_arrow_up,
-                  color: Colors.white,
                   size: 25,
                 ),
               ),
@@ -80,7 +78,6 @@ class MangaPlot extends StatelessWidget {
           theme: const ExpandableThemeData(
             hasIcon: false,
             useInkWell: false,
-            iconColor: Colors.white,
             headerAlignment: ExpandablePanelHeaderAlignment.center,
             bodyAlignment: ExpandablePanelBodyAlignment.center,
             tapBodyToCollapse: true,
@@ -108,52 +105,49 @@ class MangaPageDetailAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Opacity(
-            opacity: .8,
-            child: Hero(
-              tag: tag,
-              child: CachedNetworkImage(
-                imageUrl: manga.image,
-                width: 150,
-                fit: BoxFit.contain,
-                alignment: Alignment.center,
-                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                    const Center(child: Skeleton(color: Colors.white)),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Opacity(
+          opacity: .8,
+          child: Hero(
+            tag: tag,
+            child: CachedNetworkImage(
+              imageUrl: manga.image,
+              width: 150,
+              fit: BoxFit.contain,
+              alignment: Alignment.center,
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  const Center(child: Skeleton(color: Colors.white)),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: 250,
-                child: GenresWrap(manga: manga),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 250,
+              child: GenresWrap(manga: manga),
+            ),
+            Container(
+              height: 30,
+              width: 100,
+              margin: const EdgeInsets.only(top: defaultPadding / 2),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5),
               ),
-              Container(
-                height: 30,
-                width: 100,
-                margin: const EdgeInsets.only(top: defaultPadding / 2),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: backgroundColor.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Text(
-                  manga.status.toString(),
-                  style: titleGreenStyle(),
-                ),
+              child: Text(
+                manga.status.toString(),
+                style: const TextStyle(color: Colors.green),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -177,7 +171,7 @@ class GenresWrap extends StatelessWidget {
             elevation: 5,
             child: Padding(
               padding: const EdgeInsets.all(5),
-              child: Text(e, style: miniStyle()),
+              child: Text(e, style: const TextStyle(fontSize: 12)),
             ));
       }).toList(),
     );

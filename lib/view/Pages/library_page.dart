@@ -31,12 +31,8 @@ class _LibraryPageState extends State<LibraryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primaryColor,
-        elevation: 0.0,
-        centerTitle: true,
-        title: Text(
+        title: const Text(
           'Library',
-          style: titleStyle(),
         ),
         actions: [
           IconButton(

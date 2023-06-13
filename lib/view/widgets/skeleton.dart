@@ -48,7 +48,6 @@ class CardSkelton extends StatelessWidget {
           child: Card(
             elevation: 10,
             margin: const EdgeInsets.all(defaultPadding),
-            color: backgroundColor,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),

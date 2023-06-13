@@ -1,14 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:photo_view/photo_view.dart';
-
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:yomu_no_ikiru/controller/reader_page_controller.dart';
 
-import '../../constants.dart';
 import '../../model/chapter.dart';
 import '../../model/manga_builder.dart';
 
@@ -170,7 +167,6 @@ class _ReaderState extends State<Reader> {
                                     style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(20.0)),
-                                      backgroundColor: secondaryColor,
                                     ),
                                     tooltip: !reverse ? "Previous chapter" : "Next chapter",
                                     onPressed: reverse
@@ -251,7 +247,6 @@ class _ReaderState extends State<Reader> {
                                     style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(20.0)),
-                                      backgroundColor: secondaryColor,
                                     ),
                                   ),
                                 ],
