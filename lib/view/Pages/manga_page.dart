@@ -149,16 +149,9 @@ class _MangaPageState extends State<MangaPage> {
             );
           }
         },
-        style: ElevatedButton.styleFrom(
-          elevation: 10,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        icon: const Icon(
-          FontAwesomeIcons.play,
-          size: 15,
-        ),
+        icon: const Icon(FontAwesomeIcons.play, size: 20, color: Color(0xff0D0D0D)),
         label: const Center(
-          child: Text('Resume'),
+          child: Text('Resume', style: TextStyle(color: Color(0xff0D0D0D))),
         ),
       ),
     );

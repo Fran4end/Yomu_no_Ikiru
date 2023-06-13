@@ -79,7 +79,7 @@ class MangaCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   minFontSize: 16,
-                  style: const TextStyle(color: Colors.green),
+                  style: const TextStyle(color: Colors.greenAccent),
                 ),
               ),
             ],

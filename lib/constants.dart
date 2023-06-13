@@ -16,7 +16,7 @@ final List<RiveAsset> bottomNavigators = [
       artboard: "USER", stateMachineName: "USER_Interactivity", title: "Account"),
 ];
 
-ThemeData lightTheme = ThemeData(
+final ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
   textTheme: GoogleFonts.sourceCodeProTextTheme(),
@@ -49,7 +49,7 @@ ThemeData lightTheme = ThemeData(
   ),
 );
 
-ThemeData darkTheme = ThemeData(
+final ThemeData darkTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
   textTheme: GoogleFonts.sourceCodeProTextTheme(Typography.whiteCupertino),
@@ -65,19 +65,33 @@ ThemeData darkTheme = ThemeData(
     labelTextStyle:
         MaterialStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
   ),
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: const Color(0xff9F5023),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    elevation: 20,
+    contentTextStyle: GoogleFonts.robotoCondensed(fontSize: 28),
+  ),
   colorScheme: const ColorScheme.dark(
     background: Color(0xff0D0D0D),
     primary: Color(0xff9F5023),
     secondary: Color(0xffD96A29),
     tertiary: Color(0xffB8672F),
   ),
+  iconTheme: const IconThemeData(
+    color: Color(0xff0D0D0D),
+    size: 20,
+    opacity: 1,
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ButtonStyle(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xffD96A29),
       alignment: Alignment.center,
-      iconSize: MaterialStateProperty.all(35),
-      textStyle: MaterialStateProperty.all(
-        GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
-      ),
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      disabledBackgroundColor: const Color(0xffB8672F),
+      textStyle: GoogleFonts.sourceSansPro(
+          color: const Color(0xff0D0D0D), fontWeight: FontWeight.w300, fontSize: 14),
     ),
   ),
 );
