@@ -4,9 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:yomu_no_ikiru/controller/custom_exceptions.dart';
 
 import '../model/manga.dart';
 import '../model/manga_builder.dart';
+import 'utils.dart';
 
 class FileManager {
   static User? user = FirebaseAuth.instance.currentUser;
@@ -110,5 +112,25 @@ class FileManager {
     if (fileExist) {
       await jsonFile.delete();
     }
+  }
+
+  static Future isOnLibrary(String title) async {
+    user = FirebaseAuth.instance.currentUser;
+    if (user == null || title == '') {
+      if (kDebugMode) {
+        Utils.showSnackBar('user not logged or file not valid');
+      }
+    } else {
+      List<MangaBuilder> builders = await FileManager.readAllLocalFile();
+      try {
+        return builders.firstWhere((element) => element.title == title);
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+          return throw FileNotOnLibraryException("no file found");
+        }
+      }
+    }
+    return throw FileNotOnLibraryException("no file found");
   }
 }

@@ -92,14 +92,12 @@ class MangaPlot extends StatelessWidget {
 class MangaPageDetailAppBar extends StatelessWidget {
   final Manga manga;
   final double expandedHeight;
-  final Size screen;
   final String tag;
 
   const MangaPageDetailAppBar({
     super.key,
     required this.manga,
     required this.expandedHeight,
-    required this.screen,
     required this.tag,
   });
 
@@ -114,7 +112,7 @@ class MangaPageDetailAppBar extends StatelessWidget {
             tag: tag,
             child: CachedNetworkImage(
               imageUrl: manga.image,
-              width: 150,
+              width: 120,
               fit: BoxFit.contain,
               alignment: Alignment.center,
               progressIndicatorBuilder: (context, url, downloadProgress) =>
@@ -136,13 +134,8 @@ class MangaPageDetailAppBar extends StatelessWidget {
               width: 100,
               margin: const EdgeInsets.only(top: defaultPadding / 2),
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5),
-              ),
               child: Text(
                 manga.status.toString(),
-                style: const TextStyle(color: Colors.green),
               ),
             ),
           ],

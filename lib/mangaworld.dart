@@ -5,7 +5,9 @@ import 'package:html/parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:yomu_no_ikiru/controller/firebase_controller.dart';
+import 'package:yomu_no_ikiru/controller/custom_exceptions.dart';
+import 'package:yomu_no_ikiru/controller/file_manager.dart';
+import 'package:yomu_no_ikiru/model/chapter.dart';
 
 import 'constants.dart';
 import 'model/manga_builder.dart';
@@ -125,48 +127,61 @@ class MangaWorld {
     if (builder.alreadyLoaded) {
       return builder;
     }
-    final saveBuilder = await FirebaseController.isOnLibrary(builder.title);
     try {
-      if (saveBuilder.runtimeType == MangaBuilder) {
-        builder = saveBuilder;
-        builder.save = true;
-      }
-      Document? document = await _getDetailedPageDocument(builder);
-      if (document == null) {
-        return builder;
-      }
-      var info = document.querySelector('.info > .meta-data');
-      String? readings = info?.children[6].children[1].text;
-      if (builder.artist == "No artist found") {
-        builder
-          ..artist = null
-          ..author = null;
-      }
-      builder
-        ..readingsVote = [
-          double.tryParse(readings.toString()),
-          double.tryParse(await _getVote(document.querySelector('.info > .references')))
-        ]
-        ..artist ??= info!.children[3].querySelector('a')!.text
-        ..author ??= info!.children[2].querySelector('a')!.text
-        ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
-        ..plot = document.querySelector('#noidungm')!.text;
-      if (builder.chapters.isEmpty || reloadChapters) {
-        print("Chap");
-        builder = await getChapters(builder, document);
+      final savedBuilder = await FileManager.isOnLibrary(builder.title);
+      builder = savedBuilder;
+      builder.save = true;
+      if (reloadChapters) {
+        print("reLoad Chap");
+        builder = await getChapters(builder);
       }
       builder.alreadyLoaded = true;
+    } on FileNotOnLibraryException catch (e) {
+      builder = await _getInfoFromWeb(builder);
+      if (kDebugMode) {
+        print("Line 142: $e");
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
-
     return builder;
   }
 
-  Future<MangaBuilder> getChapters(MangaBuilder builder, Document document) async {
-    builder.chapters.clear();
+  Future<MangaBuilder> _getInfoFromWeb(MangaBuilder builder) async {
+    Document? document = await _getDetailedPageDocument(builder);
+    if (document == null) {
+      return builder;
+    }
+    var info = document.querySelector('.info > .meta-data');
+    String? readings = info?.children[6].children[1].text;
+    if (builder.artist == "No artist found") {
+      builder
+        ..artist = null
+        ..author = null;
+    }
+    builder
+      ..readingsVote = [
+        double.tryParse(readings.toString()),
+        double.tryParse(await _getVote(document.querySelector('.info > .references')))
+      ]
+      ..artist ??= info!.children[3].querySelector('a')!.text
+      ..author ??= info!.children[2].querySelector('a')!.text
+      ..genres = _getGenres(info?.children[1].querySelectorAll('a'))!
+      ..plot = document.querySelector('#noidungm')!.text;
+    if (builder.chapters.isEmpty) {
+      builder = await getChapters(builder, document);
+    }
+    return builder;
+  }
+
+  Future<MangaBuilder> getChapters(MangaBuilder builder, [Document? document]) async {
+    document ??= await _getDetailedPageDocument(builder);
+    if (document == null) {
+      return builder;
+    }
+    List<Chapter> newChaps = [];
     List<Element> chaptersElement =
         document.querySelector('.chapters-wrapper')!.querySelectorAll('.chapter > .chap');
     for (var chap in chaptersElement) {
@@ -178,14 +193,15 @@ class MangaWorld {
       } else {
         link = '$link?style=list';
       }
-      // String copertina = await _getCopertina(link);
       List<String> data = [
         attributes['title'],
         chap.querySelector('i')!.text,
         link,
       ];
-      builder.newChapters = data;
+      newChaps
+          .add(Chapter(date: data[1], title: data[0].replaceAll("Scan ITA", ""), link: data[2]));
     }
+    builder.newChapters = newChaps;
     return builder;
   }
 

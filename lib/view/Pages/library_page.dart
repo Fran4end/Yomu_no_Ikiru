@@ -20,12 +20,7 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  late final Future<List<MangaBuilder>> futureBuilders;
-  @override
-  void initState() {
-    super.initState();
-    futureBuilders = FileManager.readAllLocalFile();
-  }
+  Future<List<MangaBuilder>> futureBuilders = FileManager.readAllLocalFile();
 
   @override
   Widget build(BuildContext context) {
@@ -36,65 +31,37 @@ class _LibraryPageState extends State<LibraryPage> {
         ),
         actions: [
           IconButton(
-            onPressed: () async {
-              User? user = FirebaseAuth.instance.currentUser;
-              if (user != null) {
-                Directory dir = await getApplicationDocumentsDirectory();
-                try {
-                  List<File> files = Directory("${dir.path}/${user.uid}")
-                      .listSync()
-                      .map((e) => (e as File))
-                      .toList();
-                  for (var file in files) {
-                    FirebaseController.uploadJson(file);
-                  }
-                } on Exception catch (e) {
-                  if (kDebugMode) {
-                    print(e);
-                  }
-                }
-                FirebaseController.downloadJson()
-                    .then((refs) => FileManager.downloadAllFile(refs).then((files) {
-                          if (mounted) {
-                            setState(() {
-                              futureBuilders = FileManager.readAllLocalFile();
-                            });
-                          }
-                        }));
-              } else {
-                Utils.showSnackBar('You need to login before sync all manga');
-              }
-            },
+            onPressed: _syncLibrary,
             icon: const Icon(Icons.cloud_sync_rounded),
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: defaultPadding),
-        child: FutureBuilder(
-            future: futureBuilders,
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return const SkeletonGrid();
-                default:
-                  if (snapshot.hasError) {
-                    return const Center(child: Text('Something went wrong'));
-                  } else {
-                    final builders = snapshot.data!;
-                    return RefreshIndicator(
-                      onRefresh: _refresh,
-                      child: builders.isEmpty
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: Padding(
+          padding: const EdgeInsets.only(top: defaultPadding),
+          child: FutureBuilder(
+              future: futureBuilders,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const SkeletonGrid();
+                  default:
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('Something went wrong'));
+                    } else {
+                      final builders = snapshot.data!;
+                      return builders.isEmpty
                           ? const Center(child: Text('Nothing added to library'))
                           : MangaGrid(
                               listManga: builders,
                               save: true,
                               tag: "library",
-                            ),
-                    );
-                  }
-              }
-            }),
+                            );
+                    }
+                }
+              }),
+        ),
       ),
     );
   }
@@ -103,5 +70,35 @@ class _LibraryPageState extends State<LibraryPage> {
     setState(() {
       futureBuilders = FileManager.readAllLocalFile();
     });
+  }
+
+  Future _syncLibrary() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      Directory dir = await getApplicationDocumentsDirectory();
+      try {
+        List<File> files =
+            Directory("${dir.path}/${user.uid}").listSync().map((e) => (e as File)).toList();
+        for (var file in files) {
+          if (context.mounted) {
+            await FirebaseController.uploadJson(file, context);
+          }
+        }
+        FirebaseController.downloadJson()
+            .then((refs) => FileManager.downloadAllFile(refs).then((files) {
+                  if (mounted) {
+                    setState(() {
+                      futureBuilders = FileManager.readAllLocalFile();
+                    });
+                  }
+                }));
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+    } else {
+      Utils.showSnackBar('You need to login before sync all manga');
+    }
   }
 }

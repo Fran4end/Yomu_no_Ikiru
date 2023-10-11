@@ -48,11 +48,6 @@ final ThemeData lightTheme = ThemeData(
           color: const Color(0xff0D0D0D), fontWeight: FontWeight.w300, fontSize: 14),
     ),
   ),
-  iconTheme: const IconThemeData(
-    color: Color(0xff0D0D0D),
-    size: 20,
-    opacity: 1,
-  ),
 );
 
 final ThemeData darkTheme = ThemeData(
@@ -61,44 +56,36 @@ final ThemeData darkTheme = ThemeData(
   textTheme: GoogleFonts.sourceCodeProTextTheme(Typography.whiteCupertino),
   appBarTheme: const AppBarTheme(
     elevation: 5,
-    color: Color(0xff2d2d2d),
+    color: Color(0xff0f0f0f),
     centerTitle: true,
     titleTextStyle: TextStyle(color: Colors.white, fontSize: 28),
   ),
-  
   navigationBarTheme: NavigationBarThemeData(
     elevation: 5,
-    backgroundColor: const Color(0xff2d2d2d),
+    backgroundColor: const Color(0xff0f0f0f),
     labelTextStyle:
         MaterialStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
   ),
   snackBarTheme: SnackBarThemeData(
-    backgroundColor: const Color(0xff9F5023),
+    backgroundColor: const Color(0xff005B41),
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     elevation: 20,
     contentTextStyle: GoogleFonts.robotoCondensed(fontSize: 28),
   ),
   colorScheme: const ColorScheme.dark(
-    background: Color(0xff0D0D0D),
-    primary: Color(0xff9F5023),
-    secondary: Color(0xffD96A29),
-    tertiary: Color(0xffB8672F),
-  ),
-  iconTheme: const IconThemeData(
-    color: Color(0xff0D0D0D),
-    size: 20,
-    opacity: 1,
+    background: Color(0xff0f0f0f),
+    primary: Color(0xff005B41),
+    secondary: Color(0xff232D3F),
+    tertiary: Color(0xff008170),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xffD96A29),
+      backgroundColor: const Color(0xff005B41),
       alignment: Alignment.center,
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      disabledBackgroundColor: const Color(0x55B8672F),
-      textStyle: GoogleFonts.sourceSansPro(
-          color: const Color(0xff0D0D0D), fontWeight: FontWeight.w300, fontSize: 14),
+      disabledBackgroundColor: const Color(0xff232D3F),
     ),
   ),
 );

@@ -79,7 +79,6 @@ class MangaCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   minFontSize: 16,
-                  style: const TextStyle(color: Colors.greenAccent),
                 ),
               ),
             ],
@@ -107,7 +106,7 @@ class MangaGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      physics: const BouncingScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: axisCount,
         childAspectRatio: .9,

@@ -19,7 +19,11 @@ main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.transparent));
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(const MyApp());
 }
 
@@ -55,66 +59,63 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: ChangeNotifierProvider(
-        create: (context) => GoogleSignInProvider(),
-        child: Scaffold(
-          bottomNavigationBar: NavigationBarTheme(
-            data: Theme.of(context).navigationBarTheme,
-            child: NavigationBar(
-              selectedIndex: _selectPage,
-              height: 60,
-              animationDuration: const Duration(milliseconds: 400),
-              labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-              onDestinationSelected: (value) {
-                bottomNavigators[value].input!.change(true);
-                Future.delayed(
-                  const Duration(seconds: 1),
-                  () {
-                    bottomNavigators[value].input!.change(false);
-                  },
-                );
-                setState(() {
-                  selectedButton = bottomNavigators[value];
-                  _selectPage = value;
-                });
-              },
-              destinations: [
-                ...List.generate(
-                  bottomNavigators.length,
-                  (index) => NavigationDestination(
-                    icon: SizedBox(
-                      height: 36,
-                      width: 36,
-                      child: Opacity(
-                        opacity: bottomNavigators[index] == selectedButton ? 1 : .5,
-                        child: RiveAnimation.asset(
-                          bottomNavigators.first.src,
-                          artboard: bottomNavigators[index].artboard,
-                          onInit: (artboard) {
-                            StateMachineController controller = Utils.getRiveController(artboard,
-                                stateMachineName: bottomNavigators[index].stateMachineName);
-                            bottomNavigators[index].input = controller.findSMI("active");
-                          },
-                        ),
+    return ChangeNotifierProvider(
+      create: (context) => GoogleSignInProvider(),
+      child: Scaffold(
+        bottomNavigationBar: NavigationBarTheme(
+          data: Theme.of(context).navigationBarTheme,
+          child: NavigationBar(
+            selectedIndex: _selectPage,
+            height: 60,
+            animationDuration: const Duration(milliseconds: 400),
+            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+            onDestinationSelected: (value) {
+              bottomNavigators[value].input!.change(true);
+              Future.delayed(
+                const Duration(seconds: 1),
+                () {
+                  bottomNavigators[value].input!.change(false);
+                },
+              );
+              setState(() {
+                selectedButton = bottomNavigators[value];
+                _selectPage = value;
+              });
+            },
+            destinations: [
+              ...List.generate(
+                bottomNavigators.length,
+                (index) => NavigationDestination(
+                  icon: SizedBox(
+                    height: 36,
+                    width: 36,
+                    child: Opacity(
+                      opacity: bottomNavigators[index] == selectedButton ? 1 : .5,
+                      child: RiveAnimation.asset(
+                        bottomNavigators.first.src,
+                        artboard: bottomNavigators[index].artboard,
+                        onInit: (artboard) {
+                          StateMachineController controller = Utils.getRiveController(artboard,
+                              stateMachineName: bottomNavigators[index].stateMachineName);
+                          bottomNavigators[index].input = controller.findSMI("active");
+                        },
                       ),
                     ),
-                    label: bottomNavigators[index].title,
                   ),
+                  label: bottomNavigators[index].title,
                 ),
-              ],
-            ),
-          ),
-          body: IndexedStack(
-            index: _selectPage,
-            children: const [
-              HomePage(),
-              SearchPage(),
-              LibraryPage(),
-              UserPage(),
+              ),
             ],
           ),
+        ),
+        body: IndexedStack(
+          index: _selectPage,
+          children: const [
+            HomePage(),
+            SearchPage(),
+            LibraryPage(),
+            UserPage(),
+          ],
         ),
       ),
     );

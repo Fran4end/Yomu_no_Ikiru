@@ -4,7 +4,6 @@ import 'package:yomu_no_ikiru/controller/utils.dart';
 import 'chapter.dart';
 import 'manga.dart';
 
-
 class MangaBuilder {
   String title = '';
   String image = '';
@@ -16,7 +15,7 @@ class MangaBuilder {
   double? vote;
   double? readings;
   List<String> genres = [];
-  Set<Chapter> chapters = {};
+  List<Chapter> chapters = [];
   int index = 0;
   int pageIndex = 0;
   bool save = false;
@@ -47,12 +46,22 @@ class MangaBuilder {
     }
   }
 
-  set newChapters(List<String> value) {
+  set newChapter(List<String> value) {
     chapters.add(Chapter(
       title: value[0].replaceAll("Scan ITA", ""),
       date: value[1],
       link: value[2],
     ));
+  }
+
+  set newChapters(List<Chapter> chaps) {
+    if (chapters.isEmpty) {
+      chapters = chaps;
+    } else {
+      chapters = chapters.reversed.toList();
+      chapters.addAll(chaps.reversed.toList().sublist(chapters.length));
+      chapters = chapters.reversed.toList();
+    }
   }
 
   set fromJson(Map json) {
@@ -67,14 +76,11 @@ class MangaBuilder {
       plot = json['plot'];
       vote = json['vote'];
       genres = json['genres'].map<String>((e) => e.toString()).toList();
-      chapters = json["chapters"].map<Chapter>((e) => Chapter.fromJson(e)).toSet();
+      chapters = json["chapters"].map<Chapter>((e) => Chapter.fromJson(e)).toList();
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
-      titleImageLink = [json['title'], json['image'], json['link']];
-      index = json['index'];
-      pageIndex = json['pageIndex'];
     }
   }
 
@@ -88,7 +94,7 @@ class MangaBuilder {
     return Manga(
       artist: artist!,
       author: author!,
-      chapters: chapters.toList(),
+      chapters: chapters,
       genres: genres,
       image: image,
       index: index,

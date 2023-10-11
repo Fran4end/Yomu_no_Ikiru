@@ -9,7 +9,6 @@ import 'top_buttons.dart';
 class CustomSliverAppBar extends StatelessWidget {
   final bool save;
   final double expandedHeight;
-  final Size screen;
   final String tag;
   final Manga manga;
   final Function()? rightButtonFunction;
@@ -18,10 +17,11 @@ class CustomSliverAppBar extends StatelessWidget {
     required this.save,
     this.expandedHeight = 380,
     required this.manga,
-    required this.screen,
     required this.tag,
     this.rightButtonFunction,
   });
+
+  final double artistAuthorSize = 12;
 
   @override
   Widget build(BuildContext context) {
@@ -40,48 +40,35 @@ class CustomSliverAppBar extends StatelessWidget {
         centerTitle: true,
         collapseMode: CollapseMode.parallax,
         titlePadding: const EdgeInsets.symmetric(
-            horizontal: defaultPadding * 4, vertical: defaultPadding / 2),
-        title: FittedBox(
-          fit: BoxFit.contain,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    manga.title.toString(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold),
-                  ),
-                  Wrap(
-                    direction: Axis.horizontal,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text(
-                        manga.author.toString(),
-                        style: const TextStyle(
-                            fontSize: 16, color: Colors.greenAccent, fontWeight: FontWeight.w200),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-                        child: CircleAvatar(
-                          radius: 3,
-                          backgroundColor: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        manga.artist.toString(),
-                        style: const TextStyle(
-                            fontSize: 16, color: Colors.greenAccent, fontWeight: FontWeight.w200),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+            horizontal: defaultPadding * 2, vertical: defaultPadding / 2),
+        title: SafeArea(
+          child: FittedBox(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  manga.title.toString(),
+                  style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      manga.author.toString(),
+                      style: TextStyle(fontSize: artistAuthorSize, fontWeight: FontWeight.w200),
+                    ),
+                    const CircleAvatar(
+                      radius: 3,
+                      backgroundColor: Color(0xff0f0f0f),
+                    ),
+                    Text(
+                      manga.artist.toString(),
+                      style: TextStyle(fontSize: artistAuthorSize, fontWeight: FontWeight.w200),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         background: Stack(
@@ -94,7 +81,6 @@ class CustomSliverAppBar extends StatelessWidget {
               child: MangaPageDetailAppBar(
                 manga: manga,
                 expandedHeight: expandedHeight,
-                screen: screen,
                 tag: tag,
               ),
             ),

@@ -9,25 +9,35 @@ class Utils {
   static showSnackBar(String? text) {
     if (text == null) return;
     final snackBar = SnackBar(
-      margin: const EdgeInsets.all(defaultPadding),
-      backgroundColor: darkTheme.snackBarTheme.backgroundColor!.withOpacity(0.9),
+      margin: const EdgeInsets.all(defaultPadding * 4),
+      backgroundColor: darkTheme.snackBarTheme.backgroundColor!.withOpacity(0.5),
       duration: const Duration(seconds: 1),
-      content: Row(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(right: defaultPadding),
-            child: Image.asset(
-              "assets/icon.png",
-              fit: BoxFit.cover,
-              height: 50,
-            ),
+      content: Opacity(
+        opacity: .5,
+        child: SizedBox(
+          height: 30,
+          width: 50,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: defaultPadding / 2),
+                child: Image.asset(
+                  "assets/icon.png",
+                  fit: BoxFit.cover,
+                  height: 20,
+                ),
+              ),
+              Expanded(
+                child: AutoSizeText(
+                  text,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
-          AutoSizeText(
-            text,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+        ),
       ),
     );
 

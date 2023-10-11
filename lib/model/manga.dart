@@ -1,4 +1,3 @@
-
 import 'chapter.dart';
 
 class Manga {
@@ -15,7 +14,6 @@ class Manga {
   final List<Chapter> chapters;
   final int index;
   final int pageIndex;
-
   Manga({
     required this.title,
     required this.author,
@@ -32,21 +30,6 @@ class Manga {
     required this.pageIndex,
   });
 
-  Manga.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        image = json['image'],
-        link = json['link'],
-        plot = json['plot'],
-        status = json['status'],
-        artist = json['artist'],
-        author = json['author'],
-        genres = json['genres'],
-        vote = json['vote'],
-        chapters = json['chapters'],
-        readings = json['readings'],
-        index = json['index'],
-        pageIndex = json['pageIndex'];
-
   Map<String, dynamic> toJson() => {
         'title': title,
         'image': image,
@@ -59,14 +42,6 @@ class Manga {
         'vote': vote,
         'chapters': chapters.map((e) => e.toJson()).toList(),
         'readings': readings,
-        'index': index,
-        'pageIndex': pageIndex,
-      };
-
-  Map<String, dynamic> toJsonOnlyBookmark() => {
-        'title': title,
-        'image': image,
-        'link': link,
         'index': index,
         'pageIndex': pageIndex,
       };
