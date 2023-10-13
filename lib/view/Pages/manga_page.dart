@@ -163,7 +163,7 @@ class _MangaPageState extends State<MangaPage> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => Reader(
-                      index: (manga.chapters.length - manga.index) - 1,
+                      chapterIndex: (manga.chapters.length - manga.index) - 1,
                       chapters: manga.chapters,
                       chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
                       pageIndex: manga.pageIndex,
@@ -223,12 +223,14 @@ class _MangaPageState extends State<MangaPage> {
                           manga.chapters[index].date.toString(),
                         ),
                         onTap: () async {
-                          int pIndex = 0;
-                          if (manga.index == index) pIndex = manga.pageIndex;
+                          int pIndex = 1;
+                          if (manga.index == manga.chapters.length - index - 1) {
+                            pIndex = manga.pageIndex;
+                          }
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => Reader(
-                                index: index,
+                                chapterIndex: index,
                                 chapters: manga.chapters,
                                 chapter: manga.chapters[index],
                                 pageIndex: pIndex,

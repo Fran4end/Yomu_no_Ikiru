@@ -17,7 +17,7 @@ class MangaBuilder {
   List<String> genres = [];
   List<Chapter> chapters = [];
   int index = 0;
-  int pageIndex = 0;
+  int pageIndex = 1;
   bool save = false;
   bool alreadyLoaded = false;
 
