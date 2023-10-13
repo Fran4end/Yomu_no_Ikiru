@@ -19,9 +19,9 @@ class FileManager {
       try {
         final file = await downloadFile(ref);
         files.add(file);
-      } on Exception catch (e) {
+      } catch (e) {
         if (kDebugMode) {
-          print(e);
+          print("Line 24: $e");
         }
       }
     }
@@ -63,9 +63,9 @@ class FileManager {
       List<File> files =
           Directory("${dir.path}/${user?.uid}").listSync().map((e) => (e as File)).toList();
       return readAllFile(files);
-    } on Exception catch (e) {
+    } catch (e) {
       if (kDebugMode) {
-        print(e);
+        print("Line 68: $e");
       }
       return [];
     }
@@ -105,7 +105,7 @@ class FileManager {
         await ref.delete();
       } catch (e) {
         if (kDebugMode) {
-          print(e);
+          print("Line 108: $e");
         }
       }
     }

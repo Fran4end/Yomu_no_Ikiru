@@ -84,6 +84,11 @@ class _LibraryPageState extends State<LibraryPage> {
             await FirebaseController.uploadJson(file, context);
           }
         }
+      } catch (e) {
+        if (kDebugMode) {
+          print("Line 97: $e");
+        }
+      } finally {
         FirebaseController.downloadJson()
             .then((refs) => FileManager.downloadAllFile(refs).then((files) {
                   if (mounted) {
@@ -92,10 +97,6 @@ class _LibraryPageState extends State<LibraryPage> {
                     });
                   }
                 }));
-      } catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
       }
     } else {
       Utils.showSnackBar('You need to login before sync all manga');

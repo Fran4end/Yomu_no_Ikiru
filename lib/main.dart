@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'model/firebase_options.dart';
+import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
 import 'package:rive/rive.dart';
 
 import 'model/rive_assets.dart';
@@ -108,7 +109,7 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
             ],
           ),
         ),
-        body: IndexedStack(
+        body: LazyLoadIndexedStack(
           index: _selectPage,
           children: const [
             HomePage(),

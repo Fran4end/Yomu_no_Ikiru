@@ -6,6 +6,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:yomu_no_ikiru/constants.dart';
 import 'package:yomu_no_ikiru/controller/reader_page_controller.dart';
+import 'package:pagination_view/pagination_view.dart';
 
 import '../../model/chapter.dart';
 import '../../model/manga_builder.dart';
@@ -54,6 +55,23 @@ class _ReaderState extends State<Reader> {
     super.initState();
     pageController = PageController(initialPage: widget.pageIndex);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    // pageController.addListener(() {
+    // if (pageController.position.pixels == pageController.position.maxScrollExtent && reverse) {
+    // print("object");
+    // widget.index - 1 >= 0
+    //     ? ReaderPageController.nextChapter(
+    //         context: context,
+    //         builder: builder,
+    //         chapters: widget.chapters,
+    //         index: widget.index,
+    //         axis: axis,
+    //         icon: icon,
+    //         reverse: reverse,
+    //         onScope: onScope)
+    //     : null;
+    // }
+    // });
+
     timer = Timer.periodic(
         const Duration(seconds: 5),
         (_) => builder
@@ -209,42 +227,40 @@ class _ReaderState extends State<Reader> {
                   ],
                 ),
               ),
-        body: SafeArea(
-          child: imageUrls.isNotEmpty
-              ? Stack(
-                  alignment: Alignment.center,
-                  fit: StackFit.expand,
-                  children: [
-                    PhotoViewGallery.builder(
-                      pageController: pageController,
-                      itemCount: imageUrls.length,
-                      scrollDirection: axis,
-                      reverse: reverse,
-                      onPageChanged: (index) => setState(() {
-                        pageIndex = index;
-                      }),
-                      builder: (context, index) {
-                        final urlImage = imageUrls[index];
-                        return PhotoViewGalleryPageOptions(
-                          imageProvider: NetworkImage(urlImage),
-                          minScale: PhotoViewComputedScale.contained,
-                          onTapUp: (context, details, controllerValue) {
-                            setState(() {
-                              if (_showAppBar) {
-                                SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-                              } else {
-                                SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-                              }
-                              _showAppBar = !_showAppBar;
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                )
-              : const Center(),
-        ),
+        body: imageUrls.isNotEmpty
+            ? Stack(
+                alignment: Alignment.center,
+                fit: StackFit.expand,
+                children: [
+                  PhotoViewGallery.builder(
+                    pageController: pageController,
+                    itemCount: imageUrls.length,
+                    scrollDirection: axis,
+                    reverse: reverse,
+                    onPageChanged: (index) => setState(() {
+                      pageIndex = index;
+                    }),
+                    builder: (context, index) {
+                      final urlImage = imageUrls[index];
+                      return PhotoViewGalleryPageOptions(
+                        imageProvider: NetworkImage(urlImage),
+                        minScale: PhotoViewComputedScale.contained,
+                        onTapUp: (context, details, controllerValue) {
+                          setState(() {
+                            if (_showAppBar) {
+                              SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+                            } else {
+                              SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                            }
+                            _showAppBar = !_showAppBar;
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ],
+              )
+            : const Center(),
       ),
     );
   }
