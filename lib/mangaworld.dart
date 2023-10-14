@@ -16,9 +16,11 @@ import 'controller/utils.dart';
 class MangaWorld {
   static final Dio dio = Dio(BaseOptions(baseUrl: baseUrl));
   final cacheOptions = CacheOptions(
+    policy: CachePolicy.refresh,
     store: MemCacheStore(),
     hitCacheOnErrorExcept: [401, 403],
-    maxStale: const Duration(hours: 12),
+    maxStale: const Duration(hours: 6),
+    priority: CachePriority.high,
   );
   final retryOptions = RetryInterceptor(
     dio: dio,
@@ -83,10 +85,11 @@ class MangaWorld {
   }
 
   static Future<List<MangaBuilder>> getResults(String keyword,
-      [List<MangaBuilder> results = const []]) async {
+      [List<MangaBuilder> results = const [], int page = 1]) async {
     Response res = Response(requestOptions: RequestOptions());
     try {
-      res = await dio.get('/archive', queryParameters: {'sort': 'most_read', 'keyword': keyword});
+      res = await dio.get('/archive',
+          queryParameters: {'sort': 'most_read', 'keyword': keyword, "page": page});
     } on DioException catch (e) {
       Utils.showSnackBar("Network problem");
       if (kDebugMode) {

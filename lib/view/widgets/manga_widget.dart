@@ -93,6 +93,7 @@ class MangaGrid extends StatelessWidget {
   const MangaGrid({
     Key? key,
     required this.listManga,
+    this.scrollController,
     this.axisCount = 2,
     this.save = false,
     this.tag = "grid",
@@ -102,11 +103,13 @@ class MangaGrid extends StatelessWidget {
   final List<MangaBuilder> listManga;
   final int axisCount;
   final String tag;
+  final ScrollController? scrollController;
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+      controller: scrollController,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: axisCount,
         childAspectRatio: .9,

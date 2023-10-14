@@ -13,16 +13,19 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final controller = TextEditingController();
+  final textController = TextEditingController();
   late String search;
   List<MangaBuilder>? builders;
+  int page = 1;
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    controller.text = '';
+    textController.text = '';
     search = "";
-    fetchData();
+    scrollController.addListener(_scrollListener);
+    _fetchData();
   }
 
   @override
@@ -35,34 +38,39 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: fetchData,
+        onRefresh: _fetchData,
         child: Column(
           children: [
             Container(
               height: 50,
               margin: const EdgeInsets.all(defaultPadding),
               child: TextField(
-                controller: controller,
+                controller: textController,
                 decoration: InputDecoration(
                   labelText: "Search",
                   prefixIcon: const Icon(Icons.search),
                   border: const OutlineInputBorder(),
                   suffix: IconButton(
                       onPressed: () {
-                        controller.text = '';
+                        _fetchData();
+                        textController.text = '';
                         search = "";
-                        fetchData();
                       },
                       icon: const Icon(Icons.clear_rounded)),
                 ),
                 onChanged: (query) {
                   search = query.trim().toLowerCase();
-                  fetchData();
+                  _fetchData();
                 },
               ),
             ),
             Expanded(
-              child: builders == null ? const SkeletonGrid() : MangaGrid(listManga: builders!),
+              child: builders == null
+                  ? const SkeletonGrid()
+                  : MangaGrid(
+                      listManga: builders!,
+                      scrollController: scrollController,
+                    ),
             ),
           ],
         ),
@@ -70,10 +78,25 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Future fetchData() async {
-    final content = await MangaWorld.getResults(search, builders == null ? [] : builders!);
-    builders = content;
+  _scrollListener() {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent - 300 &&
+        !scrollController.position.outOfRange) {
+      setState(() {
+        _fetchData(true);
+      });
+    }
+  }
 
+  Future _fetchData([bool add = false]) async {
+    if (add) {
+      page = page + 1;
+      final content = await MangaWorld.getResults(search, builders ?? [], page);
+      builders!.addAll(content);
+    } else {
+      page = 1;
+      final content = await MangaWorld.getResults(search, builders ?? [], page);
+      builders = content;
+    }
     if (mounted) {
       setState(() {});
     }

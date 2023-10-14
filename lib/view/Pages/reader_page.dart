@@ -6,6 +6,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:yomu_no_ikiru/constants.dart';
 import 'package:yomu_no_ikiru/controller/reader_page_controller.dart';
+import 'package:yomu_no_ikiru/controller/utils.dart';
 
 import '../../model/chapter.dart';
 import '../../model/manga_builder.dart';
@@ -249,9 +250,11 @@ class _ReaderState extends State<Reader> {
                 reverse: reverse,
                 onPageChanged: (index) {
                   if (index == imageUrls.length - 1 && widget.chapterIndex - 1 < 0) {
+                    Utils.showSnackBar("No more chapter");
                     pageController.animateToPage(imageUrls.length - 2,
                         duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
                   } else if (index == 0 && widget.chapterIndex + 1 >= widget.chapters.length) {
+                    Utils.showSnackBar("It's the first chapter");
                     pageController.animateToPage(1,
                         duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
                   }
