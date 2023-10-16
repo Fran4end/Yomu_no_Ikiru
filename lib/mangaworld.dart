@@ -112,8 +112,7 @@ class MangaWorld {
     ];
   }
 
-  Future<Document?> getDetailedPageDocument(MangaBuilder builder) async {
-    final link = builder.link;
+  Future<Document?> getPageDocument(String link) async {
     Response res = Response(requestOptions: RequestOptions());
     Document? document;
     try {

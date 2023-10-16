@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:html/parser.dart';
-import 'package:dio/dio.dart';
 
 import '../model/manga_builder.dart';
 import '../model/chapter.dart';
@@ -133,8 +131,7 @@ class ReaderPageController {
     return (axis, icon, reverse);
   }
 
-  static Future<List<String>> getImages({required Chapter chapter}) async {
-    dom.Document document = await getChapter(chapter: chapter);
+  static List<String> getImages({required dom.Document document}) {
     List<String> imageUrls = [];
 
     try {
@@ -142,19 +139,12 @@ class ReaderPageController {
       for (var element in elements) {
         imageUrls.add(element.attributes['src']!);
       }
-    } catch (e, s) {
+    } catch (e) {
       if (kDebugMode) {
-        print('$e: $s');
+        print('ReaderPageController Line 142: $e');
       }
     }
 
     return imageUrls;
-  }
-
-  static Future<dom.Document> getChapter({required Chapter chapter}) async {
-    final response = await Dio().get(chapter.link!);
-    dom.Document document = parse(response.data);
-
-    return document;
   }
 }

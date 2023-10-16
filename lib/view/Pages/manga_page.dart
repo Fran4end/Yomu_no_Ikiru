@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:html/dom.dart' as dom;
 import '../../constants.dart';
 import '../../model/chapter.dart';
 import '../../mangaworld.dart';
@@ -35,12 +34,14 @@ class _MangaPageState extends State<MangaPage> {
   final User? user = FirebaseAuth.instance.currentUser;
   late bool save = widget.save;
   bool isOnLibrary = false;
+  late final Future doc;
   Timer? timer;
   final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    doc = MangaWorld().getPageDocument(mangaBuilder.link);
     FileManager.isOnLibrary(mangaBuilder.title).then((data) {
       if (data != null && mounted) {
         mangaBuilder = data;
@@ -87,16 +88,15 @@ class _MangaPageState extends State<MangaPage> {
           setState(() {});
         }),
         child: FutureBuilder(
-          future: MangaWorld().getDetailedPageDocument(mangaBuilder),
+          future: doc,
           builder: (context, snapshot) {
-            dom.Document? document;
             if (snapshot.hasError) {
               Utils.showSnackBar(snapshot.error.toString());
               return const Center(
                 child: Text("doc err"),
               );
-            } else if (snapshot.hasData) {
-              document = snapshot.data!;
+            } else if (snapshot.hasData && snapshot.data != null) {
+              final document = snapshot.data!;
               MangaWorld().getVote(document).then((vote) {
                 if (mounted) {
                   if (vote == -1.0) {

@@ -10,7 +10,6 @@ import 'package:yomu_no_ikiru/controller/custom_exceptions.dart';
 
 import '../model/manga.dart';
 import '../model/manga_builder.dart';
-import 'utils.dart';
 
 class FileManager {
   static User? user = FirebaseAuth.instance.currentUser;
@@ -135,7 +134,7 @@ class FileManager {
     user = FirebaseAuth.instance.currentUser;
     if (user == null || title == '') {
       if (kDebugMode) {
-        Utils.showSnackBar('user not logged or file not valid');
+        print("user not logged or file not valid");
       }
     } else {
       List<File> files = await FileManager.getAllLocalFile();
