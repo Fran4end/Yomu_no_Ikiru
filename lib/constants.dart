@@ -4,6 +4,7 @@ import 'model/rive_assets.dart';
 
 const String baseUrl = "https://www.mangaworld.so";
 const double defaultPadding = 16;
+const int pageSize = 16;
 final navigatorKey = GlobalKey<NavigatorState>();
 final List<RiveAsset> bottomNavigators = [
   RiveAsset("assets/RiveAssets/icons.riv",
@@ -19,7 +20,6 @@ final List<RiveAsset> bottomNavigators = [
 final ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
-  textTheme: GoogleFonts.sourceCodeProTextTheme(Typography.blackCupertino),
   appBarTheme: const AppBarTheme(
     elevation: 5,
     centerTitle: true,
@@ -44,8 +44,6 @@ final ThemeData lightTheme = ThemeData(
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       disabledBackgroundColor: const Color(0x33f6f5f5),
-      textStyle: GoogleFonts.sourceSansPro(
-          color: const Color(0xff0D0D0D), fontWeight: FontWeight.w300, fontSize: 14),
     ),
   ),
 );
@@ -53,7 +51,6 @@ final ThemeData lightTheme = ThemeData(
 final ThemeData darkTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
-  textTheme: GoogleFonts.sourceCodeProTextTheme(Typography.whiteCupertino),
   appBarTheme: const AppBarTheme(
     elevation: 5,
     color: Color(0xff0f0f0f),

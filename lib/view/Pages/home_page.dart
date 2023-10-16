@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../mangaworld.dart';
-import '../../model/manga_builder.dart';
 import '../widgets/home_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,13 +14,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<MangaBuilder>? popular;
-  List<MangaBuilder>? recent;
-
+  late final StreamSubscription subscription;
   @override
   void initState() {
     super.initState();
-    fetchData();
+    subscription = Connectivity().onConnectivityChanged.listen((connectivityResult) {
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subscription.cancel();
   }
 
   @override
@@ -29,34 +42,29 @@ class _HomePageState extends State<HomePage> {
           'Home Page',
         ),
       ),
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: fetchData,
-          child: CustomScrollView(
-            slivers: [
-              Popular(builders: popular),
-              Recent(builders: recent),
-            ],
-          ),
-        ),
+      body: RefreshIndicator(
+        onRefresh: () => Future.sync(() => setState(() {})),
+        child: FutureBuilder(
+            future: MangaWorld().getHomePageDocument(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final manga = MangaWorld().all(snapshot.data!);
+                return CustomScrollView(
+                  slivers: [
+                    Popular(builders: manga["popular"]),
+                    Recent(builders: manga["latests"]),
+                  ],
+                );
+              } else {
+                return const CustomScrollView(
+                  slivers: [
+                    Popular(builders: null),
+                    Recent(builders: null),
+                  ],
+                );
+              }
+            }),
       ),
     );
-  }
-
-  Future fetchData() async {
-    final doc = await MangaWorld().getHomePageDocument();
-
-    if (doc != null) {
-      final content = await MangaWorld().all(doc);
-      popular = content['popular']!;
-      recent = content['latests']!;
-    } else {
-      popular ??= [];
-      recent ??= [];
-    }
-
-    if (mounted) {
-      setState(() {});
-    }
   }
 }

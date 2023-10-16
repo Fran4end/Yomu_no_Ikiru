@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:yomu_no_ikiru/model/manga_builder.dart';
 
 import '../../constants.dart';
-import '../../model/manga.dart';
 import 'manga_page_background.dart';
 import 'manga_page_detail.dart';
 import 'top_buttons.dart';
@@ -10,13 +10,13 @@ class CustomSliverAppBar extends StatelessWidget {
   final bool save;
   final double expandedHeight;
   final String tag;
-  final Manga manga;
+  final MangaBuilder mangaBuilder;
   final Function()? rightButtonFunction;
   const CustomSliverAppBar({
     super.key,
     required this.save,
     this.expandedHeight = 380,
-    required this.manga,
+    required this.mangaBuilder,
     required this.tag,
     this.rightButtonFunction,
   });
@@ -25,6 +25,7 @@ class CustomSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final manga = mangaBuilder.build();
     return SliverAppBar(
       pinned: true,
       leading: Padding(

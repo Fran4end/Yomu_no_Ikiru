@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../constants.dart';
 import '../../model/manga.dart';
@@ -35,7 +36,7 @@ class MangaCard extends StatelessWidget {
         ),
       )),
       child: Stack(
-        clipBehavior: Clip.none,
+        // clipBehavior: Clip.none,
         children: [
           Positioned.fill(
             child: Card(
@@ -55,15 +56,31 @@ class MangaCard extends StatelessWidget {
                     clipBehavior: Clip.hardEdge,
                     color: Colors.transparent,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    child: Hero(
-                      tag: "${manga.title} $tag",
-                      child: CachedNetworkImage(
-                        imageUrl: manga.image,
-                        fit: BoxFit.cover,
-                        progressIndicatorBuilder: (context, url, downloadProgress) =>
-                            const Center(child: Skeleton(color: Colors.white)),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                      ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Hero(
+                            tag: "${manga.title} $tag",
+                            child: CachedNetworkImage(
+                              imageUrl: manga.image,
+                              fit: BoxFit.cover,
+                              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                  const Center(child: Skeleton(color: Colors.white)),
+                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.tertiary,
+                            borderRadius: const BorderRadius.all(Radius.circular(8)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(defaultPadding / 3),
+                            child: Text(manga.status),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -82,7 +99,7 @@ class MangaCard extends StatelessWidget {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -92,36 +109,43 @@ class MangaCard extends StatelessWidget {
 class MangaGrid extends StatelessWidget {
   const MangaGrid({
     Key? key,
-    required this.listManga,
-    this.scrollController,
+    // required this.listManga,
+    required this.pagingController,
     this.axisCount = 2,
     this.save = false,
     this.tag = "grid",
   }) : super(key: key);
 
   final bool save;
-  final List<MangaBuilder> listManga;
+  // final List<MangaBuilder> listManga;
   final int axisCount;
   final String tag;
-  final ScrollController? scrollController;
+  final PagingController<int, MangaBuilder> pagingController;
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return PagedGridView(
+      pagingController: pagingController,
       physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-      controller: scrollController,
+      showNewPageProgressIndicatorAsGridChild: false,
+      showNewPageErrorIndicatorAsGridChild: false,
+      showNoMoreItemsIndicatorAsGridChild: false,
+      builderDelegate: PagedChildBuilderDelegate(
+        firstPageProgressIndicatorBuilder: (_) =>
+            const SizedBox(height: 200, child: SkeletonGrid()),
+        newPageProgressIndicatorBuilder: (_) => const SizedBox(height: 200, child: SkeletonGrid()),
+        transitionDuration: const Duration(milliseconds: 500),
+        animateTransitions: true,
+        itemBuilder: (context, MangaBuilder manga, index) => MangaCard(
+          mangaBuilder: manga,
+          save: save,
+          tag: "$tag$index",
+        ),
+      ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: axisCount,
         childAspectRatio: .9,
       ),
-      itemBuilder: ((context, index) {
-        return MangaCard(
-          mangaBuilder: listManga[index],
-          save: save,
-          tag: "$tag$index",
-        );
-      }),
-      itemCount: listManga.length,
     );
   }
 }

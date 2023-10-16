@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../constants.dart';
@@ -10,7 +11,6 @@ import '../../controller/file_manager.dart';
 import '../../model/manga_builder.dart';
 import '../../controller/utils.dart';
 import '../widgets/manga_widget.dart';
-import '../widgets/skeleton.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -20,7 +20,21 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  Future<List<MangaBuilder>> futureBuilders = FileManager.readAllLocalFile();
+  final PagingController<int, MangaBuilder> pagingController = PagingController(firstPageKey: 1);
+
+  @override
+  void initState() {
+    super.initState();
+    pagingController.addPageRequestListener((page) {
+      _fetchData(page);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pagingController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,39 +51,31 @@ class _LibraryPageState extends State<LibraryPage> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _refresh,
+        onRefresh: () => Future.sync(() => pagingController.refresh()),
         child: Padding(
           padding: const EdgeInsets.only(top: defaultPadding),
-          child: FutureBuilder(
-              future: futureBuilders,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const SkeletonGrid();
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(child: Text('Something went wrong'));
-                    } else {
-                      final builders = snapshot.data!;
-                      return builders.isEmpty
-                          ? const Center(child: Text('Nothing added to library'))
-                          : MangaGrid(
-                              listManga: builders,
-                              save: true,
-                              tag: "library",
-                            );
-                    }
-                }
-              }),
+          child: MangaGrid(
+            pagingController: pagingController,
+            save: true,
+            tag: "library",
+          ),
         ),
       ),
     );
   }
 
-  Future _refresh() async {
-    setState(() {
-      futureBuilders = FileManager.readAllLocalFile();
-    });
+  Future _fetchData(int page) async {
+    try {
+      final newItems = await FileManager.readPagedLocalFile(page);
+      final isLastPage = newItems.length < 16;
+      if (isLastPage) {
+        pagingController.appendLastPage(newItems);
+      } else {
+        pagingController.appendPage(newItems, ++page);
+      }
+    } catch (e) {
+      pagingController.error = e;
+    }
   }
 
   Future _syncLibrary() async {
@@ -91,11 +97,7 @@ class _LibraryPageState extends State<LibraryPage> {
       } finally {
         FirebaseController.downloadJson()
             .then((refs) => FileManager.downloadAllFile(refs).then((files) {
-                  if (mounted) {
-                    setState(() {
-                      futureBuilders = FileManager.readAllLocalFile();
-                    });
-                  }
+                  pagingController.refresh();
                 }));
       }
     } else {

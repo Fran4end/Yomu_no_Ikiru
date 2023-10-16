@@ -19,7 +19,6 @@ class MangaBuilder {
   int index = 0;
   int pageIndex = 1;
   bool save = false;
-  bool alreadyLoaded = false;
 
   set readingsVote(List<double?> value) {
     readings = value[0];

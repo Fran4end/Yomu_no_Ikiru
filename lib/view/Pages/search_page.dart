@@ -1,8 +1,11 @@
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+
 import '../../constants.dart';
 import '../../mangaworld.dart';
 import '../../model/manga_builder.dart';
-import '../widgets/skeleton.dart';
 import '../widgets/manga_widget.dart';
 
 class SearchPage extends StatefulWidget {
@@ -15,17 +18,30 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final textController = TextEditingController();
   late String search;
-  List<MangaBuilder>? builders;
-  int page = 1;
-  final ScrollController scrollController = ScrollController();
+  final PagingController<int, MangaBuilder> pagingController = PagingController(firstPageKey: 1);
+  late final StreamSubscription subscription;
 
   @override
   void initState() {
+    pagingController.addPageRequestListener((page) {
+      _fetchData(page);
+    });
+    subscription = Connectivity().onConnectivityChanged.listen((connectivityResult) {
+      if ((connectivityResult == ConnectivityResult.mobile ||
+              connectivityResult == ConnectivityResult.wifi) &&
+          pagingController.itemList!.isEmpty) {
+        pagingController.refresh();
+      }
+    });
     super.initState();
     textController.text = '';
     search = "";
-    scrollController.addListener(_scrollListener);
-    _fetchData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pagingController.dispose();
   }
 
   @override
@@ -38,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: _fetchData,
+        onRefresh: () => Future.sync(() => pagingController.refresh()),
         child: Column(
           children: [
             Container(
@@ -52,25 +68,20 @@ class _SearchPageState extends State<SearchPage> {
                   border: const OutlineInputBorder(),
                   suffix: IconButton(
                       onPressed: () {
-                        _fetchData();
                         textController.text = '';
                         search = "";
+                        pagingController.refresh();
                       },
                       icon: const Icon(Icons.clear_rounded)),
                 ),
                 onChanged: (query) {
                   search = query.trim().toLowerCase();
-                  _fetchData();
+                  pagingController.refresh();
                 },
               ),
             ),
             Expanded(
-              child: builders == null
-                  ? const SkeletonGrid()
-                  : MangaGrid(
-                      listManga: builders!,
-                      scrollController: scrollController,
-                    ),
+              child: MangaGrid(pagingController: pagingController),
             ),
           ],
         ),
@@ -78,27 +89,17 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  _scrollListener() {
-    if (scrollController.offset >= scrollController.position.maxScrollExtent - 300 &&
-        !scrollController.position.outOfRange) {
-      setState(() {
-        _fetchData(true);
-      });
-    }
-  }
-
-  Future _fetchData([bool add = false]) async {
-    if (add) {
-      page = page + 1;
-      final content = await MangaWorld.getResults(search, builders ?? [], page);
-      builders!.addAll(content);
-    } else {
-      page = 1;
-      final content = await MangaWorld.getResults(search, builders ?? [], page);
-      builders = content;
-    }
-    if (mounted) {
-      setState(() {});
+  Future _fetchData(int page) async {
+    try {
+      final newItems = await MangaWorld.getResults(search, page);
+      final isLastPage = newItems.length < pageSize;
+      if (isLastPage) {
+        pagingController.appendLastPage(newItems);
+      } else {
+        pagingController.appendPage(newItems, ++page);
+      }
+    } catch (e) {
+      pagingController.error = e;
     }
   }
 }

@@ -6,6 +6,7 @@ import 'constants.dart';
 import 'model/firebase_options.dart';
 import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
 import 'package:rive/rive.dart';
+import 'dart:io';
 
 import 'model/rive_assets.dart';
 import 'view/Pages/user_page.dart';
@@ -25,7 +26,16 @@ main() async {
       statusBarBrightness: Brightness.dark,
       systemNavigationBarColor: Colors.transparent));
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
 }
 
 class MyApp extends StatelessWidget {

@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:yomu_no_ikiru/constants.dart';
 import 'package:yomu_no_ikiru/controller/custom_exceptions.dart';
 
 import '../model/manga.dart';
@@ -39,7 +41,7 @@ class FileManager {
     return file;
   }
 
-  static Future<List<MangaBuilder>> readAllFile(List<File> files) async {
+  static Future<List<MangaBuilder>> readFileFromList(List<File> files) async {
     List<MangaBuilder> builders = [];
     for (var file in files) {
       final builder = await _readFile(file);
@@ -57,12 +59,27 @@ class FileManager {
     return builder;
   }
 
-  static Future<List<MangaBuilder>> readAllLocalFile() async {
+  static Future<List<MangaBuilder>> readPagedLocalFile(int page) async {
+    List<File> files = [];
     Directory dir = await getApplicationDocumentsDirectory();
     try {
-      List<File> files =
-          Directory("${dir.path}/${user?.uid}").listSync().map((e) => (e as File)).toList();
-      return readAllFile(files);
+      files = Directory("${dir.path}/${user?.uid}").listSync().map((e) => (e as File)).toList();
+      final subList = files.sublist((page - 1) * pageSize, page * pageSize);
+      return await readFileFromList(subList);
+    } on RangeError {
+      return await readFileFromList(files.sublist((page - 1) * pageSize));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Line 68: $e");
+      }
+      return [];
+    }
+  }
+
+  static Future<List<File>> getAllLocalFile() async {
+    Directory dir = await getApplicationDocumentsDirectory();
+    try {
+      return Directory("${dir.path}/${user?.uid}").listSync().map((e) => (e as File)).toList();
     } catch (e) {
       if (kDebugMode) {
         print("Line 68: $e");
@@ -121,12 +138,15 @@ class FileManager {
         Utils.showSnackBar('user not logged or file not valid');
       }
     } else {
-      List<MangaBuilder> builders = await FileManager.readAllLocalFile();
+      List<File> files = await FileManager.getAllLocalFile();
+
       try {
-        return builders.firstWhere((element) => element.title == title);
+        final file =
+            files.firstWhere((element) => basename(element.path).replaceAll(".json", "") == title);
+        return await _readFile(file);
       } catch (e) {
         if (kDebugMode) {
-          print(e);
+          print("Line 149: $e");
           return throw FileNotOnLibraryException("no file found");
         }
       }
