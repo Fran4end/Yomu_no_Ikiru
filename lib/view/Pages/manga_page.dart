@@ -34,6 +34,7 @@ class _MangaPageState extends State<MangaPage> {
   final User? user = FirebaseAuth.instance.currentUser;
   late bool save = widget.save;
   bool isOnLibrary = false;
+  bool isGetVote = false;
   late final Future doc;
   Timer? timer;
   final scrollController = ScrollController();
@@ -98,12 +99,14 @@ class _MangaPageState extends State<MangaPage> {
             } else if (snapshot.hasData && snapshot.data != null) {
               final document = snapshot.data!;
               MangaWorld().getVote(document).then((vote) {
-                if (mounted) {
+                if (mounted && !isGetVote) {
                   if (vote == -1.0) {
                     Utils.showSnackBar("Can't take vote");
                   } else {
                     mangaBuilder.vote = vote;
-                    setState(() {});
+                    setState(() {
+                      isGetVote = true;
+                    });
                   }
                 }
               });
