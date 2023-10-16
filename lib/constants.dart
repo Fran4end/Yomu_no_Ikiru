@@ -31,15 +31,22 @@ final ThemeData lightTheme = ThemeData(
     labelTextStyle:
         MaterialStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
   ),
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: const Color(0xffF78C25),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    elevation: 20,
+    contentTextStyle: GoogleFonts.robotoCondensed(fontSize: 28),
+  ),
   colorScheme: const ColorScheme.light(
     background: Color(0xfff6f5f5),
-    primary: Color(0xff9f5023),
-    secondary: Color(0xffF78C25),
+    primary: Color(0xffF78C25),
+    secondary: Color(0xff9f5023),
     tertiary: Color(0xffF78C25),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xfff6f5f5),
+      backgroundColor: const Color(0xffF78C25),
       alignment: Alignment.center,
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -86,27 +93,3 @@ final ThemeData darkTheme = ThemeData(
     ),
   ),
 );
-
-// * Text Style
-// TextStyle titleStyle({double? fontSize = 18}) {
-//   return GoogleFonts.sourceSansPro(
-//       color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontSize);
-// }
-
-// TextStyle titleBlackStyle({double? fontSize = 18}) {
-//   return GoogleFonts.sourceSansPro(
-//       color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
-// }
-
-// TextStyle titleGreenStyle({double? fontSize = 18}) {
-//   return GoogleFonts.sourceSansPro(
-//       color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontSize);
-// }
-
-// TextStyle subtitleStyle({double? fontSize = 14, FontWeight fontWeight = FontWeight.w300}) {
-//   return GoogleFonts.sourceSansPro(color: Colors.white, fontWeight: fontWeight, fontSize: fontSize);
-// }
-
-// TextStyle miniStyle({double? fontSize = 12, Color color = Colors.white}) {
-//   return GoogleFonts.sourceSansPro(color: color, fontSize: fontSize);
-// }

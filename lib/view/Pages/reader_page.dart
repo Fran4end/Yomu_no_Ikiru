@@ -273,7 +273,8 @@ class _ReaderState extends State<Reader> {
                         if (_showAppBar) {
                           SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
                         } else {
-                          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                          SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                              overlays: [SystemUiOverlay.top]);
                         }
                         _showAppBar = !_showAppBar;
                       });

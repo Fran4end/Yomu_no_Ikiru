@@ -84,10 +84,10 @@ class _LoginWidgetState extends State<LoginWidget> {
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
               ),
-              icon: const Icon(Icons.lock_open),
-              label: const Text(
+              icon: Icon(Icons.lock_open, color: Theme.of(context).iconTheme.color),
+              label: Text(
                 'Sign in',
-                style: TextStyle(color: Colors.white, fontSize: 25),
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(fontSize: 25),
               ),
             ),
             const SizedBox(height: 15),
@@ -96,13 +96,16 @@ class _LoginWidgetState extends State<LoginWidget> {
                   final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
                   provider.googleLogin();
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+                style: ElevatedButton.styleFrom(elevation: 0),
                 icon: const FaIcon(FontAwesomeIcons.google, color: Colors.red),
-                label: const Text('Sign in with google')),
+                label: Text(
+                  'Sign in with google',
+                  style: Theme.of(context).textTheme.labelMedium,
+                )),
             const SizedBox(height: 50),
             RichText(
               text: TextSpan(
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+                style: Theme.of(context).textTheme.bodyMedium,
                 text: 'No account?  ',
                 children: [
                   TextSpan(
