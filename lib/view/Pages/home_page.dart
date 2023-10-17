@@ -15,9 +15,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final StreamSubscription subscription;
+  late Future document;
   @override
   void initState() {
     super.initState();
+    document = MangaWorld().getPageDocument();
     subscription = Connectivity().onConnectivityChanged.listen((connectivityResult) {
       if (connectivityResult == ConnectivityResult.mobile ||
           connectivityResult == ConnectivityResult.wifi) {
@@ -43,9 +45,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () => Future.sync(() => setState(() {})),
+        onRefresh: () => Future.sync(() => setState(() {
+              document = MangaWorld().getPageDocument();
+            })),
         child: FutureBuilder(
-            future: MangaWorld().getHomePageDocument(),
+            future: document,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final manga = MangaWorld().all(snapshot.data!);

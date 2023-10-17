@@ -147,4 +147,43 @@ class ReaderPageController {
 
     return imageUrls;
   }
+
+  static pageControllerListener({
+    required List<String> imageUrls,
+    required PageController pageController,
+    required BuildContext context,
+    required MangaBuilder builder,
+    required List<Chapter> chapters,
+    required int chapterIndex,
+    required Axis axis,
+    required Widget icon,
+    required bool reverse,
+    required Function(MangaBuilder) onScope,
+  }) {
+    if (imageUrls.isNotEmpty) {
+      if (pageController.page == imageUrls.length - 1 && chapterIndex - 1 >= 0) {
+        ReaderPageController.nextChapter(
+          context: context,
+          builder: builder,
+          chapters: chapters,
+          chapterIndex: chapterIndex,
+          axis: axis,
+          icon: icon,
+          reverse: reverse,
+          onScope: onScope,
+        );
+      } else if (pageController.page == 0 && chapterIndex + 1 < chapters.length) {
+        ReaderPageController.previousChapter(
+          context: context,
+          builder: builder,
+          chapters: chapters,
+          chapterIndex: chapterIndex,
+          axis: axis,
+          icon: icon,
+          reverse: reverse,
+          onScope: onScope,
+        );
+      }
+    }
+  }
 }

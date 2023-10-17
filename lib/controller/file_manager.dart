@@ -7,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:yomu_no_ikiru/constants.dart';
 import 'package:yomu_no_ikiru/controller/custom_exceptions.dart';
+import 'package:yomu_no_ikiru/controller/utils.dart';
 
 import '../model/manga.dart';
 import '../model/manga_builder.dart';
@@ -67,9 +68,15 @@ class FileManager {
       return await readFileFromList(subList);
     } on RangeError {
       return await readFileFromList(files.sublist((page - 1) * pageSize));
+    } on PathNotFoundException {
+      if (kDebugMode) {
+        print("You need to login before save on library");
+      }
+      Utils.showSnackBar("You need to login before save on library");
+      return [];
     } catch (e) {
       if (kDebugMode) {
-        print("Line 68: $e");
+        print("Line 75: $e");
       }
       return [];
     }

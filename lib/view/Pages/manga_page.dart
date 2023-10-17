@@ -98,18 +98,20 @@ class _MangaPageState extends State<MangaPage> {
               );
             } else if (snapshot.hasData && snapshot.data != null) {
               final document = snapshot.data!;
-              MangaWorld().getVote(document).then((vote) {
-                if (mounted && !isGetVote) {
-                  if (vote == -1.0) {
-                    Utils.showSnackBar("Can't take vote");
-                  } else {
-                    mangaBuilder.vote = vote;
-                    setState(() {
-                      isGetVote = true;
-                    });
+              if (!isGetVote) {
+                MangaWorld().getVote(document).then((vote) {
+                  if (mounted) {
+                    if (vote == -1.0) {
+                      Utils.showSnackBar("Can't take vote");
+                    } else {
+                      mangaBuilder.vote = vote;
+                      setState(() {
+                        isGetVote = true;
+                      });
+                    }
                   }
-                }
-              });
+                });
+              }
               mangaBuilder = MangaWorld().getAppBarInfo(mangaBuilder, document);
               mangaBuilder
                 ..chapters = MangaWorld().getChapters(document)

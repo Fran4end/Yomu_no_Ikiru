@@ -24,21 +24,6 @@ class MangaWorld {
     dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
   }
 
-  Future<Document> getHomePageDocument() async {
-    Document document;
-    try {
-      Response res = await dio.get("");
-      document = parse(res.data);
-      return document;
-    } on DioException catch (e) {
-      Utils.showSnackBar("Network problem");
-      if (kDebugMode) {
-        print("riga 34: $e");
-      }
-      return throw DioException;
-    }
-  }
-
   Map<String, List<MangaBuilder>> all(Document document) {
     List<Element> latestElements = document.querySelectorAll('.comics-grid > .entry');
     List<Element> popularElements = document.querySelectorAll('.comics-flex > .entry');
@@ -112,7 +97,7 @@ class MangaWorld {
     ];
   }
 
-  Future<Document?> getPageDocument(String link) async {
+  Future<Document?> getPageDocument([String link = ""]) async {
     Response res = Response(requestOptions: RequestOptions());
     Document? document;
     try {
