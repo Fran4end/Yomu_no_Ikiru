@@ -11,26 +11,26 @@ class ReaderPageController {
   static nextChapter({
     required BuildContext context,
     required MangaBuilder builder,
-    required List<Chapter> chapters,
     required int chapterIndex,
     required Axis axis,
     required Widget icon,
     required bool reverse,
     required Function(MangaBuilder) onScope,
+    required Function(int page, int chapterIndex) onPageChange,
   }) {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (_) => Reader(
-                  chapter: chapters[chapterIndex - 1],
-                  chapters: chapters,
+                  chapter: builder.chapters[chapterIndex - 1],
                   pageIndex: 1,
-                  chapterIndex: chapterIndex - 1,
                   builder: builder,
                   onScope: onScope,
                   axis: axis,
                   icon: icon,
                   reverse: reverse,
+                  onPageChange: onPageChange,
+                  chapterIndex: chapterIndex - 1,
                 )));
   }
 
@@ -43,13 +43,13 @@ class ReaderPageController {
     required Widget icon,
     required bool reverse,
     required Function(MangaBuilder) onScope,
+    required Function(int page, int chapterIndex) onPageChange,
   }) {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (_) => Reader(
                   chapter: chapters[chapterIndex + 1],
-                  chapters: chapters,
                   chapterIndex: chapterIndex + 1,
                   pageIndex: 1,
                   builder: builder,
@@ -57,6 +57,7 @@ class ReaderPageController {
                   axis: axis,
                   icon: icon,
                   reverse: reverse,
+                  onPageChange: onPageChange,
                 )));
   }
 
@@ -159,18 +160,20 @@ class ReaderPageController {
     required Widget icon,
     required bool reverse,
     required Function(MangaBuilder) onScope,
+    required Function(int page, int chapterIndex) onPageChange,
   }) {
+    onPageChange(pageController.page!.toInt(), (chapters.length - chapterIndex) - 1);
     if (imageUrls.isNotEmpty) {
       if (pageController.page == imageUrls.length - 1 && chapterIndex - 1 >= 0) {
         ReaderPageController.nextChapter(
           context: context,
           builder: builder,
-          chapters: chapters,
           chapterIndex: chapterIndex,
           axis: axis,
           icon: icon,
           reverse: reverse,
           onScope: onScope,
+          onPageChange: onPageChange,
         );
       } else if (pageController.page == 0 && chapterIndex + 1 < chapters.length) {
         ReaderPageController.previousChapter(
@@ -182,6 +185,7 @@ class ReaderPageController {
           icon: icon,
           reverse: reverse,
           onScope: onScope,
+          onPageChange: onPageChange,
         );
       }
     }

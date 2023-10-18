@@ -25,6 +25,7 @@ class ReaderPagesWidget extends StatefulWidget {
   final Function(MangaBuilder) onScope;
   final bool showAppBar;
   final Function() onTap;
+  final Function(int page, int chapterIndex) onPageChange;
 
   const ReaderPagesWidget({
     super.key,
@@ -39,6 +40,7 @@ class ReaderPagesWidget extends StatefulWidget {
     required this.chapterIndex,
     required this.showAppBar,
     required this.onTap,
+    required this.onPageChange,
   });
 
   @override
@@ -55,6 +57,7 @@ class _ReaderPagesWidgetState extends State<ReaderPagesWidget> {
   late Future document;
   late bool showAppBar = widget.showAppBar;
   late final onScope = widget.onScope;
+  late final onPageChange = widget.onPageChange;
   List<String> imageUrls = [];
   late final PageController pageController;
   late final onTap = widget.onTap;
@@ -81,6 +84,7 @@ class _ReaderPagesWidgetState extends State<ReaderPagesWidget> {
           icon: icon,
           reverse: reverse,
           onScope: onScope,
+          onPageChange: onPageChange,
         ));
   }
 
@@ -125,6 +129,7 @@ class _ReaderPagesWidgetState extends State<ReaderPagesWidget> {
               axis: axis,
               icon: icon,
               onScope: onScope,
+              onPageChange: onPageChange,
               slider: pageIndex < imageUrls.length - 1 && pageIndex > 0
                   ? Slider.adaptive(
                       value: pageIndex + 1,

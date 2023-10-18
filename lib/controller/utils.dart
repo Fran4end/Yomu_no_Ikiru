@@ -6,12 +6,12 @@ import 'package:yomu_no_ikiru/constants.dart';
 class Utils {
   static final messengerKey = GlobalKey<ScaffoldMessengerState>();
 
-  static showSnackBar(String? text) {
+  static showSnackBar(String? text, {Duration duration = const Duration(seconds: 1)}) {
     if (text == null) return;
     final snackBar = SnackBar(
       margin: const EdgeInsets.all(defaultPadding * 4),
       backgroundColor: darkTheme.snackBarTheme.backgroundColor!.withOpacity(0.5),
-      duration: const Duration(seconds: 1),
+      duration: duration,
       content: Opacity(
         opacity: .5,
         child: SizedBox(

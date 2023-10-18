@@ -15,6 +15,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
   final Widget icon;
   final Slider? slider;
   final Function(MangaBuilder) onScope;
+  final Function(int page, int chapterIndex) onPageChange;
 
   const ReaderBottomNavigationBar({
     super.key,
@@ -26,6 +27,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
     required this.icon,
     required this.onScope,
     this.slider,
+    required this.onPageChange,
   });
 
   @override
@@ -52,12 +54,12 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                     ? () => ReaderPageController.nextChapter(
                           context: context,
                           builder: builder,
-                          chapters: chapters,
                           chapterIndex: chapterIndex,
                           axis: axis,
                           icon: icon,
                           reverse: reverse,
                           onScope: onScope,
+                          onPageChange: onPageChange,
                         )
                     : null
                 : chapterIndex + 1 < chapters.length
@@ -70,6 +72,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                           icon: icon,
                           reverse: reverse,
                           onScope: onScope,
+                          onPageChange: onPageChange,
                         )
                     : null,
           ),
@@ -92,12 +95,12 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                     ? () => ReaderPageController.nextChapter(
                         context: context,
                         builder: builder,
-                        chapters: chapters,
                         chapterIndex: chapterIndex,
                         axis: axis,
                         icon: icon,
                         reverse: reverse,
-                        onScope: onScope)
+                        onScope: onScope,
+                        onPageChange: onPageChange)
                     : null
                 : chapterIndex + 1 < chapters.length
                     ? () => ReaderPageController.previousChapter(
@@ -109,6 +112,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                           icon: icon,
                           reverse: reverse,
                           onScope: onScope,
+                          onPageChange: onPageChange,
                         )
                     : null,
             tooltip: reverse ? "Previous chapter" : "Next chapter",

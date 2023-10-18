@@ -36,7 +36,6 @@ class _MangaPageState extends State<MangaPage> {
   bool isOnLibrary = false;
   bool isGetVote = false;
   late final Future doc;
-  Timer? timer;
   final scrollController = ScrollController();
 
   @override
@@ -54,22 +53,12 @@ class _MangaPageState extends State<MangaPage> {
         print("$error ");
       }
     });
-
-    if (mounted) {
-      timer = Timer.periodic(
-        const Duration(seconds: 3),
-        (_) {
-          saveBookmark();
-        },
-      );
-    }
   }
 
   @override
   void dispose() {
     saveBookmark();
     scrollController.dispose();
-    timer?.cancel();
     super.dispose();
   }
 
@@ -189,7 +178,6 @@ class _MangaPageState extends State<MangaPage> {
                   MaterialPageRoute(
                     builder: (context) => Reader(
                       chapterIndex: (manga.chapters.length - manga.index) - 1,
-                      chapters: manga.chapters,
                       chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
                       pageIndex: manga.pageIndex,
                       builder: mangaBuilder,
@@ -213,7 +201,11 @@ class _MangaPageState extends State<MangaPage> {
                         ],
                       ),
                       reverse: true,
-                      onScope: (builder) => setState(() => mangaBuilder = builder),
+                      onScope: (builder) {
+                        setState(() => mangaBuilder = builder);
+                        saveBookmark();
+                      },
+                      onPageChange: onPageChange,
                     ),
                   ),
                 );
@@ -251,7 +243,6 @@ class _MangaPageState extends State<MangaPage> {
                         MaterialPageRoute(
                           builder: (context) => Reader(
                             chapterIndex: index,
-                            chapters: chapters,
                             chapter: chapters[index],
                             pageIndex: 1,
                             builder: mangaBuilder,
@@ -275,7 +266,11 @@ class _MangaPageState extends State<MangaPage> {
                               ],
                             ),
                             reverse: true,
-                            onScope: (builder) => setState(() => mangaBuilder = builder),
+                            onScope: (builder) {
+                              setState(() => mangaBuilder = builder);
+                              saveBookmark();
+                            },
+                            onPageChange: onPageChange,
                           ),
                         ),
                       );
@@ -287,4 +282,11 @@ class _MangaPageState extends State<MangaPage> {
             ),
           ),
         );
+
+  onPageChange(int page, int chapterIndex) {
+    mangaBuilder
+      ..pageIndex = page
+      ..index = chapterIndex;
+    saveBookmark();
+  }
 }

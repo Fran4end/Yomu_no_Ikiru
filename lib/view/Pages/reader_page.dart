@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:yomu_no_ikiru/view/widgets/reader_pages_widget.dart';
@@ -9,7 +8,6 @@ import '../../model/manga_builder.dart';
 class Reader extends StatefulWidget {
   const Reader({
     required this.chapterIndex,
-    required this.chapters,
     required this.chapter,
     required this.pageIndex,
     required this.builder,
@@ -18,15 +16,16 @@ class Reader extends StatefulWidget {
     required this.axis,
     required this.reverse,
     required this.icon,
+    required this.onPageChange,
   });
   final int chapterIndex, pageIndex;
-  final List<Chapter> chapters;
   final Chapter chapter;
   final MangaBuilder builder;
   final Axis axis;
   final bool reverse;
   final Widget icon;
   final Function(MangaBuilder builder) onScope;
+  final Function(int page, int chapterIndex) onPageChange;
 
   @override
   State<StatefulWidget> createState() => _ReaderState();
@@ -40,55 +39,43 @@ class _ReaderState extends State<Reader> {
   late Widget icon = widget.icon;
   late int pageIndex = widget.pageIndex;
   bool showAppBar = false;
-  Timer? timer;
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    timer = Timer.periodic(
-        const Duration(seconds: 5),
-        (_) => builder
-          ..index = (widget.chapters.length - widget.chapterIndex) - 1
-          ..pageIndex = pageIndex);
   }
 
   @override
   void dispose() {
-    timer?.cancel();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    onScope(builder);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        onScope(builder);
-        return true;
+    return ReaderPagesWidget(
+      pageIndex: pageIndex,
+      chapter: widget.chapter,
+      builder: builder,
+      axis: axis,
+      icon: icon,
+      onScope: onScope,
+      reverse: reverse,
+      chapters: builder.chapters,
+      chapterIndex: widget.chapterIndex,
+      showAppBar: showAppBar,
+      onTap: () {
+        if (showAppBar) {
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        } else {
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
+        }
+        showAppBar = !showAppBar;
+        setState(() {});
       },
-      child: ReaderPagesWidget(
-        pageIndex: pageIndex,
-        chapter: widget.chapter,
-        builder: builder,
-        axis: axis,
-        icon: icon,
-        onScope: onScope,
-        reverse: reverse,
-        chapters: widget.chapters,
-        chapterIndex: widget.chapterIndex,
-        showAppBar: showAppBar,
-        onTap: () {
-          if (showAppBar) {
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-          } else {
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                overlays: [SystemUiOverlay.top]);
-          }
-          showAppBar = !showAppBar;
-          setState(() {});
-        },
-      ),
+      onPageChange: widget.onPageChange,
     );
   }
 }

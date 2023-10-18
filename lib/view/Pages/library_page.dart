@@ -86,7 +86,7 @@ class _LibraryPageState extends State<LibraryPage> {
         List<File> files =
             Directory("${dir.path}/${user.uid}").listSync().map((e) => (e as File)).toList();
         for (var file in files) {
-          if (context.mounted) {
+          if (mounted) {
             await FirebaseController.uploadJson(file, context);
           }
         }
