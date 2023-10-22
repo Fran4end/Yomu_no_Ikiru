@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import '../../constants.dart';
-import '../../model/manga.dart';
-import 'skeleton.dart';
+import '../../../constants.dart';
+import '../../../model/manga.dart';
+import '../skeleton.dart';
 
 class MangaPlot extends StatelessWidget {
   final Manga manga;

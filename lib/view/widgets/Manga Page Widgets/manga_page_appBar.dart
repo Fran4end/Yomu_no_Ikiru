@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:yomu_no_ikiru/model/manga_builder.dart';
 
-import '../../constants.dart';
+import '../../../constants.dart';
+import '../top_button.dart';
 import 'manga_page_background.dart';
 import 'manga_page_detail.dart';
-import 'top_buttons.dart';
 
 class CustomSliverAppBar extends StatelessWidget {
   final bool save;

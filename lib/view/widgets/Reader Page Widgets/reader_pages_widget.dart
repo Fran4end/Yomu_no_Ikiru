@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
-import '../../view/Pages/reader_page.dart';
-import '../../model/chapter.dart';
-import '../../model/manga_builder.dart';
-import '../../view/widgets/bottom_navigation_bar_reader.dart';
-import '../../controller/reader_page_controller.dart';
-import '../../controller/utils.dart';
-import '../../mangaworld.dart';
+import '../../Pages/reader_page.dart';
+import '../../../model/chapter.dart';
+import '../../../model/manga_builder.dart';
+import 'bottom_navigation_bar_reader.dart';
+import '../../../controller/reader_page_controller.dart';
+import '../../../controller/utils.dart';
+import '../../../Api/Apis/mangaworld.dart';
 
 class ReaderPagesWidget extends StatefulWidget {
   final int pageIndex;

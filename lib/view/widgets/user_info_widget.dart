@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
-import 'top_buttons.dart';
+import 'top_button.dart';
 
 class UserInfoWidget extends StatefulWidget {
   const UserInfoWidget({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:yomu_no_ikiru/view/widgets/reader_pages_widget.dart';
+import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/reader_pages_widget.dart';
 
 import '../../model/chapter.dart';
 import '../../model/manga_builder.dart';

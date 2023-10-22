@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:yomu_no_ikiru/model/manga_builder.dart';
 
-import '../../model/chapter.dart';
-import '../../constants.dart';
-import '../../controller/reader_page_controller.dart';
+import '../../../model/chapter.dart';
+import '../../../constants.dart';
+import '../../../controller/reader_page_controller.dart';
 
 class ReaderBottomNavigationBar extends StatelessWidget {
   final bool reverse;

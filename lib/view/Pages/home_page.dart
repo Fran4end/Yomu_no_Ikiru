@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-import '../../mangaworld.dart';
+import '../../Api/Apis/mangaworld.dart';
 import '../widgets/home_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
             future: document,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                final manga = MangaWorld().all(snapshot.data!);
+                final manga = MangaWorld().getLatestsAndPopular(snapshot.data!);
                 return CustomScrollView(
                   slivers: [
                     Popular(builders: manga["popular"]),

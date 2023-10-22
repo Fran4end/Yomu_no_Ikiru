@@ -3,15 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../../constants.dart';
 import '../../model/chapter.dart';
-import '../../mangaworld.dart';
+import '../../Api/Apis/mangaworld.dart';
 import '../../controller/file_manager.dart';
 import '../../model/manga.dart';
 import '../../model/manga_builder.dart';
 import '../../controller/utils.dart';
-import '../widgets/manga_page_appBar.dart';
-import '../widgets/manga_page_detail.dart';
+import '../widgets/Manga Page Widgets/manga_page_appBar.dart';
+import '../widgets/Manga Page Widgets/manga_page_detail.dart';
 import 'reader_page.dart';
 
 class MangaPage extends StatefulWidget {

@@ -5,10 +5,10 @@ import 'package:html/parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
-import 'model/chapter.dart';
-import 'constants.dart';
-import 'model/manga_builder.dart';
-import 'controller/utils.dart';
+import '../../model/chapter.dart';
+import '../../constants.dart';
+import '../../model/manga_builder.dart';
+import '../../controller/utils.dart';
 
 class MangaWorld {
   static final Dio dio = Dio(BaseOptions(baseUrl: baseUrl));
@@ -24,7 +24,7 @@ class MangaWorld {
     dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
   }
 
-  Map<String, List<MangaBuilder>> all(Document document) {
+  Map<String, List<MangaBuilder>> getLatestsAndPopular(Document document) {
     List<Element> latestElements = document.querySelectorAll('.comics-grid > .entry');
     List<Element> popularElements = document.querySelectorAll('.comics-flex > .entry');
 
