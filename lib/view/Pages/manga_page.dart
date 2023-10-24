@@ -3,10 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:yomu_no_ikiru/Api/adapter.dart';
 
 import '../../constants.dart';
 import '../../model/chapter.dart';
-import '../../Api/Apis/mangaworld.dart';
 import '../../controller/file_manager.dart';
 import '../../model/manga.dart';
 import '../../model/manga_builder.dart';
@@ -20,11 +20,13 @@ class MangaPage extends StatefulWidget {
     required this.mangaBuilder,
     required this.save,
     required this.tag,
+    required this.api,
     super.key,
   });
   final MangaBuilder mangaBuilder;
   final bool save;
   final String tag;
+  final MangaApiAdapter api;
 
   @override
   State<StatefulWidget> createState() => _MangaPageState();
@@ -36,13 +38,14 @@ class _MangaPageState extends State<MangaPage> {
   late bool save = widget.save;
   bool isOnLibrary = false;
   bool isGetVote = false;
-  late final Future doc;
+  late Future builder;
+  late final api = widget.api;
   final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    doc = MangaWorld().getPageDocument(mangaBuilder.link);
+    builder = api.getDetails(mangaBuilder, mangaBuilder.link);
     FileManager.isOnLibrary(mangaBuilder.title).then((data) {
       if (data != null && mounted) {
         mangaBuilder = data;
@@ -76,20 +79,24 @@ class _MangaPageState extends State<MangaPage> {
       body: RefreshIndicator(
         onRefresh: () => Future.sync(() {
           mangaBuilder.chapters.clear();
+          builder = api.getDetails(mangaBuilder, mangaBuilder.link);
           setState(() {});
         }),
         child: FutureBuilder(
-          future: doc,
+          future: builder,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              Utils.showSnackBar(snapshot.error.toString());
-              return const Center(
-                child: Text("doc err"),
+              // print(mangaBuilder.link);
+              if (kDebugMode) {
+                print(snapshot.error);
+              }
+              return Center(
+                child: Text(snapshot.error.toString()),
               );
             } else if (snapshot.hasData && snapshot.data != null) {
-              final document = snapshot.data!;
+              mangaBuilder = snapshot.data!;
               if (!isGetVote) {
-                MangaWorld().getVote(document).then((vote) {
+                api.getVote(mangaBuilder.link).then((vote) {
                   if (mounted) {
                     if (vote == -1.0) {
                       Utils.showSnackBar("Can't take vote");
@@ -102,11 +109,6 @@ class _MangaPageState extends State<MangaPage> {
                   }
                 });
               }
-              mangaBuilder = MangaWorld().getAppBarInfo(mangaBuilder, document);
-              mangaBuilder
-                ..chapters = MangaWorld().getChapters(document)
-                ..plot = MangaWorld().getPlot(document)
-                ..readings = MangaWorld().getReadings(document);
             }
             final manga = mangaBuilder.build();
             return Stack(
@@ -122,6 +124,8 @@ class _MangaPageState extends State<MangaPage> {
                         if (user != null) {
                           if (save) {
                             FileManager.deleteFile(manga.title);
+                          } else {
+                            saveBookmark();
                           }
                           setState(() => save = !save);
                         } else {
@@ -234,7 +238,7 @@ class _MangaPageState extends State<MangaPage> {
                   elevation: 5,
                   child: ListTile(
                     title: Text(
-                      chapters[index].title.substring(chapters[index].title.indexOf("Cap")),
+                      chapters[index].title,
                     ),
                     subtitle: Text(
                       chapters[index].date.toString(),
@@ -268,7 +272,7 @@ class _MangaPageState extends State<MangaPage> {
                             ),
                             reverse: true,
                             onScope: (builder) {
-                              setState(() => mangaBuilder = builder);
+                              mangaBuilder = builder;
                               saveBookmark();
                             },
                             onPageChange: onPageChange,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yomu_no_ikiru/Api/Adapter/mangaworld_adapter.dart';
 import '../../constants.dart';
 import '../../model/manga_builder.dart';
 import 'manga_widget.dart';
@@ -42,6 +43,7 @@ class Recent extends StatelessWidget {
                           child: MangaCard(
                             mangaBuilder: builders![index],
                             tag: 'recent$index',
+                            api: MangaWorldAdapter(),
                           ),
                         );
                       },
@@ -111,6 +113,7 @@ class Popular extends StatelessWidget {
                             tag: 'popular$index',
                             maxLineText: 2,
                             aspectRatio: 0.7,
+                            api: MangaWorldAdapter(),
                           ),
                         );
                       },

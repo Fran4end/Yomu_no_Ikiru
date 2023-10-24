@@ -1,11 +1,19 @@
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'model/rive_assets.dart';
 
-const String baseUrl = "https://www.mangaworld.so";
+// const String baseUrl = "https://www.mangaworld.so";
 const double defaultPadding = 16;
 const int pageSize = 16;
 final navigatorKey = GlobalKey<NavigatorState>();
+final cacheOptions = CacheOptions(
+  policy: CachePolicy.refresh,
+  store: MemCacheStore(),
+  hitCacheOnErrorExcept: [401, 403],
+  maxStale: const Duration(hours: 6),
+  priority: CachePriority.high,
+);
 final List<RiveAsset> bottomNavigators = [
   RiveAsset("assets/RiveAssets/icons.riv",
       artboard: "HOME", stateMachineName: "HOME_interactivity", title: "Home"),

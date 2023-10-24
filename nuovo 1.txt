@@ -1,0 +1,10 @@
+{
+	"search": "https://api.mangadex.org/manga?title=$title&order[relevance]=desc&limit=16&offset=$page",
+	"chapters": "https://api.mangadex.org/chapter?manga=$id&translatedLanguage%5B%5D=en",
+}
+
+32fdfe9b-6e11-4a13-9e36-dcd8ea77b4e4
+
+https://api.mangadex.org/manga/32fdfe9b-6e11-4a13-9e36-dcd8ea77b4e4/feed
+
+https://api.consumet.org/manga/manga?title=tokyo%20ghoul&order[relevance]=desc&offset=0&limit=16

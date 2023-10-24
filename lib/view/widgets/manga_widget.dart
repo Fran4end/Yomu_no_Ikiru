@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:yomu_no_ikiru/Api/adapter.dart';
 
 import '../../constants.dart';
 import '../../model/manga.dart';
@@ -17,12 +18,14 @@ class MangaCard extends StatelessWidget {
     this.aspectRatio = 0.9,
     this.tag = '',
     this.maxLineText = 1,
+    required this.api,
   }) : super(key: key);
 
   final MangaBuilder mangaBuilder;
   final bool save;
   final String tag;
   final double maxLineText, aspectRatio;
+  final MangaApiAdapter api;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,8 @@ class MangaCard extends StatelessWidget {
         builder: (context) => MangaPage(
           mangaBuilder: mangaBuilder,
           save: save,
-          tag: "${manga.title} $tag",
+          tag: "${manga.id} $tag",
+          api: api,
         ),
       )),
       child: Stack(
@@ -60,7 +64,7 @@ class MangaCard extends StatelessWidget {
                       children: [
                         Positioned.fill(
                           child: Hero(
-                            tag: "${manga.title} $tag",
+                            tag: "${manga.id} $tag",
                             child: CachedNetworkImage(
                               imageUrl: manga.image,
                               fit: BoxFit.cover,
@@ -109,18 +113,18 @@ class MangaCard extends StatelessWidget {
 class MangaGrid extends StatelessWidget {
   const MangaGrid({
     Key? key,
-    // required this.listManga,
     required this.pagingController,
     this.axisCount = 2,
     this.save = false,
     this.tag = "grid",
+    this.api,
   }) : super(key: key);
 
   final bool save;
-  // final List<MangaBuilder> listManga;
   final int axisCount;
   final String tag;
   final PagingController<int, MangaBuilder> pagingController;
+  final MangaApiAdapter? api;
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +144,7 @@ class MangaGrid extends StatelessWidget {
           mangaBuilder: manga,
           save: save,
           tag: "$tag$index",
+          api: api ?? manga.api,
         ),
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

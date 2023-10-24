@@ -60,6 +60,10 @@ class FileManager {
   }
 
   static Future<List<MangaBuilder>> readPagedLocalFile(int page) async {
+    if (user == null) {
+      Utils.showSnackBar("You need to login before save on library");
+      return [];
+    }
     List<File> files = [];
     Directory dir = await getApplicationDocumentsDirectory();
     try {
@@ -70,9 +74,9 @@ class FileManager {
       return await readFileFromList(files.sublist((page - 1) * pageSize));
     } on PathNotFoundException {
       if (kDebugMode) {
-        print("You need to login before save on library");
+        print("No manga already saved");
       }
-      Utils.showSnackBar("You need to login before save on library");
+      Utils.showSnackBar("No manga already saved");
       return [];
     } catch (e) {
       if (kDebugMode) {
@@ -88,7 +92,7 @@ class FileManager {
       return Directory("${dir.path}/${user?.uid}").listSync().map((e) => (e as File)).toList();
     } catch (e) {
       if (kDebugMode) {
-        print("Line 68: $e");
+        print("Line 91: $e");
       }
       return [];
     }
@@ -112,6 +116,31 @@ class FileManager {
     }
     await jsonFile.writeAsString(jsonEncode(jsonFileContent));
     return jsonFile;
+  }
+
+  static void delateAllLocalAndCloudFiles() async {
+    List<File> files = await getAllLocalFile();
+    for (var file in files) {
+      bool fileExist = await file.exists();
+      if (user == null) {
+        if (kDebugMode) {
+          print('user not logged');
+        }
+      } else {
+        final title = basename(file.path);
+        final ref = FirebaseStorage.instance.ref('${user?.uid}/$title');
+        try {
+          await ref.delete();
+        } catch (e) {
+          if (kDebugMode) {
+            print("Line 108: $e");
+          }
+        }
+      }
+      if (fileExist) {
+        await file.delete();
+      }
+    }
   }
 
   static void deleteFile(String title) async {

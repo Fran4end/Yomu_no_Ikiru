@@ -1,6 +1,9 @@
+import 'package:yomu_no_ikiru/Api/adapter.dart';
+
 import 'chapter.dart';
 
 class Manga {
+  final String id;
   final String title;
   final String author;
   final String artist;
@@ -14,7 +17,10 @@ class Manga {
   final List<Chapter> chapters;
   final int index;
   final int pageIndex;
+  final MangaApiAdapter api;
   Manga({
+    required this.api,
+    required this.id,
     required this.title,
     required this.author,
     required this.artist,
@@ -30,24 +36,28 @@ class Manga {
     required this.pageIndex,
   });
 
-  Map<String, dynamic> toJson() => {
-        'title': title,
-        'image': image,
-        'link': link,
-        'plot': plot,
-        'status': status,
-        'artist': artist,
-        'author': author,
-        'genres': genres,
-        'vote': vote,
-        'chapters': chapters.map((e) => e.toJson()).toList(),
-        'readings': readings,
-        'index': index,
-        'pageIndex': pageIndex,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      'title': title,
+      'image': image,
+      'link': link,
+      'plot': plot,
+      'status': status,
+      'artist': artist,
+      'author': author,
+      'genres': genres,
+      'vote': vote,
+      'chapters': chapters.map((e) => e.toJson()).toList(),
+      'readings': readings,
+      'index': index,
+      'pageIndex': pageIndex,
+      'api': api.toJson(),
+    };
+  }
 
   @override
   String toString() {
-    return '$title -> ($author, $artist): $status ($vote, $readings) \n[$plot] $genres\n$image\n$link\n\n';
+    return '$id || $title -> ($author, $artist): $status ($vote, $readings)\n$genres\n$image\n$link\n\n';
   }
 }

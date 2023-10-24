@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -47,7 +48,35 @@ class _LibraryPageState extends State<LibraryPage> {
           IconButton(
             onPressed: _syncLibrary,
             icon: const Icon(Icons.cloud_sync_rounded),
-          )
+          ),
+          IconButton(
+            onPressed: () {
+              FileManager.delateAllLocalAndCloudFiles();
+              pagingController.refresh();
+            },
+            icon: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                const Align(
+                  alignment: Alignment.center,
+                  child: Icon(FontAwesomeIcons.trash),
+                ),
+                Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 5),
+                      child: Text(
+                        "ALL",
+                        style: TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    )),
+              ],
+            ),
+          ),
         ],
       ),
       body: RefreshIndicator(

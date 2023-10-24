@@ -11,14 +11,7 @@ import '../../model/manga_builder.dart';
 import '../../controller/utils.dart';
 
 class MangaWorld {
-  static final Dio dio = Dio(BaseOptions(baseUrl: baseUrl));
-  final cacheOptions = CacheOptions(
-    policy: CachePolicy.refresh,
-    store: MemCacheStore(),
-    hitCacheOnErrorExcept: [401, 403],
-    maxStale: const Duration(hours: 6),
-    priority: CachePriority.high,
-  );
+  static final Dio dio = Dio(BaseOptions(baseUrl: "https://www.mangaworld.so"));
 
   MangaWorld() {
     dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
@@ -56,7 +49,7 @@ class MangaWorld {
     return popular;
   }
 
-  static Future<List<MangaBuilder>> getResults(String keyword, [int page = 1]) async {
+  Future<List<MangaBuilder>> getResults(String keyword, int page) async {
     Response res = Response(requestOptions: RequestOptions());
     List<MangaBuilder> results = [];
     try {
@@ -97,7 +90,7 @@ class MangaWorld {
     ];
   }
 
-  Future<Document?> getPageDocument([String link = ""]) async {
+  Future<Document?> getPageDocument(String link) async {
     Response res = Response(requestOptions: RequestOptions());
     Document? document;
     try {
@@ -112,11 +105,11 @@ class MangaWorld {
     return document;
   }
 
-  String getPlot(Document document) {
+  String _getPlot(Document document) {
     return document.querySelector('#noidungm')!.text;
   }
 
-  double? getReadings(Document document) {
+  double? _getReadings(Document document) {
     String? readings = document.querySelector('.info > .meta-data')?.children[6].children[1].text;
     return double.tryParse(readings.toString());
   }
@@ -131,10 +124,14 @@ class MangaWorld {
         ..artist = null
         ..author = null;
     }
-    builder
-      ..artist ??= info!.children[3].querySelector('a')!.text
-      ..author ??= info!.children[2].querySelector('a')!.text
-      ..genres = _getGenres(info?.children[1].querySelectorAll('a'));
+    builder.appBarInfo = [
+      _getReadings(document),
+      info!.children[3].querySelector('a')!.text,
+      info.children[2].querySelector('a')!.text,
+      _getGenres(info.children[1].querySelectorAll('a')),
+      _getPlot(document),
+    ];
+
     return builder;
   }
 
@@ -146,8 +143,8 @@ class MangaWorld {
     return tmp;
   }
 
-  Future<double> getVote(Document document) async {
-    final element = document.querySelector('.info > .references');
+  Future<double> getVote(Document? document) async {
+    final element = document?.querySelector('.info > .references');
     if (element == null) {
       return 0;
     }
@@ -182,7 +179,10 @@ class MangaWorld {
     }
   }
 
-  List<Chapter> getChapters(Document document) {
+  List<Chapter> getChapters(Document? document) {
+    if (document == null) {
+      return [];
+    }
     List<Chapter> chapters = [];
     List<Element> chaptersElement =
         document.querySelector('.chapters-wrapper')!.querySelectorAll('.chapter > .chap');
@@ -196,12 +196,11 @@ class MangaWorld {
         link = '$link?style=list';
       }
       List<String> data = [
-        attributes['title'],
+        attributes['title'].replaceAll("Scan ITA", ""),
         chap.querySelector('i')!.text,
         link,
       ];
-      chapters
-          .add(Chapter(date: data[1], title: data[0].replaceAll("Scan ITA", ""), link: data[2]));
+      chapters.add(Chapter(id: data[0], date: data[1], title: data[0], link: data[2]));
     }
     return chapters;
   }

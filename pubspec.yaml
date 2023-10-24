@@ -58,6 +58,8 @@ dependencies:
   lazy_load_indexed_stack:
   infinite_scroll_pagination:
   connectivity_plus:
+  flutter_screenutil:
+  intl:
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +91,7 @@ flutter:
   assets:
     - assets/
     - assets/RiveAssets/
+    - assets/sourceIcons/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

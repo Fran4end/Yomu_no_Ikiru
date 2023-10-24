@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'model/firebase_options.dart';
@@ -27,6 +28,7 @@ main() async {
       systemNavigationBarColor: Colors.transparent));
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   HttpOverrides.global = MyHttpOverrides();
+  await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
 
@@ -44,6 +46,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     return MaterialApp(
       navigatorKey: navigatorKey,
       scaffoldMessengerKey: Utils.messengerKey,

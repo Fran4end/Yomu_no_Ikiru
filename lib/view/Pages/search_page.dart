@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:yomu_no_ikiru/Api/Adapter/mangadex_adapter.dart';
+import 'package:yomu_no_ikiru/Api/Adapter/mangaworld_adapter.dart';
+import 'package:yomu_no_ikiru/Api/adapter.dart';
+import 'package:yomu_no_ikiru/view/widgets/source_selector.dart';
 
 import '../../constants.dart';
-import '../../Api/Apis/mangaworld.dart';
 import '../../model/manga_builder.dart';
 import '../widgets/manga_widget.dart';
 
@@ -18,8 +22,24 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final textController = TextEditingController();
   late String search;
-  final PagingController<int, MangaBuilder> pagingController = PagingController(firstPageKey: 1);
+  final PagingController<int, MangaBuilder> pagingController = PagingController(
+    firstPageKey: 1,
+    invisibleItemsThreshold: 8,
+  );
   late final StreamSubscription subscription;
+  MangaApiAdapter api = MangaWorldAdapter();
+  final sources = [
+    SourceSelector(
+      sourceName: "MangaWorld",
+      imagePath: "assets/sourceIcons/MangaWorld.png",
+      mangaApi: MangaWorldAdapter(),
+    ),
+    SourceSelector(
+      sourceName: "MangaDex",
+      imagePath: "assets/sourceIcons/MangaDex.png",
+      mangaApi: MangaDexAdapter(),
+    ),
+  ];
 
   @override
   void initState() {
@@ -52,6 +72,21 @@ class _SearchPageState extends State<SearchPage> {
         title: const Text(
           'Discover',
         ),
+        actions: [
+          PopupMenuButton(
+              icon: const Icon(FontAwesomeIcons.filter),
+              onSelected: (value) {
+                api = value;
+                pagingController.refresh();
+              },
+              itemBuilder: (context) {
+                List<PopupMenuItem<MangaApiAdapter>> items = [];
+                for (SourceSelector source in sources) {
+                  items.add(PopupMenuItem(value: source.mangaApi, child: source));
+                }
+                return items;
+              }),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () => Future.sync(() => pagingController.refresh()),
@@ -81,7 +116,10 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             Expanded(
-              child: MangaGrid(pagingController: pagingController),
+              child: MangaGrid(
+                pagingController: pagingController,
+                api: api,
+              ),
             ),
           ],
         ),
@@ -91,7 +129,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Future _fetchData(int page) async {
     try {
-      final newItems = await MangaWorld.getResults(search, page);
+      final newItems = await api.getResults(search, page);
       final isLastPage = newItems.length < pageSize;
       if (isLastPage) {
         pagingController.appendLastPage(newItems);

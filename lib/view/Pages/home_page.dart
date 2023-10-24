@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:yomu_no_ikiru/Api/Adapter/mangadex_adapter.dart';
 
 import '../../Api/Apis/mangaworld.dart';
 import '../widgets/home_widget.dart';
@@ -19,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    document = MangaWorld().getPageDocument();
+    document = MangaWorld().getPageDocument("");
     subscription = Connectivity().onConnectivityChanged.listen((connectivityResult) {
       if (connectivityResult == ConnectivityResult.mobile ||
           connectivityResult == ConnectivityResult.wifi) {
@@ -43,10 +45,19 @@ class _HomePageState extends State<HomePage> {
         title: const Text(
           'Home Page',
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(FontAwesomeIcons.bug),
+            onPressed: () async {
+              final builders = await MangaDexAdapter().getResults("Medabot Reloaded");
+              await MangaDexAdapter().getDetails(builders.first, builders.first.link);
+            },
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () => Future.sync(() => setState(() {
-              document = MangaWorld().getPageDocument();
+              document = MangaWorld().getPageDocument("");
             })),
         child: FutureBuilder(
             future: document,
