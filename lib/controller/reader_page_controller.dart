@@ -1,8 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:html/dom.dart' as dom;
 
+import '../Api/adapter.dart';
 import '../model/manga_builder.dart';
 import '../model/chapter.dart';
 import '../view/Pages/reader_page.dart';
@@ -15,6 +15,7 @@ class ReaderPageController {
     required Axis axis,
     required Widget icon,
     required bool reverse,
+    required MangaApiAdapter api,
     required Function(MangaBuilder) onScope,
     required Function(int page, int chapterIndex) onPageChange,
   }) {
@@ -31,6 +32,7 @@ class ReaderPageController {
                   reverse: reverse,
                   onPageChange: onPageChange,
                   chapterIndex: chapterIndex - 1,
+                  api: api,
                 )));
   }
 
@@ -42,6 +44,7 @@ class ReaderPageController {
     required Axis axis,
     required Widget icon,
     required bool reverse,
+    required MangaApiAdapter api,
     required Function(MangaBuilder) onScope,
     required Function(int page, int chapterIndex) onPageChange,
   }) {
@@ -58,6 +61,7 @@ class ReaderPageController {
                   icon: icon,
                   reverse: reverse,
                   onPageChange: onPageChange,
+                  api: api,
                 )));
   }
 
@@ -132,25 +136,8 @@ class ReaderPageController {
     return (axis, icon, reverse);
   }
 
-  static List<String> getImages({required dom.Document document}) {
-    List<String> imageUrls = [];
-
-    try {
-      var elements = document.querySelectorAll('#page > img');
-      for (var element in elements) {
-        imageUrls.add(element.attributes['src']!);
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('ReaderPageController Line 142: $e');
-      }
-    }
-
-    return imageUrls;
-  }
-
   static pageControllerListener({
-    required List<String> imageUrls,
+    required Future<List<String>> imageUrls,
     required PageController pageController,
     required BuildContext context,
     required MangaBuilder builder,
@@ -159,35 +146,45 @@ class ReaderPageController {
     required Axis axis,
     required Widget icon,
     required bool reverse,
+    required MangaApiAdapter api,
     required Function(MangaBuilder) onScope,
     required Function(int page, int chapterIndex) onPageChange,
   }) {
     onPageChange(pageController.page!.toInt(), (chapters.length - chapterIndex) - 1);
-    if (imageUrls.isNotEmpty) {
-      if (pageController.page == imageUrls.length - 1 && chapterIndex - 1 >= 0) {
-        ReaderPageController.nextChapter(
-          context: context,
-          builder: builder,
-          chapterIndex: chapterIndex,
-          axis: axis,
-          icon: icon,
-          reverse: reverse,
-          onScope: onScope,
-          onPageChange: onPageChange,
-        );
-      } else if (pageController.page == 0 && chapterIndex + 1 < chapters.length) {
-        ReaderPageController.previousChapter(
-          context: context,
-          builder: builder,
-          chapters: chapters,
-          chapterIndex: chapterIndex,
-          axis: axis,
-          icon: icon,
-          reverse: reverse,
-          onScope: onScope,
-          onPageChange: onPageChange,
-        );
+    imageUrls.then((images) {
+      if (images.isNotEmpty) {
+        if (pageController.page == images.length && chapterIndex - 1 >= 0) {
+          ReaderPageController.nextChapter(
+            context: context,
+            builder: builder,
+            chapterIndex: chapterIndex,
+            axis: axis,
+            icon: icon,
+            reverse: reverse,
+            onScope: onScope,
+            onPageChange: onPageChange,
+            api: api,
+          );
+        } else if (pageController.page == 0 && chapterIndex + 1 < chapters.length) {
+          ReaderPageController.previousChapter(
+            context: context,
+            builder: builder,
+            chapters: chapters,
+            chapterIndex: chapterIndex,
+            axis: axis,
+            icon: icon,
+            reverse: reverse,
+            onScope: onScope,
+            onPageChange: onPageChange,
+            api: api,
+          );
+        }
       }
-    }
+    });
+  }
+
+  static void preload(BuildContext context, String path) {
+    final configuration = createLocalImageConfiguration(context);
+    CachedNetworkImageProvider(path).resolve(configuration);
   }
 }

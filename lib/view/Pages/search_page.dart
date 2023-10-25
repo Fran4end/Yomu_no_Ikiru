@@ -77,6 +77,7 @@ class _SearchPageState extends State<SearchPage> {
               icon: const Icon(FontAwesomeIcons.filter),
               onSelected: (value) {
                 api = value;
+                setState(() {});
                 pagingController.refresh();
               },
               itemBuilder: (context) {

@@ -1,7 +1,11 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart';
 import 'package:yomu_no_ikiru/Api/Apis/mangadex.dart';
 import 'package:yomu_no_ikiru/Api/adapter.dart';
 import 'package:yomu_no_ikiru/model/manga_builder.dart';
+
+import '../../controller/utils.dart';
 
 class MangaDexAdapter implements MangaApiAdapter {
   final MangaDex api = MangaDex();
@@ -19,15 +23,14 @@ class MangaDexAdapter implements MangaApiAdapter {
   }
 
   @override
-  Future<double> getVote([String link = ""]) async {
-    return -1;
+  Future<double> getVote(MangaBuilder builder) async {
+    builder = await api.getUnloadInfo(builder);
+    return 0;
   }
 
   @override
   Future<MangaBuilder> getDetails(MangaBuilder builder, [String link = ""]) async {
-    List values = await Future.wait([api.getUnloadInfo(builder), api.getChapters(builder.id!)]);
-    builder = values[0];
-    builder.chapters = values[1];
+    builder.chapters = await api.getChapters(builder.id!);
     return builder;
   }
 
@@ -36,4 +39,25 @@ class MangaDexAdapter implements MangaApiAdapter {
 
   @override
   Map<String, dynamic> toJson() => {"type": type};
+
+  @override
+  Future<List<String>> getImageUrls(String link) async {
+    try {
+      List<String> images = [];
+      final res = await api.getJson(link);
+      final baseUrl = res["baseUrl"];
+      final hash = res["chapter"]["hash"];
+      for (String image in res["chapter"]["dataSaver"]) {
+        images.add("$baseUrl/data-saver/$hash/$image");
+      }
+      return images;
+    } on DioException catch (e) {
+      Utils.showSnackBar("Network problem");
+      if (kDebugMode) {
+        print(e.requestOptions.uri);
+        print("MangaDex riga 48: $e");
+      }
+      return [];
+    }
+  }
 }

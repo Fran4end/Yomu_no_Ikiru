@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'model/rive_assets.dart';
 
-// const String baseUrl = "https://www.mangaworld.so";
 const double defaultPadding = 16;
 const int pageSize = 16;
 final navigatorKey = GlobalKey<NavigatorState>();

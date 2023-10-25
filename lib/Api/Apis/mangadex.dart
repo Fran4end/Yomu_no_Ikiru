@@ -2,11 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-import 'package:yomu_no_ikiru/model/chapter.dart';
-import 'package:yomu_no_ikiru/model/manga_builder.dart';
 
 import '../../constants.dart';
 import '../../controller/utils.dart';
+import '../../model/chapter.dart';
+import '../../model/manga_builder.dart';
 
 class MangaDex {
   static final Dio dio = Dio(BaseOptions(baseUrl: "https://api.mangadex.org"));
@@ -88,13 +88,26 @@ class MangaDex {
     final title = element["attributes"]["title"]["en"];
     final coverID =
         element["relationships"].where((element) => element["type"] == "cover_art").first["id"];
-    final coverRes = await dio.get("/cover/$coverID");
-    final coverFileName = coverRes.data["data"]["attributes"]["fileName"];
-    return [
-      title ?? element["attributes"]["title"]["ja"],
-      "https://uploads.mangadex.org/covers/$mangaID/$coverFileName",
-      "https://api.mangadex.org/manga/$mangaID",
-    ];
+    try {
+      final coverRes = await dio.get("/cover/$coverID");
+      final coverFileName = coverRes.data["data"]["attributes"]["fileName"];
+      return [
+        title ?? element["attributes"]["title"]["ja"],
+        "https://uploads.mangadex.org/covers/$mangaID/$coverFileName",
+        "https://api.mangadex.org/manga/$mangaID",
+      ];
+    } on DioException catch (e) {
+      Utils.showSnackBar("Network problem");
+      if (kDebugMode) {
+        print(e.requestOptions.uri);
+        print("MangaDex riga 48: $e");
+      }
+      return [
+        title ?? element["attributes"]["title"]["ja"],
+        null,
+        "https://api.mangadex.org/manga/$mangaID",
+      ];
+    }
   }
 
   Future<MangaBuilder> getUnloadInfo(MangaBuilder builder) async {
@@ -118,41 +131,43 @@ class MangaDex {
     int offset = 0;
     int limit = 100;
     do {
-      final res = await dio.get("/manga/$id/feed", queryParameters: {
-        "translatedLanguage[]": "en",
-        "limit": limit,
-        "offset": offset,
-      });
-      for (var chap in res.data["data"].where((e) => e["type"] == "chapter")) {
-        String? title = chap["attributes"]["chapter"] + " " + chap["attributes"]["title"];
-        if (title == null || title == "") {
-          title = 'chapter ${chap["attributes"]["chapter"]}';
+      try {
+        final res = await dio.get("/manga/$id/feed", queryParameters: {
+          "translatedLanguage[]": "en",
+          "limit": limit,
+          "offset": offset,
+        });
+        for (var chap in res.data["data"].where((e) => e["type"] == "chapter")) {
+          String? title = chap["attributes"]["chapter"] + " " + (chap["attributes"]["title"] ?? "");
+          if (title == null || title == "") {
+            title = 'chapter ${chap["attributes"]["chapter"]}';
+          }
+          final DateTime date = DateTime.parse(chap["attributes"]["publishAt"]);
+          chapters.add(
+            Chapter(
+                id: chap["id"],
+                date: DateFormat('d MMMM y').format(date.toLocal()),
+                title: title,
+                link: 'https://api.mangadex.org/at-home/server/${chap["id"]}',
+                volume: chap["volume"],
+                order: double.parse(chap["attributes"]["chapter"])),
+          );
         }
-        final DateTime date = DateTime.parse(chap["attributes"]["publishAt"]);
-        chapters.add(
-          Chapter(
-              id: chap["id"],
-              date: DateFormat('d MMMM y').format(date.toLocal()),
-              title: title,
-              link: 'https://api.mangadex.org/at-home/server/${chap["id"]}',
-              volume: chap["volume"],
-              order: double.parse(chap["attributes"]["chapter"])),
-        );
-      }
-      if (res.data["total"] > chapters.length) {
-        offset += limit;
-      } else {
-        allLoaded = false;
+        if (res.data["total"] > chapters.length) {
+          offset += limit;
+        } else {
+          allLoaded = false;
+        }
+      } on DioException catch (e) {
+        Utils.showSnackBar("Network problem");
+        if (kDebugMode) {
+          print(e.requestOptions.uri);
+          print("MangaDex riga 48: $e");
+        }
+        return [];
       }
     } while (allLoaded);
     chapters.sort((a, b) => a.order!.compareTo(b.order!));
     return chapters.reversed.toList();
-  }
-
-  getChapterImages(List<Chapter> chapters) async {
-    for (var chapter in chapters) {
-      final data = await dio.get(chapter.link!);
-      print(data);
-    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:yomu_no_ikiru/Api/adapter.dart';
 import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/reader_pages_widget.dart';
 
 import '../../model/chapter.dart';
@@ -17,6 +18,7 @@ class Reader extends StatefulWidget {
     required this.reverse,
     required this.icon,
     required this.onPageChange,
+    required this.api,
   });
   final int chapterIndex, pageIndex;
   final Chapter chapter;
@@ -24,6 +26,7 @@ class Reader extends StatefulWidget {
   final Axis axis;
   final bool reverse;
   final Widget icon;
+  final MangaApiAdapter api;
   final Function(MangaBuilder builder) onScope;
   final Function(int page, int chapterIndex) onPageChange;
 
@@ -76,6 +79,7 @@ class _ReaderState extends State<Reader> {
         setState(() {});
       },
       onPageChange: widget.onPageChange,
+      api: widget.api,
     );
   }
 }

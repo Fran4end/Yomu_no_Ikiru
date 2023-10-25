@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:yomu_no_ikiru/Api/adapter.dart';
 import 'package:yomu_no_ikiru/model/manga_builder.dart';
 
 import '../../../model/chapter.dart';
@@ -14,6 +15,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
   final Axis axis;
   final Widget icon;
   final Slider? slider;
+  final MangaApiAdapter api;
   final Function(MangaBuilder) onScope;
   final Function(int page, int chapterIndex) onPageChange;
 
@@ -28,6 +30,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
     required this.onScope,
     this.slider,
     required this.onPageChange,
+    required this.api,
   });
 
   @override
@@ -60,6 +63,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                           reverse: reverse,
                           onScope: onScope,
                           onPageChange: onPageChange,
+                          api: api,
                         )
                     : null
                 : chapterIndex + 1 < chapters.length
@@ -73,6 +77,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                           reverse: reverse,
                           onScope: onScope,
                           onPageChange: onPageChange,
+                          api: api,
                         )
                     : null,
           ),
@@ -100,7 +105,8 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                         icon: icon,
                         reverse: reverse,
                         onScope: onScope,
-                        onPageChange: onPageChange)
+                        onPageChange: onPageChange,
+                        api: api)
                     : null
                 : chapterIndex + 1 < chapters.length
                     ? () => ReaderPageController.previousChapter(
@@ -113,6 +119,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                           reverse: reverse,
                           onScope: onScope,
                           onPageChange: onPageChange,
+                          api: api,
                         )
                     : null,
             tooltip: reverse ? "Previous chapter" : "Next chapter",

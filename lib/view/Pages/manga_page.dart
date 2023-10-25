@@ -96,7 +96,7 @@ class _MangaPageState extends State<MangaPage> {
             } else if (snapshot.hasData && snapshot.data != null) {
               mangaBuilder = snapshot.data!;
               if (!isGetVote) {
-                api.getVote(mangaBuilder.link).then((vote) {
+                api.getVote(mangaBuilder).then((vote) {
                   if (mounted) {
                     if (vote == -1.0) {
                       Utils.showSnackBar("Can't take vote");
@@ -211,6 +211,7 @@ class _MangaPageState extends State<MangaPage> {
                         saveBookmark();
                       },
                       onPageChange: onPageChange,
+                      api: api,
                     ),
                   ),
                 );
@@ -276,6 +277,7 @@ class _MangaPageState extends State<MangaPage> {
                               saveBookmark();
                             },
                             onPageChange: onPageChange,
+                            api: api,
                           ),
                         ),
                       );

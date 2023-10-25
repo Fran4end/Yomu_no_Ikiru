@@ -196,7 +196,10 @@ class MangaWorld {
         link = '$link?style=list';
       }
       List<String> data = [
-        attributes['title'].replaceAll("Scan ITA", ""),
+        attributes['title']
+            .toString()
+            .substring(attributes['title'].toString().indexOf("C"))
+            .replaceAll("Scan ITA", ""),
         chap.querySelector('i')!.text,
         link,
       ];
