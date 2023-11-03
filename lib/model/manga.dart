@@ -11,8 +11,8 @@ class Manga {
   final String plot;
   final String image;
   final String link;
-  final double vote;
-  final double readings;
+  final double? vote;
+  final double? readings;
   final List<String> genres;
   final List<Chapter> chapters;
   final int index;

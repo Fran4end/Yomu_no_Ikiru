@@ -21,26 +21,28 @@ class MangaPlot extends StatelessWidget {
       padding: const EdgeInsets.all(defaultPadding),
       child: ExpandableNotifier(
         child: ExpandablePanel(
-          header: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.star,
-                color: Colors.orange,
-                size: 22.0,
-              ),
-              const SizedBox(width: defaultPadding / 2),
-              Text(
-                manga.vote.toString(),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
-              ),
-              const SizedBox(width: defaultPadding / 2),
-              Text(
-                '(${manga.readings})',
-                style: const TextStyle(fontSize: 12),
-              )
-            ],
-          ),
+          header: manga.readings == null
+              ? null
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.star,
+                      color: Colors.orange,
+                      size: 22.0,
+                    ),
+                    const SizedBox(width: defaultPadding / 2),
+                    Text(
+                      manga.vote.toString(),
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+                    ),
+                    const SizedBox(width: defaultPadding / 2),
+                    Text(
+                      '(${manga.readings})',
+                      style: const TextStyle(fontSize: 12),
+                    )
+                  ],
+                ),
           collapsed: Stack(
             alignment: Alignment.center,
             children: [

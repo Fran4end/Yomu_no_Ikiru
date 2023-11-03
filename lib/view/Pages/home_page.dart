@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:yomu_no_ikiru/Api/Adapter/mangadex_adapter.dart';
+import 'package:yomu_no_ikiru/Api/Adapter/mangakatana_adapter.dart';
 
 import '../../Api/Apis/mangaworld.dart';
+import '../../model/manga_builder.dart';
 import '../widgets/home_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -49,8 +50,8 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(FontAwesomeIcons.bug),
             onPressed: () async {
-              final builders = await MangaDexAdapter().getResults("Medabot Reloaded");
-              await MangaDexAdapter().getDetails(builders.first, builders.first.link);
+              MangaKatanaAdapter()
+                  .getDetails(MangaBuilder(), "https://mangakatana.com/manga/oshi-no-ko.24487");
             },
           ),
         ],

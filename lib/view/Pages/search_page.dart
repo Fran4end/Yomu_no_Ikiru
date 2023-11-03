@@ -3,7 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:yomu_no_ikiru/Api/Adapter/mangadex_adapter.dart';
+import 'package:yomu_no_ikiru/Api/Adapter/mangakatana_adapter.dart';
 import 'package:yomu_no_ikiru/Api/Adapter/mangaworld_adapter.dart';
 import 'package:yomu_no_ikiru/Api/adapter.dart';
 import 'package:yomu_no_ikiru/view/widgets/source_selector.dart';
@@ -35,9 +35,9 @@ class _SearchPageState extends State<SearchPage> {
       mangaApi: MangaWorldAdapter(),
     ),
     SourceSelector(
-      sourceName: "MangaDex",
-      imagePath: "assets/sourceIcons/MangaDex.png",
-      mangaApi: MangaDexAdapter(),
+      sourceName: "MangaKatana",
+      imagePath: "assets/sourceIcons/MangaKatana.png",
+      mangaApi: MangaKatanaAdapter(),
     ),
   ];
 
@@ -131,7 +131,7 @@ class _SearchPageState extends State<SearchPage> {
   Future _fetchData(int page) async {
     try {
       final newItems = await api.getResults(search, page);
-      final isLastPage = newItems.length < pageSize;
+      final isLastPage = newItems.length < api.pageSize;
       if (isLastPage) {
         pagingController.appendLastPage(newItems);
       } else {

@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'model/rive_assets.dart';
 
 const double defaultPadding = 16;
-const int pageSize = 16;
 final navigatorKey = GlobalKey<NavigatorState>();
 final cacheOptions = CacheOptions(
   policy: CachePolicy.refresh,

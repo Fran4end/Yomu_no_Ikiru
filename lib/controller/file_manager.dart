@@ -5,7 +5,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:yomu_no_ikiru/constants.dart';
 import 'package:yomu_no_ikiru/controller/custom_exceptions.dart';
 import 'package:yomu_no_ikiru/controller/utils.dart';
 
@@ -59,7 +58,7 @@ class FileManager {
     return builder;
   }
 
-  static Future<List<MangaBuilder>> readPagedLocalFile(int page) async {
+  static Future<List<MangaBuilder>> readPagedLocalFile(int page, int pageSize) async {
     if (user == null) {
       Utils.showSnackBar("You need to login before save on library");
       return [];

@@ -56,4 +56,7 @@ class MangaWorldAdapter implements MangaApiAdapter {
     }
     return imageUrls;
   }
+
+  @override
+  int get pageSize => 16;
 }

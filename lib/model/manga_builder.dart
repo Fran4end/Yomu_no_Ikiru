@@ -124,10 +124,8 @@ class MangaBuilder {
     id ??= "${api.type}_$title";
     artist ??= 'No artist found';
     author ??= 'No author found';
-    readings ??= 0;
     status ??= 'Unknown status';
     plot ??= 'No trama found';
-    vote ??= 0;
     return Manga(
       id: id!,
       artist: artist!,
@@ -138,11 +136,11 @@ class MangaBuilder {
       index: index,
       link: link,
       pageIndex: pageIndex,
-      readings: readings!,
+      readings: readings,
       status: status!,
       title: title,
       plot: plot!,
-      vote: vote!,
+      vote: vote,
       api: api,
     );
   }

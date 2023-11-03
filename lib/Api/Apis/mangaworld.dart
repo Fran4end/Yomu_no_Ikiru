@@ -82,7 +82,7 @@ class MangaWorld {
     return results;
   }
 
-  static List<String?> _getTitleImageLink(var element) {
+  List<String?> _getTitleImageLink(var element) {
     return [
       element.querySelector('.name > .manga-title').text,
       element.querySelector('.thumb > img').attributes['src'],
@@ -135,7 +135,7 @@ class MangaWorld {
     return builder;
   }
 
-  static List<String> _getGenres(var elements) {
+  List<String> _getGenres(var elements) {
     List<String> tmp = [];
     for (var element in elements) {
       tmp.add(element.text);

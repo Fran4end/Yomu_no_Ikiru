@@ -37,7 +37,7 @@ class MangaDex {
     }
   }
 
-  Future<List<MangaBuilder>> getResult(String keyword, int page) async {
+  Future<List<MangaBuilder>> getResult(String keyword, int page, [int pageSize = 16]) async {
     Response res = Response(requestOptions: RequestOptions());
     page--;
     try {

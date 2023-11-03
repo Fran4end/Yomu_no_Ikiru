@@ -60,4 +60,7 @@ class MangaDexAdapter implements MangaApiAdapter {
       return [];
     }
   }
+
+  @override
+  int get pageSize => 16;
 }

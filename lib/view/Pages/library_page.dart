@@ -95,8 +95,8 @@ class _LibraryPageState extends State<LibraryPage> {
 
   Future _fetchData(int page) async {
     try {
-      final newItems = await FileManager.readPagedLocalFile(page);
-      final isLastPage = newItems.length < 16;
+      final newItems = await FileManager.readPagedLocalFile(page, 20);
+      final isLastPage = newItems.length < 20;
       if (isLastPage) {
         pagingController.appendLastPage(newItems);
       } else {
