@@ -203,7 +203,8 @@ class MangaWorld {
         chap.querySelector('i')!.text,
         link,
       ];
-      chapters.add(Chapter(id: data[0], date: data[1], title: data[0], link: data[2]));
+      chapters
+          .add(Chapter(id: "MangaWorld_${data[0]}", date: data[1], title: data[0], link: data[2]));
     }
     return chapters;
   }

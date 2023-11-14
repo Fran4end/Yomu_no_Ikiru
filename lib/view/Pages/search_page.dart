@@ -22,11 +22,13 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final textController = TextEditingController();
   late String search;
+  bool isSearching = false;
   final PagingController<int, MangaBuilder> pagingController = PagingController(
     firstPageKey: 1,
     invisibleItemsThreshold: 8,
   );
   late final StreamSubscription subscription;
+  Timer? _debounce;
   MangaApiAdapter api = MangaWorldAdapter();
   final sources = [
     SourceSelector(
@@ -39,6 +41,11 @@ class _SearchPageState extends State<SearchPage> {
       imagePath: "assets/sourceIcons/MangaKatana.png",
       mangaApi: MangaKatanaAdapter(),
     ),
+    // SourceSelector(
+    //   sourceName: "MangaDex",
+    //   imagePath: "assets/sourceIcons/MangaDex.png",
+    //   mangaApi: MangaDexAdapter(),
+    // ),
   ];
 
   @override
@@ -54,7 +61,17 @@ class _SearchPageState extends State<SearchPage> {
       }
     });
     super.initState();
-    textController.text = '';
+    textController.addListener(() {
+      if (_debounce?.isActive ?? false) {
+        _debounce?.cancel();
+      }
+      if (search != textController.text.trim().toLowerCase()) {
+        _debounce = Timer(const Duration(milliseconds: 700), () {
+          search = textController.text.trim().toLowerCase();
+          pagingController.refresh();
+        });
+      }
+    });
     search = "";
   }
 
@@ -62,6 +79,7 @@ class _SearchPageState extends State<SearchPage> {
   void dispose() {
     super.dispose();
     pagingController.dispose();
+    subscription.cancel();
   }
 
   @override
@@ -73,49 +91,58 @@ class _SearchPageState extends State<SearchPage> {
           'Discover',
         ),
         actions: [
-          PopupMenuButton(
-              icon: const Icon(FontAwesomeIcons.filter),
-              onSelected: (value) {
-                api = value;
-                setState(() {});
-                pagingController.refresh();
-              },
-              itemBuilder: (context) {
-                List<PopupMenuItem<MangaApiAdapter>> items = [];
-                for (SourceSelector source in sources) {
-                  items.add(PopupMenuItem(value: source.mangaApi, child: source));
-                }
-                return items;
-              }),
+          isSearching
+              ? PopupMenuButton(
+                  icon: const Icon(FontAwesomeIcons.filter),
+                  onSelected: (value) {
+                    api = value;
+                    setState(() {});
+                    pagingController.refresh();
+                  },
+                  itemBuilder: (context) {
+                    List<PopupMenuItem<MangaApiAdapter>> items = [];
+                    for (SourceSelector source in sources) {
+                      items.add(PopupMenuItem(value: source.mangaApi, child: source));
+                    }
+                    return items;
+                  })
+              : const Center(),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                isSearching = !isSearching;
+              });
+            },
+            icon: const Icon(Icons.search),
+          )
         ],
       ),
       body: RefreshIndicator(
         onRefresh: () => Future.sync(() => pagingController.refresh()),
         child: Column(
           children: [
-            Container(
-              height: 50,
-              margin: const EdgeInsets.all(defaultPadding),
-              child: TextField(
-                controller: textController,
-                decoration: InputDecoration(
-                  labelText: "Search",
-                  prefixIcon: const Icon(Icons.search),
-                  border: const OutlineInputBorder(),
-                  suffix: IconButton(
-                      onPressed: () {
-                        textController.text = '';
-                        search = "";
-                        pagingController.refresh();
-                      },
-                      icon: const Icon(Icons.clear_rounded)),
-                ),
-                onChanged: (query) {
-                  search = query.trim().toLowerCase();
-                  pagingController.refresh();
-                },
-              ),
-            ),
+            isSearching
+                ? Container(
+                    height: 50,
+                    margin: const EdgeInsets.all(defaultPadding),
+                    child: TextField(
+                      controller: textController,
+                      textAlignVertical: TextAlignVertical.top,
+                      decoration: InputDecoration(
+                        labelText: "Search",
+                        prefixIcon: const Icon(Icons.search),
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              search = "";
+                              textController.clear();
+                              pagingController.refresh();
+                            },
+                            icon: const Icon(Icons.clear_rounded)),
+                      ),
+                    ),
+                  )
+                : const Center(),
             Expanded(
               child: MangaGrid(
                 pagingController: pagingController,

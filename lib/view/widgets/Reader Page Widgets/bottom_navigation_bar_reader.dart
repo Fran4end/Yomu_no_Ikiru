@@ -16,11 +16,12 @@ class ReaderBottomNavigationBar extends StatelessWidget {
   final Widget icon;
   final Slider? slider;
   final MangaApiAdapter api;
+  final List<String> images;
+  final int pageIndex;
   final Function(MangaBuilder) onScope;
   final Function(int page, int chapterIndex) onPageChange;
 
   const ReaderBottomNavigationBar({
-    super.key,
     required this.reverse,
     required this.chapters,
     required this.builder,
@@ -28,9 +29,12 @@ class ReaderBottomNavigationBar extends StatelessWidget {
     required this.axis,
     required this.icon,
     required this.onScope,
-    this.slider,
+    required this.images,
+    required this.pageIndex,
     required this.onPageChange,
     required this.api,
+    this.slider,
+    super.key,
   });
 
   @override
@@ -85,13 +89,26 @@ class ReaderBottomNavigationBar extends StatelessWidget {
             child: Directionality(
               textDirection: reverse ? TextDirection.rtl : TextDirection.ltr,
               child: Container(
-                  margin: const EdgeInsets.only(bottom: 1, left: 5, right: 5),
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[900],
-                    borderRadius: BorderRadius.circular(20),
+                margin: const EdgeInsets.only(bottom: 1, left: 5, right: 5),
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[900],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(pageIndex.toString()),
+                      Expanded(
+                        child: slider ?? const Center(),
+                      ),
+                      Text((images.length + 1).toString()),
+                    ],
                   ),
-                  child: slider),
+                ),
+              ),
             ),
           ),
           IconButton.filled(

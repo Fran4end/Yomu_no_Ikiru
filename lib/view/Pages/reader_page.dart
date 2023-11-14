@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:yomu_no_ikiru/Api/adapter.dart';
 import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/reader_pages_widget.dart';
 
@@ -13,12 +14,13 @@ class Reader extends StatefulWidget {
     required this.pageIndex,
     required this.builder,
     required this.onScope,
-    super.key,
     required this.axis,
     required this.reverse,
     required this.icon,
     required this.onPageChange,
     required this.api,
+    this.lastPage = false,
+    super.key,
   });
   final int chapterIndex, pageIndex;
   final Chapter chapter;
@@ -29,6 +31,7 @@ class Reader extends StatefulWidget {
   final MangaApiAdapter api;
   final Function(MangaBuilder builder) onScope;
   final Function(int page, int chapterIndex) onPageChange;
+  final bool lastPage;
 
   @override
   State<StatefulWidget> createState() => _ReaderState();
@@ -42,10 +45,16 @@ class _ReaderState extends State<Reader> {
   late Widget icon = widget.icon;
   late int pageIndex = widget.pageIndex;
   bool showAppBar = false;
+  late final WebViewController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(
+        Uri.parse(widget.chapter.link!),
+      );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
@@ -69,6 +78,7 @@ class _ReaderState extends State<Reader> {
       chapters: builder.chapters,
       chapterIndex: widget.chapterIndex,
       showAppBar: showAppBar,
+      controller: controller,
       onTap: () {
         if (showAppBar) {
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -80,6 +90,7 @@ class _ReaderState extends State<Reader> {
       },
       onPageChange: widget.onPageChange,
       api: widget.api,
+      lastPage: widget.lastPage,
     );
   }
 }

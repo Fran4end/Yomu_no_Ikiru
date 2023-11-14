@@ -127,7 +127,6 @@ class MangaDex {
 
   Future<List<Chapter>> getChapters(String id) async {
     List<Chapter> chapters = [];
-    bool allLoaded = true;
     int offset = 0;
     int limit = 100;
     do {
@@ -137,26 +136,34 @@ class MangaDex {
           "limit": limit,
           "offset": offset,
         });
-        for (var chap in res.data["data"].where((e) => e["type"] == "chapter")) {
-          String? title = chap["attributes"]["chapter"] + " " + (chap["attributes"]["title"] ?? "");
-          if (title == null || title == "") {
-            title = 'chapter ${chap["attributes"]["chapter"]}';
-          }
-          final DateTime date = DateTime.parse(chap["attributes"]["publishAt"]);
-          chapters.add(
-            Chapter(
-                id: chap["id"],
-                date: DateFormat('d MMMM y').format(date.toLocal()),
-                title: title,
-                link: 'https://api.mangadex.org/at-home/server/${chap["id"]}',
-                volume: chap["volume"],
-                order: double.parse(chap["attributes"]["chapter"])),
-          );
+        if (res.statusCode == 429 || res.statusCode == 403) {
+          break;
         }
-        if (res.data["total"] > chapters.length) {
-          offset += limit;
+        final List chaps = res.data["data"].where((e) => e["type"] == "chapter").toList();
+        for (var chap in chaps) {
+          if (chap["attributes"]["chapter"] != null) {
+            String? title =
+                chap["attributes"]["chapter"] + " " + (chap["attributes"]["title"] ?? "");
+            if (title == null || title == "") {
+              title = 'chapter ${chap["attributes"]["chapter"]}';
+            }
+            final DateTime date = DateTime.parse(chap["attributes"]["publishAt"]);
+            chapters.add(
+              Chapter(
+                  id: chap["id"],
+                  date: DateFormat('d MMMM y').format(date.toLocal()),
+                  title: title,
+                  link: 'https://api.mangadex.org/at-home/server/${chap["id"]}',
+                  volume: chap["volume"],
+                  order: double.parse(chap["attributes"]["chapter"])),
+            );
+          }
+        }
+        final data = res.data["data"].length;
+        if (data < limit) {
+          break;
         } else {
-          allLoaded = false;
+          offset += limit;
         }
       } on DioException catch (e) {
         Utils.showSnackBar("Network problem");
@@ -164,9 +171,9 @@ class MangaDex {
           print(e.requestOptions.uri);
           print("MangaDex riga 48: $e");
         }
-        return [];
+        break;
       }
-    } while (allLoaded);
+    } while (true);
     chapters.sort((a, b) => a.order!.compareTo(b.order!));
     return chapters.reversed.toList();
   }

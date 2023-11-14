@@ -62,6 +62,7 @@ class ReaderPageController {
                   reverse: reverse,
                   onPageChange: onPageChange,
                   api: api,
+                  lastPage: true,
                 )));
   }
 
@@ -85,7 +86,7 @@ class ReaderPageController {
                 margin: const EdgeInsets.only(bottom: 2),
                 child: const Icon(
                   FontAwesomeIcons.arrowRight,
-                  size: 7,
+                  size: 10,
                 ),
               )),
         ],
@@ -105,7 +106,7 @@ class ReaderPageController {
                 margin: const EdgeInsets.only(bottom: 2),
                 child: const Icon(
                   FontAwesomeIcons.arrowLeft,
-                  size: 7,
+                  size: 10,
                 ),
               )),
         ],
@@ -126,7 +127,7 @@ class ReaderPageController {
                 margin: const EdgeInsets.only(bottom: 2),
                 child: const Icon(
                   FontAwesomeIcons.arrowDown,
-                  size: 7,
+                  size: 10,
                 ),
               )),
         ],
@@ -153,7 +154,7 @@ class ReaderPageController {
     onPageChange(pageController.page!.toInt(), (chapters.length - chapterIndex) - 1);
     imageUrls.then((images) {
       if (images.isNotEmpty) {
-        if (pageController.page == images.length && chapterIndex - 1 >= 0) {
+        if (pageController.page == images.length + 1 && chapterIndex - 1 >= 0) {
           ReaderPageController.nextChapter(
             context: context,
             builder: builder,

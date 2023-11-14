@@ -9,13 +9,10 @@ class MangaWorldAdapter implements MangaApiAdapter {
 
   @override
   Future<double> getVote(MangaBuilder builder) async {
+    print("object");
     Document? document = await api.getPageDocument(builder.link);
     return await api.getVote(document);
   }
-
-  @override
-  Map<String, List<MangaBuilder>> getLatestsAndPopular(Document document) =>
-      api.getLatestsAndPopular(document);
 
   @override
   Future<List<MangaBuilder>> getResults(String keyword, [int page = 1]) async {
@@ -38,8 +35,11 @@ class MangaWorldAdapter implements MangaApiAdapter {
   String get type => "MangaWorld";
 
   @override
-  Future<List<String>> getImageUrls(String link) async {
-    final Document? document = await api.getPageDocument(link);
+  Future<List<String>> getImageUrls(dynamic source) async {
+    if (source.runtimeType != String) {
+      return [];
+    }
+    final Document? document = await api.getPageDocument(source);
     if (document == null) {
       return [];
     }

@@ -6,6 +6,7 @@ import 'package:html/parser.dart';
 
 import '../../constants.dart';
 import '../../controller/utils.dart';
+import '../../model/chapter.dart';
 import '../../model/manga_builder.dart';
 
 class MangaKatana {
@@ -106,5 +107,24 @@ class MangaKatana {
       tmp.add(element.text);
     }
     return tmp;
+  }
+
+  List<Chapter> getChapters(Document? document) {
+    if (document == null) {
+      return [];
+    }
+    List<Chapter> chapters = [];
+    List<Element> chaptersElement =
+        document.querySelector('div.chapters')!.querySelectorAll('div.chapter > a');
+    for (var chap in chaptersElement) {
+      List<String> data = [
+        chap.text,
+        chap.parent!.parent!.parent!.children[1].text,
+        chap.attributes['href']!,
+      ];
+      chapters
+          .add(Chapter(id: "MangaKatana_${data[0]}", date: data[1], title: data[0], link: data[2]));
+    }
+    return chapters;
   }
 }

@@ -3,11 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:yomu_no_ikiru/Api/Adapter/mangakatana_adapter.dart';
 
 import '../../Api/Apis/mangaworld.dart';
-import '../../model/manga_builder.dart';
-import '../widgets/home_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -42,21 +39,19 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Home Page',
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(FontAwesomeIcons.bug),
-            onPressed: () async {
-              MangaKatanaAdapter()
-                  .getDetails(MangaBuilder(), "https://mangakatana.com/manga/oshi-no-ko.24487");
-            },
+        appBar: AppBar(
+          title: const Text(
+            'Home Page',
           ),
-        ],
-      ),
-      body: RefreshIndicator(
+          actions: [
+            IconButton(
+              icon: const Icon(FontAwesomeIcons.bug),
+              onPressed: () async {},
+            ),
+          ],
+        ),
+        body: const Center(child: Text("coming soon.."))
+        /*RefreshIndicator(
         onRefresh: () => Future.sync(() => setState(() {
               document = MangaWorld().getPageDocument("");
             })),
@@ -80,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                 );
               }
             }),
-      ),
-    );
+      ),*/
+        );
   }
 }

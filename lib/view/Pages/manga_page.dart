@@ -95,16 +95,15 @@ class _MangaPageState extends State<MangaPage> {
               );
             } else if (snapshot.hasData && snapshot.data != null) {
               mangaBuilder = snapshot.data!;
-              if (!isGetVote) {
+              if (!isGetVote || mangaBuilder.vote == 0) {
                 api.getVote(mangaBuilder).then((vote) {
                   if (mounted) {
                     if (vote == -1.0) {
                       Utils.showSnackBar("Can't take vote");
                     } else {
                       mangaBuilder.vote = vote;
-                      setState(() {
-                        isGetVote = true;
-                      });
+                      isGetVote = true;
+                      setState(() {});
                     }
                   }
                 });
@@ -266,7 +265,7 @@ class _MangaPageState extends State<MangaPage> {
                                       margin: const EdgeInsets.only(bottom: 2),
                                       child: const Icon(
                                         FontAwesomeIcons.arrowLeft,
-                                        size: 7,
+                                        size: 10,
                                       ),
                                     )),
                               ],

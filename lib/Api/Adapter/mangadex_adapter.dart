@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:html/dom.dart';
 import 'package:yomu_no_ikiru/Api/Apis/mangadex.dart';
 import 'package:yomu_no_ikiru/Api/adapter.dart';
 import 'package:yomu_no_ikiru/model/manga_builder.dart';
@@ -9,12 +8,6 @@ import '../../controller/utils.dart';
 
 class MangaDexAdapter implements MangaApiAdapter {
   final MangaDex api = MangaDex();
-
-  @override
-  Map<String, List<MangaBuilder>> getLatestsAndPopular(Document document) {
-    // TODO: implement getLatestsAndPopular
-    throw UnimplementedError();
-  }
 
   @override
   Future<List<MangaBuilder>> getResults(String keyword, [int page = 1]) async {
@@ -41,10 +34,13 @@ class MangaDexAdapter implements MangaApiAdapter {
   Map<String, dynamic> toJson() => {"type": type};
 
   @override
-  Future<List<String>> getImageUrls(String link) async {
+  Future<List<String>> getImageUrls(dynamic source) async {
+    if (source.runtimeType != String) {
+      return [];
+    }
     try {
       List<String> images = [];
-      final res = await api.getJson(link);
+      final res = await api.getJson(source);
       final baseUrl = res["baseUrl"];
       final hash = res["chapter"]["hash"];
       for (String image in res["chapter"]["dataSaver"]) {
