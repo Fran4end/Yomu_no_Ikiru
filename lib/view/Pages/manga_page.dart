@@ -182,7 +182,6 @@ class _MangaPageState extends State<MangaPage> {
                   MaterialPageRoute(
                     builder: (context) => Reader(
                       chapterIndex: (manga.chapters.length - manga.index) - 1,
-                      chapter: manga.chapters[(manga.chapters.length - manga.index) - 1],
                       pageIndex: manga.pageIndex,
                       builder: mangaBuilder,
                       axis: Axis.horizontal,
@@ -248,7 +247,6 @@ class _MangaPageState extends State<MangaPage> {
                         MaterialPageRoute(
                           builder: (context) => Reader(
                             chapterIndex: index,
-                            chapter: chapters[index],
                             pageIndex: 1,
                             builder: mangaBuilder,
                             axis: Axis.horizontal,

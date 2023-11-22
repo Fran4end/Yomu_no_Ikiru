@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'model/firebase_options.dart';
@@ -19,6 +19,7 @@ import 'view/Pages/search_page.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -28,7 +29,6 @@ main() async {
       systemNavigationBarColor: Colors.transparent));
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   HttpOverrides.global = MyHttpOverrides();
-  await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
 
@@ -46,7 +46,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
     return MaterialApp(
       navigatorKey: navigatorKey,
       scaffoldMessengerKey: Utils.messengerKey,
@@ -76,50 +75,54 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
     return ChangeNotifierProvider(
       create: (context) => GoogleSignInProvider(),
       child: Scaffold(
-        bottomNavigationBar: NavigationBarTheme(
-          data: Theme.of(context).navigationBarTheme,
-          child: NavigationBar(
-            selectedIndex: _selectPage,
-            height: 60,
-            animationDuration: const Duration(milliseconds: 400),
-            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-            onDestinationSelected: (value) {
-              bottomNavigators[value].input!.change(true);
-              Future.delayed(
-                const Duration(seconds: 1),
-                () {
-                  bottomNavigators[value].input!.change(false);
-                },
-              );
-              setState(() {
-                selectedButton = bottomNavigators[value];
-                _selectPage = value;
-              });
-            },
-            destinations: [
-              ...List.generate(
-                bottomNavigators.length,
-                (index) => NavigationDestination(
-                  icon: SizedBox(
-                    height: 36,
-                    width: 36,
-                    child: Opacity(
-                      opacity: bottomNavigators[index] == selectedButton ? 1 : .5,
-                      child: RiveAnimation.asset(
-                        bottomNavigators.first.src,
-                        artboard: bottomNavigators[index].artboard,
-                        onInit: (artboard) {
-                          StateMachineController controller = Utils.getRiveController(artboard,
-                              stateMachineName: bottomNavigators[index].stateMachineName);
-                          bottomNavigators[index].input = controller.findSMI("active");
-                        },
+        extendBody: true,
+        bottomNavigationBar: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: NavigationBarTheme(
+            data: Theme.of(context).navigationBarTheme,
+            child: NavigationBar(
+              selectedIndex: _selectPage,
+              height: 45,
+              animationDuration: const Duration(milliseconds: 400),
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+              onDestinationSelected: (value) {
+                bottomNavigators[value].input!.change(true);
+                Future.delayed(
+                  const Duration(seconds: 1),
+                  () {
+                    bottomNavigators[value].input!.change(false);
+                  },
+                );
+                setState(() {
+                  selectedButton = bottomNavigators[value];
+                  _selectPage = value;
+                });
+              },
+              destinations: [
+                ...List.generate(
+                  bottomNavigators.length,
+                  (index) => NavigationDestination(
+                    icon: SizedBox(
+                      height: 36,
+                      width: 36,
+                      child: Opacity(
+                        opacity: bottomNavigators[index] == selectedButton ? 1 : .5,
+                        child: RiveAnimation.asset(
+                          bottomNavigators.first.src,
+                          artboard: bottomNavigators[index].artboard,
+                          onInit: (artboard) {
+                            StateMachineController controller = Utils.getRiveController(artboard,
+                                stateMachineName: bottomNavigators[index].stateMachineName);
+                            bottomNavigators[index].input = controller.findSMI("active");
+                          },
+                        ),
                       ),
                     ),
+                    label: bottomNavigators[index].title,
                   ),
-                  label: bottomNavigators[index].title,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         body: LazyLoadIndexedStack(

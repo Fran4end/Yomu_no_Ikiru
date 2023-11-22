@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:yomu_no_ikiru/Api/adapter.dart';
 
 class SourceSelector extends StatelessWidget {
@@ -19,7 +18,7 @@ class SourceSelector extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10.0),
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         width: double.infinity,
-        height: ScreenUtil().setHeight(33.0),
+        height: 33,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8.0),

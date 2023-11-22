@@ -15,10 +15,7 @@ class MangaKatanaAdapter implements MangaApiAdapter {
   }
 
   @override
-  Future<List<String>> getImageUrls(dynamic source) async {
-    if (source.runtimeType != Document) {
-      return [];
-    }
+  Future<List<String>> getImageUrls(Document source) async {
     List<String> imageUrls = [];
     try {
       var elements = source.querySelector("#imgs")!.querySelectorAll('img');

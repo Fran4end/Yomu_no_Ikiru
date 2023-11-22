@@ -137,7 +137,8 @@ class MangaGrid extends StatelessWidget {
       builderDelegate: PagedChildBuilderDelegate(
         firstPageProgressIndicatorBuilder: (_) =>
             const SizedBox(height: 200, child: SkeletonGrid()),
-        newPageProgressIndicatorBuilder: (_) => const SizedBox(height: 200, child: SkeletonGrid()),
+        newPageProgressIndicatorBuilder: (_) =>
+            const SizedBox(height: 250, child: SkeletonGrid(itemCount: 2)),
         transitionDuration: const Duration(milliseconds: 500),
         animateTransitions: true,
         itemBuilder: (context, MangaBuilder manga, index) => MangaCard(

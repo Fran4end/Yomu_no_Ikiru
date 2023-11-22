@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../Api/adapter.dart';
+import '../constants.dart';
 import '../model/manga_builder.dart';
-import '../model/chapter.dart';
 import '../view/Pages/reader_page.dart';
 
 class ReaderPageController {
@@ -23,7 +25,6 @@ class ReaderPageController {
         context,
         MaterialPageRoute(
             builder: (_) => Reader(
-                  chapter: builder.chapters[chapterIndex - 1],
                   pageIndex: 1,
                   builder: builder,
                   onScope: onScope,
@@ -39,7 +40,6 @@ class ReaderPageController {
   static previousChapter({
     required BuildContext context,
     required MangaBuilder builder,
-    required List<Chapter> chapters,
     required int chapterIndex,
     required Axis axis,
     required Widget icon,
@@ -52,7 +52,6 @@ class ReaderPageController {
         context,
         MaterialPageRoute(
             builder: (_) => Reader(
-                  chapter: chapters[chapterIndex + 1],
                   chapterIndex: chapterIndex + 1,
                   pageIndex: 1,
                   builder: builder,
@@ -138,11 +137,10 @@ class ReaderPageController {
   }
 
   static pageControllerListener({
-    required Future<List<String>> imageUrls,
+    required List<String> imageUrls,
     required PageController pageController,
     required BuildContext context,
     required MangaBuilder builder,
-    required List<Chapter> chapters,
     required int chapterIndex,
     required Axis axis,
     required Widget icon,
@@ -150,41 +148,58 @@ class ReaderPageController {
     required MangaApiAdapter api,
     required Function(MangaBuilder) onScope,
     required Function(int page, int chapterIndex) onPageChange,
+    required WebViewController controller,
   }) {
-    onPageChange(pageController.page!.toInt(), (chapters.length - chapterIndex) - 1);
-    imageUrls.then((images) {
-      if (images.isNotEmpty) {
-        if (pageController.page == images.length + 1 && chapterIndex - 1 >= 0) {
-          ReaderPageController.nextChapter(
-            context: context,
-            builder: builder,
-            chapterIndex: chapterIndex,
-            axis: axis,
-            icon: icon,
-            reverse: reverse,
-            onScope: onScope,
-            onPageChange: onPageChange,
-            api: api,
-          );
-        } else if (pageController.page == 0 && chapterIndex + 1 < chapters.length) {
-          ReaderPageController.previousChapter(
-            context: context,
-            builder: builder,
-            chapters: chapters,
-            chapterIndex: chapterIndex,
-            axis: axis,
-            icon: icon,
-            reverse: reverse,
-            onScope: onScope,
-            onPageChange: onPageChange,
-            api: api,
-          );
-        }
+    onPageChange(pageController.page!.toInt(), (builder.chapters.length - chapterIndex) - 1);
+    if (imageUrls.isNotEmpty) {
+      if (pageController.page == imageUrls.length + 1 && chapterIndex - 1 >= 0) {
+        // ReaderPageController.nextChapter(
+        //   context: context,
+        //   builder: builder,
+        //   chapterIndex: chapterIndex,
+        //   axis: axis,
+        //   icon: icon,
+        //   reverse: reverse,
+        //   onScope: onScope,
+        //   onPageChange: onPageChange,
+        //   api: api,
+        // );
+      } else if (pageController.page == 0 && chapterIndex + 1 < builder.chapters.length) {
+        // ReaderPageController.previousChapter(
+        //   context: context,
+        //   builder: builder,
+        //   chapterIndex: chapterIndex,
+        //   axis: axis,
+        //   icon: icon,
+        //   reverse: reverse,
+        //   onScope: onScope,
+        //   onPageChange: onPageChange,
+        //   api: api,
+        // );
       }
-    });
+    }
   }
 
-  static void preload(BuildContext context, String path) {
+  static NativeAd loadAd() {
+    return NativeAd(
+      adUnitId: adUnitId,
+      listener: NativeAdListener(
+        onAdLoaded: (ad) {
+          debugPrint('$NativeAd loaded.');
+        },
+        onAdFailedToLoad: (ad, error) {
+          // Dispose the ad here to free resources.
+          debugPrint('$NativeAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+      request: const AdRequest(),
+      // Styling
+      nativeTemplateStyle: adNativeTemplateStyle,
+    )..load();
+  }
+
+  static void preloadImage(BuildContext context, String path) {
     final configuration = createLocalImageConfiguration(context);
     CachedNetworkImageProvider(path).resolve(configuration);
   }

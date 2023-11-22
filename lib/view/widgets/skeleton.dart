@@ -73,15 +73,17 @@ class SkeletonGrid extends StatelessWidget {
   const SkeletonGrid({
     Key? key,
     this.axisCount = 2,
+    this.itemCount = 20,
   }) : super(key: key);
 
   final int axisCount;
+  final int itemCount;
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       physics: const BouncingScrollPhysics(),
-      itemCount: 10,
+      itemCount: itemCount,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: axisCount,
         childAspectRatio: .9,

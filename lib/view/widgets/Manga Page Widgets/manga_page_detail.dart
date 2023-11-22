@@ -33,7 +33,7 @@ class MangaPlot extends StatelessWidget {
                     ),
                     const SizedBox(width: defaultPadding / 2),
                     Text(
-                      manga.vote.toString(),
+                      manga.vote == null ? "0" : manga.vote.toString(),
                       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
                     ),
                     const SizedBox(width: defaultPadding / 2),

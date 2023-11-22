@@ -9,7 +9,6 @@ class MangaWorldAdapter implements MangaApiAdapter {
 
   @override
   Future<double> getVote(MangaBuilder builder) async {
-    print("object");
     Document? document = await api.getPageDocument(builder.link);
     return await api.getVote(document);
   }
@@ -35,17 +34,13 @@ class MangaWorldAdapter implements MangaApiAdapter {
   String get type => "MangaWorld";
 
   @override
-  Future<List<String>> getImageUrls(dynamic source) async {
-    if (source.runtimeType != String) {
-      return [];
-    }
-    final Document? document = await api.getPageDocument(source);
-    if (document == null) {
+  Future<List<String>> getImageUrls(Document? source) async {
+    if (source == null) {
       return [];
     }
     List<String> imageUrls = [];
     try {
-      var elements = document.querySelectorAll('#page > img');
+      var elements = source.querySelectorAll('#page > img');
       for (var element in elements) {
         imageUrls.add(element.attributes['src']!);
       }

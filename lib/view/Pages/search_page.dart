@@ -3,7 +3,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:yomu_no_ikiru/Api/Adapter/mangakatana_adapter.dart';
 import 'package:yomu_no_ikiru/Api/Adapter/mangaworld_adapter.dart';
 import 'package:yomu_no_ikiru/Api/adapter.dart';
 import 'package:yomu_no_ikiru/view/widgets/source_selector.dart';
@@ -23,30 +22,10 @@ class _SearchPageState extends State<SearchPage> {
   final textController = TextEditingController();
   late String search;
   bool isSearching = false;
-  final PagingController<int, MangaBuilder> pagingController = PagingController(
-    firstPageKey: 1,
-    invisibleItemsThreshold: 8,
-  );
+  final PagingController<int, MangaBuilder> pagingController = PagingController(firstPageKey: 1);
   late final StreamSubscription subscription;
   Timer? _debounce;
   MangaApiAdapter api = MangaWorldAdapter();
-  final sources = [
-    SourceSelector(
-      sourceName: "MangaWorld",
-      imagePath: "assets/sourceIcons/MangaWorld.png",
-      mangaApi: MangaWorldAdapter(),
-    ),
-    SourceSelector(
-      sourceName: "MangaKatana",
-      imagePath: "assets/sourceIcons/MangaKatana.png",
-      mangaApi: MangaKatanaAdapter(),
-    ),
-    // SourceSelector(
-    //   sourceName: "MangaDex",
-    //   imagePath: "assets/sourceIcons/MangaDex.png",
-    //   mangaApi: MangaDexAdapter(),
-    // ),
-  ];
 
   @override
   void initState() {
@@ -156,6 +135,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future _fetchData(int page) async {
+    print(page);
     try {
       final newItems = await api.getResults(search, page);
       final isLastPage = newItems.length < api.pageSize;

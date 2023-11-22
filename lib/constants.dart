@@ -1,10 +1,64 @@
+import 'dart:io';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:yomu_no_ikiru/view/widgets/source_selector.dart';
+import 'Api/Adapter/mangakatana_adapter.dart';
+import 'Api/Adapter/mangaworld_adapter.dart';
 import 'model/rive_assets.dart';
 
 const double defaultPadding = 16;
 final navigatorKey = GlobalKey<NavigatorState>();
+final adUnitId = Platform.isAndroid
+    ? 'ca-app-pub-3940256099942544/2247696110'
+    : 'ca-app-pub-3940256099942544/3986624511';
+
+final adNativeTemplateStyle = NativeTemplateStyle(
+  // Required: Choose a template.
+  templateType: TemplateType.medium,
+  // Optional: Customize the ad's style.
+  mainBackgroundColor: Colors.purple,
+  cornerRadius: 10.0,
+  callToActionTextStyle: NativeTemplateTextStyle(
+      textColor: Colors.cyan,
+      backgroundColor: Colors.red,
+      style: NativeTemplateFontStyle.monospace,
+      size: 16.0),
+  primaryTextStyle: NativeTemplateTextStyle(
+      textColor: Colors.red,
+      backgroundColor: Colors.cyan,
+      style: NativeTemplateFontStyle.italic,
+      size: 16.0),
+  secondaryTextStyle: NativeTemplateTextStyle(
+      textColor: Colors.green,
+      backgroundColor: Colors.black,
+      style: NativeTemplateFontStyle.bold,
+      size: 16.0),
+  tertiaryTextStyle: NativeTemplateTextStyle(
+    textColor: Colors.brown,
+    backgroundColor: Colors.amber,
+    style: NativeTemplateFontStyle.normal,
+    size: 16.0,
+  ),
+);
+final sources = [
+  SourceSelector(
+    sourceName: "MangaWorld",
+    imagePath: "assets/sourceIcons/MangaWorld.png",
+    mangaApi: MangaWorldAdapter(),
+  ),
+  SourceSelector(
+    sourceName: "MangaKatana",
+    imagePath: "assets/sourceIcons/MangaKatana.png",
+    mangaApi: MangaKatanaAdapter(),
+  ),
+  // SourceSelector(
+  //   sourceName: "MangaDex",
+  //   imagePath: "assets/sourceIcons/MangaDex.png",
+  //   mangaApi: MangaDexAdapter(),
+  // ),
+];
 final cacheOptions = CacheOptions(
   policy: CachePolicy.refresh,
   store: MemCacheStore(),
@@ -72,7 +126,7 @@ final ThemeData darkTheme = ThemeData(
   ),
   navigationBarTheme: NavigationBarThemeData(
     elevation: 5,
-    backgroundColor: const Color(0xff0f0f0f),
+    backgroundColor: const Color(0x880f0f0f),
     labelTextStyle:
         MaterialStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
   ),
