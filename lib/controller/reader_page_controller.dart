@@ -1,13 +1,22 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:html/dom.dart';
+import 'package:html/parser.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:yomu_no_ikiru/model/chapter.dart';
+import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/next_chapter_page_widget.dart';
 
 import '../Api/adapter.dart';
 import '../constants.dart';
 import '../model/manga_builder.dart';
 import '../view/Pages/reader_page.dart';
+import '../view/widgets/Reader Page Widgets/prev_chapter_page_widget.dart';
 
 class ReaderPageController {
   static nextChapter({
@@ -61,7 +70,6 @@ class ReaderPageController {
                   reverse: reverse,
                   onPageChange: onPageChange,
                   api: api,
-                  lastPage: true,
                 )));
   }
 
@@ -136,48 +144,38 @@ class ReaderPageController {
     return (axis, icon, reverse);
   }
 
-  static pageControllerListener({
-    required List<String> imageUrls,
-    required PageController pageController,
-    required BuildContext context,
-    required MangaBuilder builder,
+  static List<PhotoViewGalleryPageOptions> buildPages({
+    required List<Chapter> chapters,
     required int chapterIndex,
-    required Axis axis,
-    required Widget icon,
-    required bool reverse,
-    required MangaApiAdapter api,
-    required Function(MangaBuilder) onScope,
-    required Function(int page, int chapterIndex) onPageChange,
-    required WebViewController controller,
+    required List<String> imageUrls,
+    required Function(BuildContext, TapUpDetails, PhotoViewControllerValue)? onTapUp,
   }) {
-    onPageChange(pageController.page!.toInt(), (builder.chapters.length - chapterIndex) - 1);
-    if (imageUrls.isNotEmpty) {
-      if (pageController.page == imageUrls.length + 1 && chapterIndex - 1 >= 0) {
-        // ReaderPageController.nextChapter(
-        //   context: context,
-        //   builder: builder,
-        //   chapterIndex: chapterIndex,
-        //   axis: axis,
-        //   icon: icon,
-        //   reverse: reverse,
-        //   onScope: onScope,
-        //   onPageChange: onPageChange,
-        //   api: api,
-        // );
-      } else if (pageController.page == 0 && chapterIndex + 1 < builder.chapters.length) {
-        // ReaderPageController.previousChapter(
-        //   context: context,
-        //   builder: builder,
-        //   chapterIndex: chapterIndex,
-        //   axis: axis,
-        //   icon: icon,
-        //   reverse: reverse,
-        //   onScope: onScope,
-        //   onPageChange: onPageChange,
-        //   api: api,
-        // );
-      }
+    List<PhotoViewGalleryPageOptions> pages = [
+      PhotoViewGalleryPageOptions.customChild(
+        onTapUp: onTapUp,
+        child: PrevChapterPageWidget(
+            chapters: chapters, chapterIndex: chapterIndex, nativeAd1: loadAd()),
+      )
+    ];
+    for (var imageUrl in imageUrls) {
+      final image = CachedNetworkImageProvider(imageUrl);
+      pages.add(
+        PhotoViewGalleryPageOptions(
+          imageProvider: image,
+          minScale: PhotoViewComputedScale.contained,
+          tightMode: false,
+          onTapUp: onTapUp,
+        ),
+      );
     }
+    pages.add(
+      PhotoViewGalleryPageOptions.customChild(
+        onTapUp: onTapUp,
+        child: NextChapterPageWidget(
+            chapters: chapters, chapterIndex: chapterIndex, nativeAd2: loadAd()),
+      ),
+    );
+    return pages;
   }
 
   static NativeAd loadAd() {
@@ -200,7 +198,39 @@ class ReaderPageController {
   }
 
   static void preloadImage(BuildContext context, String path) {
-    final configuration = createLocalImageConfiguration(context);
-    CachedNetworkImageProvider(path).resolve(configuration);
+    precacheImage(CachedNetworkImageProvider(path), context);
+    // final configuration = createLocalImageConfiguration(context);
+    // CachedNetworkImageProvider(path).resolve(configuration);
+  }
+
+  static loadChapter({
+    required Function(List<String>) onFinish,
+    required String link,
+    required WebViewController controller,
+    required MangaApiAdapter api,
+  }) async {
+    if (api.isJavaScript) {
+      controller
+        ..loadRequest(
+          Uri.parse(link),
+        )
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageFinished: (url) async {
+              var document = await controller
+                  .runJavaScriptReturningResult('new XMLSerializer().serializeToString(document)');
+              var dom = parse(json.decode(document.toString()));
+              onFinish(api.getImageUrls(dom));
+            },
+          ),
+        );
+    } else {
+      final Document? document = await api.getDocument(link);
+      if (document == null) {
+        onFinish([]);
+      } else {
+        onFinish(api.getImageUrls(document));
+      }
+    }
   }
 }

@@ -15,7 +15,7 @@ class MangaKatanaAdapter implements MangaApiAdapter {
   }
 
   @override
-  Future<List<String>> getImageUrls(Document source) async {
+  List<String> getImageUrls(Document source) {
     List<String> imageUrls = [];
     try {
       var elements = source.querySelector("#imgs")!.querySelectorAll('img');
@@ -45,4 +45,10 @@ class MangaKatanaAdapter implements MangaApiAdapter {
 
   @override
   int get pageSize => 20;
+
+  @override
+  bool get isJavaScript => true;
+
+  @override
+  Future<Document?> getDocument(String link) async =>  api.getPageDocument(link);
 }

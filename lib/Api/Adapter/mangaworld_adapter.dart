@@ -34,7 +34,7 @@ class MangaWorldAdapter implements MangaApiAdapter {
   String get type => "MangaWorld";
 
   @override
-  Future<List<String>> getImageUrls(Document? source) async {
+  List<String> getImageUrls(Document? source) {
     if (source == null) {
       return [];
     }
@@ -54,4 +54,10 @@ class MangaWorldAdapter implements MangaApiAdapter {
 
   @override
   int get pageSize => 16;
+
+  @override
+  bool get isJavaScript => false;
+
+  @override
+  Future<Document?> getDocument(String link) async => api.getPageDocument(link);
 }

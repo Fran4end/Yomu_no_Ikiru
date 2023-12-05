@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:html/parser.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:yomu_no_ikiru/constants.dart';
 
-import '../../Api/Adapter/mangakatana_adapter.dart';
 import '../../Api/adapter.dart';
 import '../../controller/reader_page_controller.dart';
 import '../../model/chapter.dart';
@@ -28,7 +24,6 @@ class Reader extends StatefulWidget {
     required this.icon,
     required this.onPageChange,
     required this.api,
-    this.lastPage = false,
     super.key,
   });
   final int chapterIndex, pageIndex;
@@ -39,7 +34,6 @@ class Reader extends StatefulWidget {
   final MangaApiAdapter api;
   final Function(MangaBuilder builder) onScope;
   final Function(int page, int chapterIndex) onPageChange;
-  final bool lastPage;
 
   @override
   State<StatefulWidget> createState() => _ReaderState();
@@ -50,74 +44,52 @@ class _ReaderState extends State<Reader> {
   late final MangaBuilder builder = widget.builder;
   late final WebViewController controller;
   late final api = widget.api;
+  late Chapter chapter;
+  late int chapterIndex = widget.chapterIndex;
   late bool reverse = widget.reverse;
   late Axis axis = widget.axis;
   late Widget icon = widget.icon;
   late int pageIndex = widget.pageIndex;
-  late final Chapter chapter;
+  late PageController pageController;
 
+  List<PhotoViewGalleryPageOptions> pages = [];
   double sliderValue = 2;
   bool isSliding = false;
-  Future<List<String>>? imageFutures;
-  PageController? pageController;
+  bool isLoading = true;
+  Map<Chapter, List<String>> imageUrls = {};
   bool showAppBar = false;
-  NativeAd? nativeAd1;
-  NativeAd? nativeAd2;
 
   @override
   void initState() {
     super.initState();
     final manga = builder.build();
     chapter = manga.chapters[widget.chapterIndex];
-    nativeAd1 = ReaderPageController.loadAd();
-    nativeAd2 = ReaderPageController.loadAd();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(
-        Uri.parse(chapter.link!),
-      );
-    controller.setNavigationDelegate(
-      NavigationDelegate(
-        onPageFinished: (url) async {
-          var document =
-              await controller.runJavaScriptReturningResult('document.documentElement.innerHTML');
-          var dom = parse(json.decode(document.toString()));
-          imageFutures = api.getImageUrls(dom);
-          _setController();
-          setState(() {});
-        },
-      ),
-    );
-
+    pageController = PageController(initialPage: pageIndex);
+    pageController.addListener(() {
+      widget.onPageChange(
+          pageController.page!.toInt(), (builder.chapters.length - chapterIndex) - 1);
+    });
+    controller = WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted);
+    _loadChapter(chapter.link!);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
-  _setController() {
-    imageFutures!.then((images) {
-      if (mounted) {
-        if (widget.lastPage) {
-          pageIndex = images.length;
-        }
-        pageController = PageController(initialPage: pageIndex);
-        pageController?.addListener(
-          () => ReaderPageController.pageControllerListener(
-            imageUrls: images,
-            pageController: pageController!,
-            context: context,
-            builder: builder,
-            chapterIndex: widget.chapterIndex,
-            axis: axis,
-            icon: icon,
-            reverse: reverse,
-            onScope: onScope,
-            onPageChange: widget.onPageChange,
-            controller: controller,
-            api: api,
-          ),
+  _loadChapter(String link) {
+    ReaderPageController.loadChapter(
+      onFinish: (urls) {
+        imageUrls[chapter] = urls;
+        pages = ReaderPageController.buildPages(
+          chapters: builder.chapters,
+          chapterIndex: chapterIndex,
+          imageUrls: imageUrls[chapter]!,
+          onTapUp: (p0, p1, p2) => onTap(),
         );
-      }
-      setState(() {});
-    });
+        setState(() {});
+      },
+      link: link,
+      controller: controller,
+      api: api,
+    );
   }
 
   @override
@@ -129,16 +101,10 @@ class _ReaderState extends State<Reader> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: imageFutures,
-        builder: (context, snapshot) {
-          if (snapshot.data != null &&
-              snapshot.data!.isEmpty &&
-              api.runtimeType != MangaKatanaAdapter) {
-            return const Center(child: Text("No chapter pages found"));
-          } else if (snapshot.hasData && snapshot.data != null && snapshot.data!.isNotEmpty) {
-            final List<String> imageUrls = snapshot.data!;
-            for (var img in imageUrls) {
+    return imageUrls[chapter] == null
+        ? const Center(child: CircularProgressIndicator())
+        : Builder(builder: (context) {
+            for (var img in imageUrls[chapter]!) {
               ReaderPageController.preloadImage(context, img);
             }
             return Scaffold(
@@ -179,15 +145,15 @@ class _ReaderState extends State<Reader> {
                             icon: icon,
                             onScope: onScope,
                             onPageChange: widget.onPageChange,
-                            images: imageUrls,
+                            images: imageUrls[chapter]!,
                             pageIndex: pageIndex,
                             slider: Slider.adaptive(
                               inactiveColor: Theme.of(context).colorScheme.secondary,
                               value: sliderValue,
-                              divisions: imageUrls.length + 2,
-                              label: "${sliderValue.toInt() - 1} / ${imageUrls.length}",
+                              divisions: imageUrls[chapter]!.length + 2,
+                              label: "${sliderValue.toInt() - 1} / ${imageUrls[chapter]!.length}",
                               min: 2,
-                              max: (imageUrls.length.toDouble() + 1),
+                              max: (imageUrls[chapter]!.length.toDouble() + 1),
                               onChangeStart: (value) => setState(() {
                                 isSliding = true;
                               }),
@@ -195,11 +161,11 @@ class _ReaderState extends State<Reader> {
                                 isSliding = false;
                               }),
                               onChanged: (value) {
-                                if (!(value == 1 || value == imageUrls.length + 2)) {
+                                if (!(value == 1 || value == imageUrls[chapter]!.length + 2)) {
                                   sliderValue = value;
                                 }
                                 pageIndex = value.toInt() - 1;
-                                pageController?.animateToPage(
+                                pageController.animateToPage(
                                   pageIndex,
                                   duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeInOut,
@@ -215,26 +181,24 @@ class _ReaderState extends State<Reader> {
               body: ReaderPageWidget(
                 axis: axis,
                 reverse: reverse,
-                imageUrls: imageUrls,
                 pageController: pageController,
-                chapters: builder.chapters,
-                chapterIndex: widget.chapterIndex,
-                nativeAd1: nativeAd1!,
-                nativeAd2: nativeAd2!,
                 onPageChanged: (index) {
                   double value = index.toDouble() + 1;
-                  if (!(value == 1 || value == imageUrls.length + 2) && !isSliding) {
+                  if (!(value == 1 || value == imageUrls[chapter]!.length + 2) && !isSliding) {
                     sliderValue = value;
+                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+                    showAppBar = false;
+                  } else {
+                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                    showAppBar = true;
                   }
                   pageIndex = index;
                   setState(() {});
                 },
-                onTapUp: (p0, p1, p2) => onTap(),
+                pages: pages,
               ),
             );
-          }
-          return const Center(child: CircularProgressIndicator());
-        });
+          });
   }
 
   onTap() {
