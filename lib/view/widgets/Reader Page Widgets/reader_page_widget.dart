@@ -7,6 +7,7 @@ class ReaderPageWidget extends StatelessWidget {
   final bool reverse;
   final PageController? pageController;
   final Function(int) onPageChanged;
+  final PhotoViewGalleryPageOptions Function(BuildContext, int) builder;
   final List<PhotoViewGalleryPageOptions> pages;
 
   const ReaderPageWidget({
@@ -16,17 +17,24 @@ class ReaderPageWidget extends StatelessWidget {
     required this.pageController,
     required this.onPageChanged,
     required this.pages,
+    required,
+    required this.builder,
   });
 
   @override
   Widget build(BuildContext context) {
-    return PhotoViewGallery.builder(
-      pageController: pageController,
-      scrollDirection: axis,
-      reverse: reverse,
-      onPageChanged: onPageChanged,
-      builder: (context, index) => pages[index],
-      itemCount: pages.length,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: ClipRect(
+        child: PhotoViewGallery.builder(
+          pageController: pageController,
+          scrollDirection: axis,
+          reverse: reverse,
+          onPageChanged: onPageChanged,
+          builder: builder,
+          itemCount: pages.length,
+        ),
+      ),
     );
   }
 }
