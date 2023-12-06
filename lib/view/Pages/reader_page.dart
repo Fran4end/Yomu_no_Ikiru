@@ -51,11 +51,11 @@ class _ReaderState extends State<Reader> {
   late Widget icon = widget.icon;
   late int pageIndex = widget.pageIndex;
   late PageController pageController;
-  late PageController chapterController;
 
-  List pages = [];
+  List<PhotoViewGalleryPageOptions> pages = [];
   double sliderValue = 2;
   bool isSliding = false;
+  bool isLoading = true;
   Map<Chapter, List<String>> imageUrls = {};
   bool showAppBar = false;
 
@@ -64,16 +64,10 @@ class _ReaderState extends State<Reader> {
     super.initState();
     final manga = builder.build();
     chapter = manga.chapters[widget.chapterIndex];
-    chapterController = PageController();
     pageController = PageController(initialPage: pageIndex);
     pageController.addListener(() {
       widget.onPageChange(
           pageController.page!.toInt(), (builder.chapters.length - chapterIndex) - 1);
-      if (pageController.page == imageUrls[chapter]!.length + 1 && chapterIndex - 1 >= 0) {
-        chapterIndex -= 1;
-        chapter = builder.chapters[chapterIndex];
-        setState(() {});
-      } else if (pageController.page == 0 && chapterIndex + 1 < builder.chapters.length) {}
     });
     controller = WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted);
     _loadChapter(chapter.link!);
@@ -84,6 +78,12 @@ class _ReaderState extends State<Reader> {
     ReaderPageController.loadChapter(
       onFinish: (urls) {
         imageUrls[chapter] = urls;
+        pages = ReaderPageController.buildPages(
+          chapters: builder.chapters,
+          chapterIndex: chapterIndex,
+          imageUrls: imageUrls[chapter]!,
+          onTapUp: (p0, p1, p2) => onTap(),
+        );
         setState(() {});
       },
       link: link,
@@ -168,7 +168,7 @@ class _ReaderState extends State<Reader> {
                                 pageController.animateToPage(
                                   pageIndex,
                                   duration: const Duration(milliseconds: 300),
-                                  curve: Curves.ease,
+                                  curve: Curves.easeInOut,
                                 );
                                 setState(() {});
                               },
@@ -178,38 +178,24 @@ class _ReaderState extends State<Reader> {
                         ),
                 ),
               ),
-              body: PageView.builder(
-                controller: chapterController,
-                itemCount: (imageUrls.keys.length + 2) + (imageUrls.keys.length - 1),
-                itemBuilder: (context, index) {
-                  final chapter = imageUrls.keys.elementAt(index);
-                  // return ReaderPageWidget(
-                  //   axis: axis,
-                  //   reverse: reverse,
-                  //   pageController: pageController,
-                  //   onPageChanged: (index) {
-                  //     double value = index.toDouble() + 1;
-                  //     if (!(value == 1 || value == imageUrls[chapter]!.length + 2) && !isSliding) {
-                  //       if (sliderValue != value) {
-                  //         sliderValue = value;
-                  //       }
-                  //       if (!isSliding) {
-                  //         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-                  //         showAppBar = false;
-                  //       }
-                  //     } else {
-                  //       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-                  //       showAppBar = true;
-                  //     }
-                  //     pageIndex = index;
-                  //     setState(() {});
-                  //   },
-                  // pages: ReaderPageController.addChapterPage(
-                  //   imageUrls: imageUrls,
-                  //   onTapUp: (p0, p1, p2) => onTap(),
-                  // ),
-                  // );
+              body: ReaderPageWidget(
+                axis: axis,
+                reverse: reverse,
+                pageController: pageController,
+                onPageChanged: (index) {
+                  double value = index.toDouble() + 1;
+                  if (!(value == 1 || value == imageUrls[chapter]!.length + 2) && !isSliding) {
+                    sliderValue = value;
+                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+                    showAppBar = false;
+                  } else {
+                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                    showAppBar = true;
+                  }
+                  pageIndex = index;
+                  setState(() {});
                 },
+                pages: pages,
               ),
             );
           });

@@ -9,12 +9,14 @@ import 'package:html/parser.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:yomu_no_ikiru/model/chapter.dart';
+import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/next_chapter_page_widget.dart';
 
 import '../Api/adapter.dart';
 import '../constants.dart';
-import '../model/chapter.dart';
 import '../model/manga_builder.dart';
 import '../view/Pages/reader_page.dart';
+import '../view/widgets/Reader Page Widgets/prev_chapter_page_widget.dart';
 
 class ReaderPageController {
   static nextChapter({
@@ -142,25 +144,37 @@ class ReaderPageController {
     return (axis, icon, reverse);
   }
 
-  static chapterControllerListener({required String s}) {}
-
-  static List addChapterPage({
-    required Map<Chapter, List<String>> imageUrls,
+  static List<PhotoViewGalleryPageOptions> buildPages({
+    required List<Chapter> chapters,
+    required int chapterIndex,
+    required List<String> imageUrls,
     required Function(BuildContext, TapUpDetails, PhotoViewControllerValue)? onTapUp,
   }) {
-    List pages = [];
-
-    // for (var imageUrl in imageUrls) {
-    //   final image = CachedNetworkImageProvider(imageUrl);
-    //   pages.add(
-    //     PhotoViewGalleryPageOptions(
-    //       imageProvider: image,
-    //       minScale: PhotoViewComputedScale.contained,
-    //       tightMode: false,
-    //       onTapUp: onTapUp,
-    //     ),
-    //   );
-    // }
+    List<PhotoViewGalleryPageOptions> pages = [
+      PhotoViewGalleryPageOptions.customChild(
+        onTapUp: onTapUp,
+        child: PrevChapterPageWidget(
+            chapters: chapters, chapterIndex: chapterIndex, nativeAd1: loadAd()),
+      )
+    ];
+    for (var imageUrl in imageUrls) {
+      final image = CachedNetworkImageProvider(imageUrl);
+      pages.add(
+        PhotoViewGalleryPageOptions(
+          imageProvider: image,
+          minScale: PhotoViewComputedScale.contained,
+          tightMode: false,
+          onTapUp: onTapUp,
+        ),
+      );
+    }
+    pages.add(
+      PhotoViewGalleryPageOptions.customChild(
+        onTapUp: onTapUp,
+        child: NextChapterPageWidget(
+            chapters: chapters, chapterIndex: chapterIndex, nativeAd2: loadAd()),
+      ),
+    );
     return pages;
   }
 
