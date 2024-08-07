@@ -3,8 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:yomu_no_ikiru/Api/adapter.dart';
+import 'package:yomu_no_ikiru/view/Pages/reader.dart';
 
+import '../../Api/adapter.dart';
 import '../../constants.dart';
 import '../../model/chapter.dart';
 import '../../controller/file_manager.dart';
@@ -13,7 +14,6 @@ import '../../model/manga_builder.dart';
 import '../../controller/utils.dart';
 import '../widgets/Manga Page Widgets/manga_page_appBar.dart';
 import '../widgets/Manga Page Widgets/manga_page_detail.dart';
-import 'reader_page.dart';
 
 class MangaPage extends StatefulWidget {
   const MangaPage({
@@ -33,14 +33,14 @@ class MangaPage extends StatefulWidget {
 }
 
 class _MangaPageState extends State<MangaPage> {
+  late final api = widget.api;
   late MangaBuilder mangaBuilder = widget.mangaBuilder;
-  final User? user = FirebaseAuth.instance.currentUser;
+  late Future builder;
   late bool save = widget.save;
+  final User? user = FirebaseAuth.instance.currentUser;
+  final scrollController = ScrollController();
   bool isOnLibrary = false;
   bool isGetVote = false;
-  late Future builder;
-  late final api = widget.api;
-  final scrollController = ScrollController();
 
   @override
   void initState() {
@@ -182,34 +182,15 @@ class _MangaPageState extends State<MangaPage> {
                   MaterialPageRoute(
                     builder: (context) => Reader(
                       chapterIndex: (manga.chapters.length - manga.index) - 1,
+                      manga: manga,
                       pageIndex: manga.pageIndex,
-                      builder: mangaBuilder,
-                      axis: Axis.horizontal,
-                      icon: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Align(
-                            alignment: Alignment.center,
-                            child: Icon(FontAwesomeIcons.mobileScreenButton),
-                          ),
-                          Align(
-                              alignment: Alignment.center,
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 2),
-                                child: const Icon(
-                                  FontAwesomeIcons.arrowLeft,
-                                  size: 7,
-                                ),
-                              )),
-                        ],
-                      ),
-                      reverse: true,
-                      onScope: (builder) {
-                        setState(() => mangaBuilder = builder);
-                        saveBookmark();
+                      onScope: (newManga) {
+                        setState(() {
+                          manga = newManga;
+                        });
                       },
-                      onPageChange: onPageChange,
                       api: api,
+                      onPageChange: onPageChange,
                     ),
                   ),
                 );
@@ -248,33 +229,14 @@ class _MangaPageState extends State<MangaPage> {
                           builder: (context) => Reader(
                             chapterIndex: index,
                             pageIndex: 1,
-                            builder: mangaBuilder,
-                            axis: Axis.horizontal,
-                            icon: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                const Align(
-                                  alignment: Alignment.center,
-                                  child: Icon(FontAwesomeIcons.mobileScreenButton),
-                                ),
-                                Align(
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      margin: const EdgeInsets.only(bottom: 2),
-                                      child: const Icon(
-                                        FontAwesomeIcons.arrowLeft,
-                                        size: 10,
-                                      ),
-                                    )),
-                              ],
-                            ),
-                            reverse: true,
-                            onScope: (builder) {
-                              mangaBuilder = builder;
-                              saveBookmark();
+                            manga: mangaBuilder.build(),
+                            onScope: (newManga) {
+                              setState(() {
+                                mangaBuilder = MangaBuilder.fromJson(newManga.toJson());
+                              });
                             },
-                            onPageChange: onPageChange,
                             api: api,
+                            onPageChange: onPageChange,
                           ),
                         ),
                       );

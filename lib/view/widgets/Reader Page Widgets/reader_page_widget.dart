@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 class ReaderPageWidget extends StatelessWidget {
@@ -7,7 +9,8 @@ class ReaderPageWidget extends StatelessWidget {
   final bool reverse;
   final PageController? pageController;
   final Function(int) onPageChanged;
-  final List<PhotoViewGalleryPageOptions> pages;
+  final List<String> imageUrls;
+  final Function(BuildContext, TapUpDetails, PhotoViewControllerValue)? onTapUp;
 
   const ReaderPageWidget({
     super.key,
@@ -15,7 +18,8 @@ class ReaderPageWidget extends StatelessWidget {
     required this.reverse,
     required this.pageController,
     required this.onPageChanged,
-    required this.pages,
+    required this.imageUrls,
+    required this.onTapUp,
   });
 
   @override
@@ -25,8 +29,13 @@ class ReaderPageWidget extends StatelessWidget {
       scrollDirection: axis,
       reverse: reverse,
       onPageChanged: onPageChanged,
-      builder: (context, index) => pages[index],
-      itemCount: pages.length,
+      builder: (context, index) => PhotoViewGalleryPageOptions(
+        imageProvider: CachedNetworkImageProvider(imageUrls[index]),
+        minScale: PhotoViewComputedScale.contained,
+        tightMode: false,
+        onTapUp: onTapUp,
+      ),
+      itemCount: imageUrls.length,
     );
   }
 }

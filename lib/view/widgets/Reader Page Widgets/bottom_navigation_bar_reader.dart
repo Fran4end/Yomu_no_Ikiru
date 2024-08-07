@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:yomu_no_ikiru/Api/adapter.dart';
-import 'package:yomu_no_ikiru/model/manga_builder.dart';
 
 import '../../../model/chapter.dart';
 import '../../../controller/reader_page_controller.dart';
+import '../../../model/manga.dart';
 
 class ReaderBottomNavigationBar extends StatelessWidget {
   final bool reverse;
   final List<Chapter> chapters;
-  final MangaBuilder builder;
+  final Manga manga;
   final int chapterIndex;
   final Axis axis;
   final Widget icon;
@@ -17,13 +17,17 @@ class ReaderBottomNavigationBar extends StatelessWidget {
   final MangaApiAdapter api;
   final List<String> images;
   final int pageIndex;
-  final Function(MangaBuilder) onScope;
+  final PageController pageController1;
+  final Function(Manga) onScope;
   final Function(int page, int chapterIndex) onPageChange;
+  final Function(int) onLastPage;
+  final Function(int) onFirstPage;
 
   const ReaderBottomNavigationBar({
+    super.key,
     required this.reverse,
     required this.chapters,
-    required this.builder,
+    required this.manga,
     required this.chapterIndex,
     required this.axis,
     required this.icon,
@@ -33,7 +37,9 @@ class ReaderBottomNavigationBar extends StatelessWidget {
     required this.onPageChange,
     required this.api,
     required this.slider,
-    super.key,
+    required this.onLastPage,
+    required this.onFirstPage,
+    required this.pageController1,
   });
 
   @override
@@ -51,8 +57,9 @@ class ReaderBottomNavigationBar extends StatelessWidget {
           onPressed: reverse
               ? chapterIndex - 1 >= 0
                   ? () => ReaderPageController.nextChapter(
+                        pageController1: pageController1,
                         context: context,
-                        builder: builder,
+                        manga: manga,
                         chapterIndex: chapterIndex,
                         axis: axis,
                         icon: icon,
@@ -60,12 +67,15 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                         onScope: onScope,
                         onPageChange: onPageChange,
                         api: api,
+                        onLastPage: onLastPage,
+                        onFirstPage: onFirstPage,
                       )
                   : null
               : chapterIndex + 1 < chapters.length
                   ? () => ReaderPageController.previousChapter(
+                        pageController1: pageController1,
                         context: context,
-                        builder: builder,
+                        manga: manga,
                         chapterIndex: chapterIndex,
                         axis: axis,
                         icon: icon,
@@ -73,6 +83,8 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                         onScope: onScope,
                         onPageChange: onPageChange,
                         api: api,
+                        onLastPage: onLastPage,
+                        onFirstPage: onFirstPage,
                       )
                   : null,
         ),
@@ -94,20 +106,9 @@ class ReaderBottomNavigationBar extends StatelessWidget {
           onPressed: !reverse
               ? chapterIndex - 1 >= 0
                   ? () => ReaderPageController.nextChapter(
-                      context: context,
-                      builder: builder,
-                      chapterIndex: chapterIndex,
-                      axis: axis,
-                      icon: icon,
-                      reverse: reverse,
-                      onScope: onScope,
-                      onPageChange: onPageChange,
-                      api: api)
-                  : null
-              : chapterIndex + 1 < chapters.length
-                  ? () => ReaderPageController.previousChapter(
+                        pageController1: pageController1,
                         context: context,
-                        builder: builder,
+                        manga: manga,
                         chapterIndex: chapterIndex,
                         axis: axis,
                         icon: icon,
@@ -115,6 +116,24 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                         onScope: onScope,
                         onPageChange: onPageChange,
                         api: api,
+                        onLastPage: onLastPage,
+                        onFirstPage: onFirstPage,
+                      )
+                  : null
+              : chapterIndex + 1 < chapters.length
+                  ? () => ReaderPageController.previousChapter(
+                        pageController1: pageController1,
+                        context: context,
+                        manga: manga,
+                        chapterIndex: chapterIndex,
+                        axis: axis,
+                        icon: icon,
+                        reverse: reverse,
+                        onScope: onScope,
+                        onPageChange: onPageChange,
+                        api: api,
+                        onLastPage: onLastPage,
+                        onFirstPage: onFirstPage,
                       )
                   : null,
           tooltip: reverse ? "Previous chapter" : "Next chapter",

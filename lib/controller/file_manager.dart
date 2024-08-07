@@ -52,13 +52,12 @@ class FileManager {
   static Future<MangaBuilder> _readFile(File file) async {
     final content = await file.readAsString();
     final json = jsonDecode(content);
-    MangaBuilder builder = MangaBuilder()
-      ..fromJson = json
-      ..save = true;
+    MangaBuilder builder = MangaBuilder.fromJson(json)..save = true;
     return builder;
   }
 
   static Future<List<MangaBuilder>> readPagedLocalFile(int page, int pageSize) async {
+    user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       Utils.showSnackBar("You need to login before save on library");
       return [];
@@ -79,7 +78,7 @@ class FileManager {
       return [];
     } catch (e) {
       if (kDebugMode) {
-        print("Line 75: $e");
+        print("FileManager Line 80: $e");
       }
       return [];
     }
@@ -91,7 +90,7 @@ class FileManager {
       return Directory("${dir.path}/${user?.uid}").listSync().map((e) => (e as File)).toList();
     } catch (e) {
       if (kDebugMode) {
-        print("Line 91: $e");
+        print("FileManager Line 91: $e");
       }
       return [];
     }
@@ -132,7 +131,7 @@ class FileManager {
           await ref.delete();
         } catch (e) {
           if (kDebugMode) {
-            print("Line 108: $e");
+            print("FileManager Line 133: $e");
           }
         }
       }
@@ -156,7 +155,7 @@ class FileManager {
         await ref.delete();
       } catch (e) {
         if (kDebugMode) {
-          print("Line 108: $e");
+          print("FileManager Line 157: $e");
         }
       }
     }

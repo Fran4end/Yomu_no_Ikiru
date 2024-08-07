@@ -2,40 +2,39 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:yomu_no_ikiru/model/chapter.dart';
-import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/next_chapter_page_widget.dart';
+import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/reader_direction_icon.dart';
 
 import '../Api/adapter.dart';
 import '../constants.dart';
-import '../model/manga_builder.dart';
-import '../view/Pages/reader_page.dart';
-import '../view/widgets/Reader Page Widgets/prev_chapter_page_widget.dart';
+import '../model/manga.dart';
+import '../view/widgets/Reader Page Widgets/reader_chapter_page.dart';
 
 class ReaderPageController {
   static nextChapter({
     required BuildContext context,
-    required MangaBuilder builder,
+    required Manga manga,
     required int chapterIndex,
     required Axis axis,
     required Widget icon,
     required bool reverse,
     required MangaApiAdapter api,
-    required Function(MangaBuilder) onScope,
+    required PageController pageController1,
+    required Function(Manga) onScope,
     required Function(int page, int chapterIndex) onPageChange,
+    required Function(int chapterIndex) onLastPage,
+    required Function(int chapterIndex) onFirstPage,
   }) {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (_) => Reader(
+            builder: (_) => ReaderChapterPage(
+                  pageController1: pageController1,
                   pageIndex: 1,
-                  builder: builder,
+                  manga: manga,
                   onScope: onScope,
                   axis: axis,
                   icon: icon,
@@ -43,33 +42,41 @@ class ReaderPageController {
                   onPageChange: onPageChange,
                   chapterIndex: chapterIndex - 1,
                   api: api,
+                  onFirstPage: onLastPage,
+                  onLastPage: onLastPage,
                 )));
   }
 
   static previousChapter({
     required BuildContext context,
-    required MangaBuilder builder,
+    required Manga manga,
     required int chapterIndex,
     required Axis axis,
     required Widget icon,
     required bool reverse,
     required MangaApiAdapter api,
-    required Function(MangaBuilder) onScope,
+    required PageController pageController1,
+    required Function(Manga) onScope,
     required Function(int page, int chapterIndex) onPageChange,
+    required Function(int chapterIndex) onLastPage,
+    required Function(int chapterIndex) onFirstPage,
   }) {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (_) => Reader(
+            builder: (_) => ReaderChapterPage(
+                  pageController1: pageController1,
                   chapterIndex: chapterIndex + 1,
                   pageIndex: 1,
-                  builder: builder,
+                  manga: manga,
                   onScope: onScope,
                   axis: axis,
                   icon: icon,
                   reverse: reverse,
                   onPageChange: onPageChange,
                   api: api,
+                  onFirstPage: onLastPage,
+                  onLastPage: onLastPage,
                 )));
   }
 
@@ -80,102 +87,35 @@ class ReaderPageController {
   }) {
     if (axis == Axis.vertical && reverse == false) {
       axis = Axis.horizontal;
-      icon = Stack(
-        alignment: Alignment.center,
-        children: [
-          const Align(
-            alignment: Alignment.center,
-            child: Icon(FontAwesomeIcons.mobileScreenButton),
-          ),
-          Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 2),
-                child: const Icon(
-                  FontAwesomeIcons.arrowRight,
-                  size: 10,
-                ),
-              )),
-        ],
-      );
+      icon = const LeftRightIcon();
       reverse = false;
     } else if (reverse == false) {
-      icon = Stack(
-        alignment: Alignment.center,
-        children: [
-          const Align(
-            alignment: Alignment.center,
-            child: Icon(FontAwesomeIcons.mobileScreenButton),
-          ),
-          Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 2),
-                child: const Icon(
-                  FontAwesomeIcons.arrowLeft,
-                  size: 10,
-                ),
-              )),
-        ],
-      );
+      icon = const RightLeftIcon();
       reverse = true;
     } else {
       axis = Axis.vertical;
-      icon = Stack(
-        alignment: Alignment.center,
-        children: [
-          const Align(
-            alignment: Alignment.center,
-            child: Icon(FontAwesomeIcons.mobileScreenButton),
-          ),
-          Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 2),
-                child: const Icon(
-                  FontAwesomeIcons.arrowDown,
-                  size: 10,
-                ),
-              )),
-        ],
-      );
+      icon = const TopDownIcon();
       reverse = false;
     }
     return (axis, icon, reverse);
   }
 
-  static List<PhotoViewGalleryPageOptions> buildPages({
-    required List<Chapter> chapters,
-    required int chapterIndex,
+  static pageControllerListener({
     required List<String> imageUrls,
-    required Function(BuildContext, TapUpDetails, PhotoViewControllerValue)? onTapUp,
+    required PageController pageController,
+    required Manga manga,
+    required int chapterIndex,
+    required Function(int page, int chapterIndex) onPageChange,
+    required Function(int newChapterIndex) onLastPage,
+    required Function(int newChapterIndex) onFirstPage,
   }) {
-    List<PhotoViewGalleryPageOptions> pages = [
-      PhotoViewGalleryPageOptions.customChild(
-        onTapUp: onTapUp,
-        child: PrevChapterPageWidget(
-            chapters: chapters, chapterIndex: chapterIndex, nativeAd1: loadAd()),
-      )
-    ];
-    for (var imageUrl in imageUrls) {
-      final image = CachedNetworkImageProvider(imageUrl);
-      pages.add(
-        PhotoViewGalleryPageOptions(
-          imageProvider: image,
-          minScale: PhotoViewComputedScale.contained,
-          tightMode: false,
-          onTapUp: onTapUp,
-        ),
-      );
+    onPageChange(pageController.page!.toInt(), (manga.chapters.length - chapterIndex) - 1);
+
+    if (imageUrls.isNotEmpty) {
+      if (pageController.page == imageUrls.length && chapterIndex - 1 >= 0) {
+        onLastPage(chapterIndex - 1);
+      } else if (pageController.page == 0 && chapterIndex + 1 < manga.chapters.length) {}
     }
-    pages.add(
-      PhotoViewGalleryPageOptions.customChild(
-        onTapUp: onTapUp,
-        child: NextChapterPageWidget(
-            chapters: chapters, chapterIndex: chapterIndex, nativeAd2: loadAd()),
-      ),
-    );
-    return pages;
   }
 
   static NativeAd loadAd() {

@@ -11,6 +11,7 @@ class MangaKatanaAdapter implements MangaApiAdapter {
     Document? document = await api.getPageDocument(link);
     builder = api.getAppBarInfo(builder, document);
     builder.chapters = api.getChapters(document);
+    builder.api = this;
     return builder;
   }
 
@@ -50,5 +51,5 @@ class MangaKatanaAdapter implements MangaApiAdapter {
   bool get isJavaScript => true;
 
   @override
-  Future<Document?> getDocument(String link) async =>  api.getPageDocument(link);
+  Future<Document?> getDocument(String link) async => api.getPageDocument(link);
 }

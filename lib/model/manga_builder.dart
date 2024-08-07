@@ -97,7 +97,9 @@ class MangaBuilder {
     }
   }
 
-  set fromJson(Map json) {
+  MangaBuilder();
+
+  MangaBuilder.fromJson(Map json) {
     final apiBuilder = MangaApiFactory()..apiType = json["api"]["type"];
     try {
       id = json["id"];

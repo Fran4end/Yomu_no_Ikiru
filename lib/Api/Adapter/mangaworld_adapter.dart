@@ -24,6 +24,7 @@ class MangaWorldAdapter implements MangaApiAdapter {
     Document? document = await api.getPageDocument(link);
     builder = api.getAppBarInfo(builder, document);
     builder.chapters = api.getChapters(document);
+    builder.api = this;
     return builder;
   }
 

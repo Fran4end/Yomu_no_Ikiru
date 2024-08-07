@@ -24,6 +24,7 @@ class MangaDexAdapter implements MangaApiAdapter {
 
   @override
   Future<MangaBuilder> getDetails(MangaBuilder builder, [String link = ""]) async {
+    builder.api = this;
     builder.chapters = await api.getChapters(builder.id!);
     return builder;
   }
@@ -64,10 +65,10 @@ class MangaDexAdapter implements MangaApiAdapter {
 
   @override
   int get pageSize => 16;
-  
+
   @override
   bool get isJavaScript => false;
-  
+
   @override
   Future<Document> getDocument(String link) {
     // TODO: implement getDocument
