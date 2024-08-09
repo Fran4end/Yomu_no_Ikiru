@@ -38,7 +38,7 @@ class _ReaderState extends State<Reader> {
   void initState() {
     chapterPages.add(
       ReaderChapterPage(
-        pageController1: pageController,
+        pageController: pageController,
         chapterIndex: chapterIndex,
         pageIndex: widget.pageIndex,
         manga: manga,
@@ -48,8 +48,6 @@ class _ReaderState extends State<Reader> {
         icon: const RightLeftIcon(),
         onPageChange: widget.onPageChange,
         api: widget.api,
-        onLastPage: _onLastPage,
-        onFirstPage: _onFirstPage,
       ),
     );
     super.initState();
@@ -71,28 +69,4 @@ class _ReaderState extends State<Reader> {
       ),
     );
   }
-
-  _onLastPage(int newChapterIndex) {
-    chapterIndex = newChapterIndex;
-    chapterPages.insert(
-      chapterPages.length - 1,
-      ReaderChapterPage(
-        pageController1: pageController,
-        chapterIndex: chapterIndex,
-        pageIndex: widget.pageIndex,
-        manga: manga,
-        onScope: widget.onScope,
-        axis: Axis.horizontal,
-        reverse: true,
-        icon: const RightLeftIcon(),
-        onPageChange: widget.onPageChange,
-        api: widget.api,
-        onLastPage: _onLastPage,
-        onFirstPage: _onFirstPage,
-      ),
-    );
-    setState(() {});
-  }
-
-  _onFirstPage(int newChapterIndex) {}
 }

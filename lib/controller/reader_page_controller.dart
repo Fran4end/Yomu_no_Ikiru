@@ -25,8 +25,6 @@ class ReaderPageController {
     required PageController pageController1,
     required Function(Manga) onScope,
     required Function(int page, int chapterIndex) onPageChange,
-    required Function(int chapterIndex) onLastPage,
-    required Function(int chapterIndex) onFirstPage,
   }) {
     Navigator.pushReplacement(
         context,
@@ -42,8 +40,6 @@ class ReaderPageController {
                   onPageChange: onPageChange,
                   chapterIndex: chapterIndex - 1,
                   api: api,
-                  onFirstPage: onLastPage,
-                  onLastPage: onLastPage,
                 )));
   }
 
@@ -58,8 +54,6 @@ class ReaderPageController {
     required PageController pageController1,
     required Function(Manga) onScope,
     required Function(int page, int chapterIndex) onPageChange,
-    required Function(int chapterIndex) onLastPage,
-    required Function(int chapterIndex) onFirstPage,
   }) {
     Navigator.pushReplacement(
         context,
@@ -75,8 +69,6 @@ class ReaderPageController {
                   reverse: reverse,
                   onPageChange: onPageChange,
                   api: api,
-                  onFirstPage: onLastPage,
-                  onLastPage: onLastPage,
                 )));
   }
 
@@ -106,14 +98,11 @@ class ReaderPageController {
     required Manga manga,
     required int chapterIndex,
     required Function(int page, int chapterIndex) onPageChange,
-    required Function(int newChapterIndex) onLastPage,
-    required Function(int newChapterIndex) onFirstPage,
   }) {
     onPageChange(pageController.page!.toInt(), (manga.chapters.length - chapterIndex) - 1);
 
     if (imageUrls.isNotEmpty) {
       if (pageController.page == imageUrls.length && chapterIndex - 1 >= 0) {
-        onLastPage(chapterIndex - 1);
       } else if (pageController.page == 0 && chapterIndex + 1 < manga.chapters.length) {}
     }
   }

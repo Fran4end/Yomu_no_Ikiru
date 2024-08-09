@@ -27,10 +27,8 @@ class ReaderChapterPage extends StatefulWidget {
     required this.icon,
     required this.onPageChange,
     required this.api,
-    required this.onLastPage,
-    required this.onFirstPage,
     required this.pageIndex,
-    required this.pageController1,
+    required this.pageController,
   });
   final int chapterIndex, pageIndex;
   final Manga manga;
@@ -38,11 +36,9 @@ class ReaderChapterPage extends StatefulWidget {
   final bool reverse, showAppBar;
   final Widget icon;
   final MangaApiAdapter api;
-  final PageController pageController1;
+  final PageController pageController;
   final Function(Manga manga) onScope;
   final Function(int page, int chapterIndex) onPageChange;
-  final Function(int chapterIndex) onLastPage;
-  final Function(int chapterIndex) onFirstPage;
 
   @override
   State<StatefulWidget> createState() => _ReaderState();
@@ -59,8 +55,7 @@ class _ReaderState extends State<ReaderChapterPage> {
   late Axis axis = widget.axis;
   late Widget icon = widget.icon;
   late int pageIndex = widget.pageIndex;
-  late PageController pageController2;
-  late PageController pageController1 = widget.pageController1;
+  late PageController pageController = widget.pageController;
   late bool showAppBar = widget.showAppBar;
 
   List<String>? imageUrls;
@@ -73,7 +68,6 @@ class _ReaderState extends State<ReaderChapterPage> {
   void initState() {
     super.initState();
     chapter = manga.chapters[widget.chapterIndex];
-    pageController2 = PageController(initialPage: pageIndex);
     controller = WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted);
     _loadChapter(chapter.link!);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -103,79 +97,17 @@ class _ReaderState extends State<ReaderChapterPage> {
     return imageUrls == null
         ? const Center(child: CircularProgressIndicator())
         : Builder(builder: (context) {
-            pageController2.addListener(() => ReaderPageController.pageControllerListener(
+            pageController.addListener(() => ReaderPageController.pageControllerListener(
                   imageUrls: imageUrls!,
-                  pageController: pageController2,
+                  pageController: pageController,
                   manga: manga,
                   chapterIndex: chapterIndex,
                   onPageChange: widget.onPageChange,
-                  onFirstPage: widget.onFirstPage,
-                  onLastPage: widget.onLastPage,
                 ));
             for (var img in imageUrls!) {
               ReaderPageController.preloadImage(context, img);
             }
-            return NotificationListener(
-              onNotification: (notification) {
-                if (notification is OverscrollNotification && notification.overscroll < 0) {
-                  leftOverScroll += notification.overscroll;
-                  pageController1.position
-                      .correctPixels(pageController1.position.pixels + notification.overscroll);
-                  pageController1.position.notifyListeners();
-                }
-
-                if (leftOverScroll < 0) {
-                  if (notification is ScrollUpdateNotification) {
-                    final newOverScroll = min(notification.metrics.pixels + leftOverScroll, 0.0);
-                    final diff = newOverScroll - leftOverScroll;
-                    pageController1.position.correctPixels(pageController1.position.pixels + diff);
-                    pageController1.position.notifyListeners();
-                    leftOverScroll = newOverScroll;
-                    pageController2.position.correctPixels(0);
-                    pageController2.position.notifyListeners();
-                  }
-                }
-
-                if (notification is UserScrollNotification &&
-                    notification.direction == ScrollDirection.idle &&
-                    leftOverScroll != 0) {
-                  pageController1.previousPage(
-                      curve: Curves.ease, duration: const Duration(milliseconds: 400));
-                  leftOverScroll = 0;
-                }
-
-                if (notification is OverscrollNotification && notification.overscroll > 0) {
-                  rightOverScroll += notification.overscroll;
-                  pageController1.position
-                      .correctPixels(pageController1.position.pixels + notification.overscroll);
-                  pageController1.position.notifyListeners();
-                }
-
-                if (rightOverScroll > 0) {
-                  if (notification is ScrollUpdateNotification) {
-                    final maxScrollExtent = notification.metrics.maxScrollExtent;
-                    final newOverScroll =
-                        max(notification.metrics.pixels + rightOverScroll - maxScrollExtent, 0.0);
-                    final diff = newOverScroll - rightOverScroll;
-                    pageController1.position.correctPixels(pageController1.position.pixels + diff);
-                    pageController1.position.notifyListeners();
-                    rightOverScroll = newOverScroll;
-                    pageController2.position.correctPixels(maxScrollExtent);
-                    pageController2.position.notifyListeners();
-                  }
-                }
-
-                if (notification is UserScrollNotification &&
-                    notification.direction == ScrollDirection.idle &&
-                    rightOverScroll != 0) {
-                  pageController1.nextPage(
-                      curve: Curves.ease, duration: const Duration(milliseconds: 400));
-                  rightOverScroll = 0;
-                }
-
-                return false;
-              },
-              child: Scaffold(
+        return Scaffold(
                 appBar: AnimatedBar(
                   begin: const Offset(0, -1),
                   builder: () => !showAppBar
@@ -202,7 +134,7 @@ class _ReaderState extends State<ReaderChapterPage> {
                         ? const SizedBox.shrink()
                         : SafeArea(
                             child: ReaderBottomNavigationBar(
-                              pageController1: pageController1,
+                              pageController1: pageController,
                               reverse: reverse,
                               chapters: manga.chapters,
                               manga: manga,
@@ -213,8 +145,6 @@ class _ReaderState extends State<ReaderChapterPage> {
                               onPageChange: widget.onPageChange,
                               images: imageUrls!,
                               pageIndex: pageIndex,
-                              onLastPage: widget.onLastPage,
-                              onFirstPage: widget.onFirstPage,
                               slider: Slider.adaptive(
                                 inactiveColor: Theme.of(context).colorScheme.secondary,
                                 value: sliderValue,
@@ -233,7 +163,7 @@ class _ReaderState extends State<ReaderChapterPage> {
                                     sliderValue = value;
                                   }
                                   pageIndex = value.toInt() - 1;
-                                  pageController2.animateToPage(
+                                  pageControllergit .animateToPage(
                                     pageIndex,
                                     duration: const Duration(milliseconds: 300),
                                     curve: Curves.easeInOut,
@@ -263,7 +193,7 @@ class _ReaderState extends State<ReaderChapterPage> {
                     pageIndex = index;
                     setState(() {});
                   },
-                  imageUrls: imageUrls!,
+                  pages: pages,
                   onTapUp: (p0, p1, p2) => onTap(),
                 ),
               ),

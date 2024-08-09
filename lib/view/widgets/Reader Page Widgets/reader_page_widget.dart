@@ -9,7 +9,7 @@ class ReaderPageWidget extends StatelessWidget {
   final bool reverse;
   final PageController? pageController;
   final Function(int) onPageChanged;
-  final List<String> imageUrls;
+  final List<PhotoViewGalleryPageOptions> pages;
   final Function(BuildContext, TapUpDetails, PhotoViewControllerValue)? onTapUp;
 
   const ReaderPageWidget({
@@ -18,7 +18,7 @@ class ReaderPageWidget extends StatelessWidget {
     required this.reverse,
     required this.pageController,
     required this.onPageChanged,
-    required this.imageUrls,
+    required this.pages,
     required this.onTapUp,
   });
 
@@ -29,13 +29,8 @@ class ReaderPageWidget extends StatelessWidget {
       scrollDirection: axis,
       reverse: reverse,
       onPageChanged: onPageChanged,
-      builder: (context, index) => PhotoViewGalleryPageOptions(
-        imageProvider: CachedNetworkImageProvider(imageUrls[index]),
-        minScale: PhotoViewComputedScale.contained,
-        tightMode: false,
-        onTapUp: onTapUp,
-      ),
-      itemCount: imageUrls.length,
+      builder: (context, index) => pages[index],
+      itemCount: pages.length,
     );
   }
 }

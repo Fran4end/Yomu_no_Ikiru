@@ -20,8 +20,6 @@ class ReaderBottomNavigationBar extends StatelessWidget {
   final PageController pageController1;
   final Function(Manga) onScope;
   final Function(int page, int chapterIndex) onPageChange;
-  final Function(int) onLastPage;
-  final Function(int) onFirstPage;
 
   const ReaderBottomNavigationBar({
     super.key,
@@ -37,8 +35,6 @@ class ReaderBottomNavigationBar extends StatelessWidget {
     required this.onPageChange,
     required this.api,
     required this.slider,
-    required this.onLastPage,
-    required this.onFirstPage,
     required this.pageController1,
   });
 
@@ -67,8 +63,6 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                         onScope: onScope,
                         onPageChange: onPageChange,
                         api: api,
-                        onLastPage: onLastPage,
-                        onFirstPage: onFirstPage,
                       )
                   : null
               : chapterIndex + 1 < chapters.length
@@ -83,8 +77,6 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                         onScope: onScope,
                         onPageChange: onPageChange,
                         api: api,
-                        onLastPage: onLastPage,
-                        onFirstPage: onFirstPage,
                       )
                   : null,
         ),
@@ -116,8 +108,6 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                         onScope: onScope,
                         onPageChange: onPageChange,
                         api: api,
-                        onLastPage: onLastPage,
-                        onFirstPage: onFirstPage,
                       )
                   : null
               : chapterIndex + 1 < chapters.length
@@ -132,8 +122,6 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                         onScope: onScope,
                         onPageChange: onPageChange,
                         api: api,
-                        onLastPage: onLastPage,
-                        onFirstPage: onFirstPage,
                       )
                   : null,
           tooltip: reverse ? "Previous chapter" : "Next chapter",
