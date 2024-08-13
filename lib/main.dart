@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'model/firebase_options.dart';
@@ -29,6 +30,7 @@ main() async {
       systemNavigationBarColor: Colors.transparent));
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   HttpOverrides.global = MyHttpOverrides();
+  await initializeDateFormatting();
   runApp(const MyApp());
 }
 

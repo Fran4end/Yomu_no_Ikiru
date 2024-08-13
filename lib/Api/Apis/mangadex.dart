@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 import '../../controller/utils.dart';
@@ -151,7 +150,7 @@ class MangaDex {
             chapters.add(
               Chapter(
                   id: chap["id"],
-                  date: DateFormat('d MMMM y').format(date.toLocal()),
+                  date: date,
                   title: title,
                   link: 'https://api.mangadex.org/at-home/server/${chap["id"]}',
                   volume: chap["volume"],

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:yomu_no_ikiru/view/Pages/reader.dart';
 
 import '../../Api/adapter.dart';
@@ -182,7 +183,7 @@ class _MangaPageState extends State<MangaPage> {
                   MaterialPageRoute(
                     builder: (context) => Reader(
                       chapterIndex: (manga.chapters.length - manga.index) - 1,
-                      manga: manga,
+                      manga: mangaBuilder,
                       pageIndex: manga.pageIndex,
                       onScope: (newManga) {
                         setState(() {
@@ -221,7 +222,7 @@ class _MangaPageState extends State<MangaPage> {
                       chapters[index].title,
                     ),
                     subtitle: Text(
-                      chapters[index].date.toString(),
+                      DateFormat("dd/MM/yy").format(chapters[index].date),
                     ),
                     onTap: () async {
                       Navigator.of(context).push(
@@ -229,7 +230,7 @@ class _MangaPageState extends State<MangaPage> {
                           builder: (context) => Reader(
                             chapterIndex: index,
                             pageIndex: 1,
-                            manga: mangaBuilder.build(),
+                            manga: mangaBuilder,
                             onScope: (newManga) {
                               setState(() {
                                 mangaBuilder = MangaBuilder.fromJson(newManga.toJson());

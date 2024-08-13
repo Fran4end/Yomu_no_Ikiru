@@ -12,14 +12,14 @@ import 'skeleton.dart';
 
 class MangaCard extends StatelessWidget {
   const MangaCard({
-    Key? key,
+    super.key,
     required this.mangaBuilder,
     this.save = false,
     this.aspectRatio = 0.9,
     this.tag = '',
     this.maxLineText = 1,
     required this.api,
-  }) : super(key: key);
+  });
 
   final MangaBuilder mangaBuilder;
   final bool save;
@@ -112,13 +112,13 @@ class MangaCard extends StatelessWidget {
 
 class MangaGrid extends StatelessWidget {
   const MangaGrid({
-    Key? key,
+    super.key,
     required this.pagingController,
     this.axisCount = 2,
     this.save = false,
     this.tag = "grid",
     this.api,
-  }) : super(key: key);
+  });
 
   final bool save;
   final int axisCount;

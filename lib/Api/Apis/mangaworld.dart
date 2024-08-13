@@ -4,6 +4,7 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:intl/intl.dart';
 
 import '../../model/chapter.dart';
 import '../../constants.dart';
@@ -200,12 +201,18 @@ class MangaWorld {
             .toString()
             .substring(attributes['title'].toString().indexOf("C"))
             .replaceAll("Scan ITA", ""),
-        chap.querySelector('i')!.text,
+        chap.querySelector('i')!.text.trim(),
         link,
       ];
-      chapters
-          .add(Chapter(id: "MangaWorld_${data[0]}", date: data[1], title: data[0], link: data[2]));
+      chapters.add(Chapter(
+          id: "MangaWorld_${data[0]}", date: formatDate(data[1]), title: data[0], link: data[2]));
     }
     return chapters;
+  }
+
+  DateTime formatDate(String date) {
+    date = date.toLowerCase().trim();
+    final format = DateFormat('d MMMM y', 'it');
+    return format.parse(date);
   }
 }

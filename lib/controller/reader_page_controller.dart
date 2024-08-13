@@ -2,21 +2,28 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:yomu_no_ikiru/model/manga_builder.dart';
+import 'package:yomu_no_ikiru/view/Pages/reader.dart';
 import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/reader_direction_icon.dart';
 
 import '../Api/adapter.dart';
 import '../constants.dart';
+import '../model/chapter.dart';
 import '../model/manga.dart';
-import '../view/widgets/Reader Page Widgets/reader_chapter_page.dart';
+import '../view/widgets/Reader Page Widgets/next_chapter_page_widget.dart';
+import '../view/widgets/Reader Page Widgets/prev_chapter_page_widget.dart';
 
 class ReaderPageController {
   static nextChapter({
     required BuildContext context,
-    required Manga manga,
+    required MangaBuilder mangaBuilder,
     required int chapterIndex,
     required Axis axis,
     required Widget icon,
@@ -29,14 +36,13 @@ class ReaderPageController {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (_) => ReaderChapterPage(
-                  pageController1: pageController1,
+            builder: (_) => Reader(
                   pageIndex: 1,
-                  manga: manga,
+                  manga: mangaBuilder,
                   onScope: onScope,
-                  axis: axis,
-                  icon: icon,
-                  reverse: reverse,
+                  // axis: axis,
+                  // icon: icon,
+                  // reverse: reverse,
                   onPageChange: onPageChange,
                   chapterIndex: chapterIndex - 1,
                   api: api,
@@ -45,7 +51,7 @@ class ReaderPageController {
 
   static previousChapter({
     required BuildContext context,
-    required Manga manga,
+    required MangaBuilder mangaBuilder,
     required int chapterIndex,
     required Axis axis,
     required Widget icon,
@@ -58,15 +64,14 @@ class ReaderPageController {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (_) => ReaderChapterPage(
-                  pageController1: pageController1,
+            builder: (_) => Reader(
                   chapterIndex: chapterIndex + 1,
                   pageIndex: 1,
-                  manga: manga,
+                  manga: mangaBuilder,
                   onScope: onScope,
-                  axis: axis,
-                  icon: icon,
-                  reverse: reverse,
+                  // axis: axis,
+                  // icon: icon,
+                  // reverse: reverse,
                   onPageChange: onPageChange,
                   api: api,
                 )));
@@ -92,18 +97,55 @@ class ReaderPageController {
     return (axis, icon, reverse);
   }
 
-  static pageControllerListener({
+  static List<PhotoViewGalleryPageOptions> buildPages({
+    required List<Chapter> chapters,
+    required int chapterIndex,
     required List<String> imageUrls,
-    required PageController pageController,
+  }) {
+    List<PhotoViewGalleryPageOptions> pages = [
+      PhotoViewGalleryPageOptions.customChild(
+        child: PrevChapterPageWidget(
+          chapters: chapters,
+          chapterIndex: chapterIndex, /*nativeAd: loadAd()*/
+        ),
+      )
+    ];
+    for (var imageUrl in imageUrls) {
+      final image = CachedNetworkImageProvider(imageUrl);
+      pages.add(
+        PhotoViewGalleryPageOptions(
+          imageProvider: image,
+          minScale: PhotoViewComputedScale.contained,
+          tightMode: false,
+        ),
+      );
+    }
+    pages.add(
+      PhotoViewGalleryPageOptions.customChild(
+        child: NextChapterPageWidget(
+          chapters: chapters,
+          chapterIndex: chapterIndex, /*nativeAd: loadAd()*/
+        ),
+      ),
+    );
+    return pages;
+  }
+
+  static pageControllerListener({
     required Manga manga,
     required int chapterIndex,
+    required int currentPage,
+    required Function() loadNext,
+    required Function() loadPrev,
     required Function(int page, int chapterIndex) onPageChange,
   }) {
-    onPageChange(pageController.page!.toInt(), (manga.chapters.length - chapterIndex) - 1);
+    onPageChange(currentPage, (manga.chapters.length - chapterIndex) - 1);
 
-    if (imageUrls.isNotEmpty) {
-      if (pageController.page == imageUrls.length && chapterIndex - 1 >= 0) {
-      } else if (pageController.page == 0 && chapterIndex + 1 < manga.chapters.length) {}
+    final Chapter chapter = manga.chapters[chapterIndex];
+    if (currentPage == chapter.nPages && chapterIndex - 1 >= 0) {
+      loadNext();
+    } else if (currentPage == 0 && chapterIndex + 1 < manga.chapters.length) {
+      loadPrev();
     }
   }
 
@@ -161,5 +203,14 @@ class ReaderPageController {
         onFinish(api.getImageUrls(document));
       }
     }
+  }
+
+  static onTap({required bool showAppBar}) {
+    if (showAppBar) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    } else {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
+    return !showAppBar;
   }
 }

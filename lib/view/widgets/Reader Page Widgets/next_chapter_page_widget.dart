@@ -9,12 +9,12 @@ class NextChapterPageWidget extends StatelessWidget {
     super.key,
     required this.chapters,
     required this.chapterIndex,
-    required this.nativeAd2,
+    this.nativeAd,
   });
 
   final List<Chapter> chapters;
   final int chapterIndex;
-  final NativeAd nativeAd2;
+  final NativeAd? nativeAd;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class NextChapterPageWidget extends StatelessWidget {
                     maxWidth: 400,
                     maxHeight: 400,
                   ),
-                  child: AdWidget(ad: nativeAd2),
+                  child: nativeAd != null ? AdWidget(ad: nativeAd!) : Container(),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: defaultPadding * 2),

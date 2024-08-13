@@ -3,6 +3,7 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 import '../../controller/utils.dart';
@@ -119,12 +120,18 @@ class MangaKatana {
     for (var chap in chaptersElement) {
       List<String> data = [
         chap.text,
-        chap.parent!.parent!.parent!.children[1].text,
+        chap.parent!.parent!.parent!.children[1].text.trim(),
         chap.attributes['href']!,
       ];
-      chapters
-          .add(Chapter(id: "MangaKatana_${data[0]}", date: data[1], title: data[0], link: data[2]));
+      chapters.add(Chapter(
+          id: "MangaKatana_${data[0]}", date: formatDate(data[1]), title: data[0], link: data[2]));
     }
     return chapters;
+  }
+
+  DateTime formatDate(String date) {
+    date = date.trim();
+    final format = DateFormat("MMM-dd-yyyy", 'en');
+    return format.parse(date);
   }
 }

@@ -1,8 +1,15 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
-import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/reader_chapter_page.dart';
-import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/reader_direction_icon.dart';
+import 'package:flutter/services.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:yomu_no_ikiru/model/manga_builder.dart';
+import 'package:yomu_no_ikiru/view/widgets/Reader%20Page%20Widgets/reader_page_widget.dart';
 
 import '../../Api/adapter.dart';
+import '../../controller/reader_page_controller.dart';
+import '../../model/chapter.dart';
 import '../../model/manga.dart';
 
 class Reader extends StatefulWidget {
@@ -17,7 +24,7 @@ class Reader extends StatefulWidget {
   });
 
   final int chapterIndex, pageIndex;
-  final Manga manga;
+  final MangaBuilder manga;
   final MangaApiAdapter api;
   final Function(Manga manga) onScope;
   final Function(int, int) onPageChange;
@@ -27,46 +34,103 @@ class Reader extends StatefulWidget {
 }
 
 class _ReaderState extends State<Reader> {
-  late final Manga manga = widget.manga;
+  late final MangaBuilder manga = widget.manga;
   late int chapterIndex = widget.chapterIndex;
+  late MangaApiAdapter api = widget.api;
+  late Chapter currentChap = manga.chapters[chapterIndex];
+  late final WebViewController controller;
+  late final PageController pageController = PageController(
+    initialPage: widget.pageIndex,
+  );
 
-  PageController pageController = PageController();
-  List<ReaderChapterPage> chapterPages = [];
-  int nChapters = 1;
+  SplayTreeMap pages = SplayTreeMap<int, List>((a, b) => a.compareTo(b));
+  List<PhotoViewGalleryPageOptions> chapterPages = [];
+  bool showAppBar = false;
+
+  bool isSliding = false;
+  double sliderValue = 2;
+  int oldIndex = 0;
 
   @override
   void initState() {
-    chapterPages.add(
-      ReaderChapterPage(
-        pageController: pageController,
-        chapterIndex: chapterIndex,
-        pageIndex: widget.pageIndex,
-        manga: manga,
-        onScope: widget.onScope,
-        axis: Axis.horizontal,
-        reverse: true,
-        icon: const RightLeftIcon(),
-        onPageChange: widget.onPageChange,
-        api: widget.api,
-      ),
-    );
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    controller = WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted);
+    _loadChapter(currentChap.link);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    widget.onScope(manga.build());
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView.builder(
-        controller: pageController,
-        itemCount: (nChapters + 2) + (nChapters - 1),
-        itemBuilder: (context, index) {
-          if (index % 2 == 0) {
-            return const Center(child: Text("intermezzo"));
-          } else {
-            return Center(child: chapterPages[(index ~/ 2)]);
-          }
+    pageController.addListener(
+      () => ReaderPageController.pageControllerListener(
+        chapterIndex: chapterIndex,
+        loadNext: () {
+          chapterIndex--;
+          currentChap = manga.chapters[chapterIndex];
+          _loadChapter(currentChap.link);
+          setState(() {});
         },
+        loadPrev: () {
+          chapterIndex++;
+          currentChap = manga.chapters[chapterIndex];
+          _loadChapter(currentChap.link);
+          setState(() {});
+        },
+        manga: manga.build(),
+        onPageChange: widget.onPageChange,
+        currentPage: sliderValue.toInt() - 2,
       ),
+    );
+    return chapterPages.isEmpty
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Builder(builder: (context) {
+            List<PhotoViewGalleryPageOptions> allPages = [];
+            for (var chapPages in pages.values) {
+              allPages.addAll(chapPages);
+            }
+            return Scaffold(
+              body: GestureDetector(
+                onTap: () {
+                  ReaderPageController.onTap(showAppBar: showAppBar);
+                },
+                child: ReaderPageWidget(
+                  axis: Axis.horizontal,
+                  reverse: true,
+                  pageController: pageController,
+                  onPageChanged: (index) {},
+                  pages: allPages,
+                ),
+              ),
+            );
+          });
+  }
+
+  _loadChapter(String link) {
+    ReaderPageController.loadChapter(
+      onFinish: (urls) {
+        final imageUrls = urls;
+        chapterPages = ReaderPageController.buildPages(
+          chapters: manga.chapters,
+          chapterIndex: chapterIndex,
+          imageUrls: imageUrls,
+        );
+        pages.addAll(<int, List>{chapterIndex: chapterPages});
+        currentChap.nPages = urls.length;
+        manga.chapters[chapterIndex] = currentChap;
+        setState(() {});
+      },
+      link: link,
+      controller: controller,
+      api: api,
     );
   }
 }

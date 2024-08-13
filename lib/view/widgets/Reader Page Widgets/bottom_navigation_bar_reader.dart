@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:yomu_no_ikiru/Api/adapter.dart';
+import 'package:yomu_no_ikiru/model/manga_builder.dart';
 
 import '../../../model/chapter.dart';
 import '../../../controller/reader_page_controller.dart';
@@ -9,7 +10,7 @@ import '../../../model/manga.dart';
 class ReaderBottomNavigationBar extends StatelessWidget {
   final bool reverse;
   final List<Chapter> chapters;
-  final Manga manga;
+  final MangaBuilder mangaBuilder;
   final int chapterIndex;
   final Axis axis;
   final Widget icon;
@@ -25,7 +26,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
     super.key,
     required this.reverse,
     required this.chapters,
-    required this.manga,
+    required this.mangaBuilder,
     required this.chapterIndex,
     required this.axis,
     required this.icon,
@@ -47,7 +48,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
         IconButton.filled(
           icon: const Icon(FontAwesomeIcons.backwardStep),
           style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                fixedSize: const MaterialStatePropertyAll(Size(20, 20)),
+                fixedSize: const WidgetStatePropertyAll(Size(20, 20)),
               ),
           tooltip: !reverse ? "Previous chapter" : "Next chapter",
           onPressed: reverse
@@ -55,7 +56,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                   ? () => ReaderPageController.nextChapter(
                         pageController1: pageController1,
                         context: context,
-                        manga: manga,
+                        mangaBuilder: mangaBuilder,
                         chapterIndex: chapterIndex,
                         axis: axis,
                         icon: icon,
@@ -69,7 +70,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                   ? () => ReaderPageController.previousChapter(
                         pageController1: pageController1,
                         context: context,
-                        manga: manga,
+                        mangaBuilder: mangaBuilder,
                         chapterIndex: chapterIndex,
                         axis: axis,
                         icon: icon,
@@ -100,7 +101,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                   ? () => ReaderPageController.nextChapter(
                         pageController1: pageController1,
                         context: context,
-                        manga: manga,
+                        mangaBuilder: mangaBuilder,
                         chapterIndex: chapterIndex,
                         axis: axis,
                         icon: icon,
@@ -114,7 +115,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
                   ? () => ReaderPageController.previousChapter(
                         pageController1: pageController1,
                         context: context,
-                        manga: manga,
+                        mangaBuilder: mangaBuilder,
                         chapterIndex: chapterIndex,
                         axis: axis,
                         icon: icon,
@@ -127,7 +128,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
           tooltip: reverse ? "Previous chapter" : "Next chapter",
           icon: const Icon(FontAwesomeIcons.forwardStep),
           style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                fixedSize: const MaterialStatePropertyAll(Size(20, 20)),
+                fixedSize: const WidgetStatePropertyAll(Size(20, 20)),
               ),
         ),
       ],
