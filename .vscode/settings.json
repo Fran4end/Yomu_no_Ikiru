@@ -1,4 +1,11 @@
 {
-  "java.configuration.updateBuildConfiguration": "interactive",
-  "cSpell.words": ["mangaworld"]
+  "cSpell.words": [
+    "datasources",
+    "fpdart",
+    "ikiru",
+    "Supabase",
+    "usecase",
+    "usecases",
+    "yomu"
+  ]
 }
