@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:yomu_no_ikiru/core/error/failures.dart';
 import 'package:yomu_no_ikiru/core/usecase/usecase.dart';
-import 'package:yomu_no_ikiru/features/auth/domain/entities/user.dart';
+import 'package:yomu_no_ikiru/core/common/entities/user.dart';
 import 'package:yomu_no_ikiru/features/auth/domain/repository/auth_repository.dart';
 
 class UserLogin implements UseCase<User, UserLoginParams> {

@@ -1,4 +1,4 @@
-import 'package:yomu_no_ikiru/features/auth/domain/entities/user.dart';
+import 'package:yomu_no_ikiru/core/common/entities/user.dart';
 
 class UserModel extends User {
   UserModel({
@@ -14,6 +14,20 @@ class UserModel extends User {
       email: json["email"] ?? "",
       username: json["username"] ?? "",
       avatarUrl: json["avatar_url"] ?? "",
+    );
+  }
+
+  UserModel copyWith({
+    String? id,
+    String? email,
+    String? username,
+    String? avatarUrl,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      username: username ?? this.username,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
     );
   }
 }

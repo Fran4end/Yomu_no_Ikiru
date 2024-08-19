@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:yomu_no_ikiru/core/error/failures.dart';
-import 'package:yomu_no_ikiru/features/auth/domain/entities/user.dart';
+import 'package:yomu_no_ikiru/core/common/entities/user.dart';
 
 abstract interface class AuthRepository {
   Future<Either<Failure, User>> signUpWithEmailPassword({
@@ -13,4 +13,6 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
   });
+
+  Future<Either<Failure, User>> currentUser();
 }

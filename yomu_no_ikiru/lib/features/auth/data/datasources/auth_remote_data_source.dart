@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:yomu_no_ikiru/core/error/exceptions.dart';
 import 'package:yomu_no_ikiru/features/auth/data/model/user_model.dart';
 
 abstract interface class AuthRemoteDataSource {
+  Session? get currentUserSession;
+
   Future<UserModel> signUpWithEmailPassword({
     required String email,
     required String password,
@@ -18,15 +19,27 @@ abstract interface class AuthRemoteDataSource {
     required String password,
   });
 
-  Future<String> uploadAvatarImage({
-    required File imageFile,
-  });
+  Future<UserModel?> getCurrentUserData();
+
+/**
+ *  TODO: Implement Google Sign In
+ *  Future<UserModel> loginWithGoogle();
+ */
+
+/**
+ * TODO: Implement avatar image upload
+ * Future<String> uploadAvatarImage({
+ *  required XFile imageFile,
+ * });
+ */
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final SupabaseClient supabaseClient;
-
   AuthRemoteDataSourceImpl(this.supabaseClient);
+
+  @override
+  Session? get currentUserSession => supabaseClient.auth.currentSession;
 
   @override
   Future<UserModel> loginWithEmailPassword({
@@ -41,7 +54,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (res.user == null) {
         throw const ServerException("User is null");
       }
-      return UserModel.fromJson(res.user!.toJson());
+      return UserModel.fromJson(res.user!.toJson()).copyWith(
+        email: email,
+      );
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
@@ -68,7 +83,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (res.user == null) {
         throw const ServerException("User is null");
       }
-      return UserModel.fromJson(res.user!.toJson());
+      return UserModel.fromJson(res.user!.toJson()).copyWith(
+        email: email,
+      );
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
@@ -77,12 +94,33 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<UserModel?> getCurrentUserData() async {
+    try {
+      if (currentUserSession == null) {
+        return null;
+      }
+
+      final userData = await supabaseClient.from('profiles').select().eq(
+            'id',
+            currentUserSession!.user.id,
+          );
+
+      return UserModel.fromJson(userData.first).copyWith(
+        email: currentUserSession!.user.email,
+      );
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  /*
+  TODO: implement uploadAvatarImage
+  @override
   Future<String> uploadAvatarImage({
     required File imageFile,
   }) async {
-    // TODO: implement uploadAvatarImage
     throw UnimplementedError();
-    /*try {
+    try {
       final pref = await SharedPreferencesWithCache.create(
         cacheOptions: SharedPreferencesWithCacheOptions(),
       );
@@ -103,6 +141,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       //     .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10);
     } catch (e) {
       throw ServerException(e.toString());
-    }*/
-  }
+    }
+  }*/
 }

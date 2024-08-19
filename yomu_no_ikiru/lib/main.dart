@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:yomu_no_ikiru/core/common/cubits/appuser/app_user_cubit.dart';
 import 'package:yomu_no_ikiru/core/theme/default/default_theme.dart';
 import 'package:yomu_no_ikiru/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:yomu_no_ikiru/features/auth/presentation/pages/login_page.dart';
@@ -27,6 +28,9 @@ Future<void> main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(
+          create: (_) => serviceLocator<AppUserCubit>(),
+        ),
+        BlocProvider(
           create: (_) => serviceLocator<AuthBloc>(),
         ),
       ],
@@ -35,8 +39,19 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthBloc>().add(AuthCheckCurrentUser());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +60,22 @@ class MyApp extends StatelessWidget {
       title: 'Yomu no Ikiru',
       darkTheme: DefaultTheme.darkTheme,
       theme: DefaultTheme.lightTheme,
-      home: const LoginPage(),
+      home: BlocSelector<AppUserCubit, AppUserState, bool>(
+        selector: (state) {
+          return state is AppUserLoggedIn;
+        },
+        builder: (context, isLoggedIn) {
+          if (isLoggedIn) {
+            // return const HomePage();
+            return Scaffold(
+              body: Center(
+                child: Text('Logged in'),
+              ),
+            );
+          }
+          return const LoginPage();
+        },
+      ),
     );
   }
 }

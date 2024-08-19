@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:yomu_no_ikiru/core/error/failures.dart';
 import 'package:yomu_no_ikiru/features/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:yomu_no_ikiru/features/auth/domain/entities/user.dart';
+import 'package:yomu_no_ikiru/core/common/entities/user.dart';
 import 'package:yomu_no_ikiru/features/auth/domain/repository/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -44,6 +44,20 @@ class AuthRepositoryImpl implements AuthRepository {
   ) async {
     try {
       final user = await fn();
+
+      return right(user);
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> currentUser() async {
+    try {
+      final user = await remoteDataSource.getCurrentUserData();
+      if (user == null) {
+        return left(Failure("User not logged in"));
+      }
 
       return right(user);
     } catch (e) {
