@@ -3,14 +3,10 @@ import 'package:flutter/material.dart';
 void showSnackBar(
   BuildContext context,
   String content, {
-  Duration duration = const Duration(seconds: 1),
+  Duration duration = const Duration(seconds: 2),
 }) {
   final snackBar = SnackBar(
-    margin: const EdgeInsets.only(
-      bottom: 60,
-      left: 16,
-      right: 16,
-    ),
+    margin: EdgeInsets.all(16).copyWith(bottom: 60),
     behavior: SnackBarBehavior.floating,
     elevation: 3,
     shape: RoundedRectangleBorder(
@@ -32,10 +28,10 @@ void showSnackBar(
           ),
           Expanded(
             child: Center(
-              child: Text(
-                content,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
+              child: Flexible(
+                child: Text(
+                  content,
+                ),
               ),
             ),
           ),

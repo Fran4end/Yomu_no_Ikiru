@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:yomu_no_ikiru/core/error/failures.dart';
 import 'package:yomu_no_ikiru/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:yomu_no_ikiru/core/common/entities/user.dart';
+import 'package:yomu_no_ikiru/features/auth/data/model/user_model.dart';
 import 'package:yomu_no_ikiru/features/auth/domain/repository/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -27,16 +30,28 @@ class AuthRepositoryImpl implements AuthRepository {
     required String username,
     required String email,
     required String password,
-    required String avatarUrl,
+    required File? image,
   }) async {
-    return _getUser(
-      () async => await remoteDataSource.signUpWithEmailPassword(
+    try {
+      String avatarUrl = '';
+      UserModel user = await remoteDataSource.signUpWithEmailPassword(
         username: username,
         email: email,
         password: password,
-        avatarUrl: avatarUrl,
-      ),
-    );
+      );
+      if (image != null) {
+        avatarUrl = await remoteDataSource.uploadAvatarImage(imageFile: image, user: user);
+      }
+      user = user.copyWith(avatarUrl: avatarUrl);
+      return _getUser(
+        () async => await remoteDataSource.updateUser(
+          avatarUrl: avatarUrl,
+          id: user.id,
+        ),
+      );
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 
   Future<Either<Failure, User>> _getUser(

@@ -40,6 +40,10 @@ dependencies:
   flutter_dotenv: ^5.1.0
   get_it: ^7.7.0
   cached_network_image: ^3.4.1
+  uuid: ^4.4.2
+  image_picker: ^1.1.2
+  flutter_initicon: ^3.0.1
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

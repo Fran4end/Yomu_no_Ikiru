@@ -39,6 +39,7 @@ class DefaultTheme {
         bottom: 10,
         top: 10,
       ),
+      border: _border(),
       enabledBorder: _border(),
       focusedBorder: _border(DefaultPalette.gradient4),
       errorBorder: _border(DefaultPalette.errorColor),

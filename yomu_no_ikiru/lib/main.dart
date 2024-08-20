@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:yomu_no_ikiru/core/common/cubits/appuser/app_user_cubit.dart';
 import 'package:yomu_no_ikiru/core/theme/default/default_theme.dart';
 import 'package:yomu_no_ikiru/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:yomu_no_ikiru/features/auth/presentation/pages/login_page.dart';
+import 'package:yomu_no_ikiru/features/debug/presentation/pages/dubug_page.dart';
 import 'package:yomu_no_ikiru/init_dependencies.dart';
 
 Future<void> main() async {
@@ -23,6 +25,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
   await initDependencies();
+  await initializeDateFormatting();
 
   runApp(
     MultiBlocProvider(
@@ -67,11 +70,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
             // return const HomePage();
-            return Scaffold(
-              body: Center(
-                child: Text('Logged in'),
-              ),
-            );
+            return const DebugPage();
           }
           return const LoginPage();
         },

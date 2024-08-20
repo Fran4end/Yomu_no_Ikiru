@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:yomu_no_ikiru/core/error/failures.dart';
 import 'package:yomu_no_ikiru/core/usecase/usecase.dart';
@@ -15,7 +17,7 @@ class UserSignUp implements UseCase<User, UserSignUpParams> {
       username: params.username,
       email: params.email,
       password: params.password,
-      avatarUrl: params.avatarUrl,
+      image: params.image,
     );
   }
 }
@@ -24,12 +26,12 @@ class UserSignUpParams {
   final String email;
   final String password;
   final String username;
-  final String avatarUrl;
+  final File? image;
 
   UserSignUpParams({
     required this.email,
     required this.password,
     required this.username,
-    required this.avatarUrl,
+    required this.image,
   });
 }

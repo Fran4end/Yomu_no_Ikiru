@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:yomu_no_ikiru/core/error/failures.dart';
 import 'package:yomu_no_ikiru/core/common/entities/user.dart';
@@ -7,7 +9,7 @@ abstract interface class AuthRepository {
     required String username,
     required String email,
     required String password,
-    required String avatarUrl,
+    required File? image,
   });
   Future<Either<Failure, User>> loginWithEmailPassword({
     required String email,

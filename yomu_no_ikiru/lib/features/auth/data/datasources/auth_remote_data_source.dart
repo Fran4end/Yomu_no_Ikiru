@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:yomu_no_ikiru/core/error/exceptions.dart';
@@ -11,7 +12,6 @@ abstract interface class AuthRemoteDataSource {
     required String email,
     required String password,
     required String username,
-    required String avatarUrl,
   });
 
   Future<UserModel> loginWithEmailPassword({
@@ -26,12 +26,15 @@ abstract interface class AuthRemoteDataSource {
  *  Future<UserModel> loginWithGoogle();
  */
 
-/**
- * TODO: Implement avatar image upload
- * Future<String> uploadAvatarImage({
- *  required XFile imageFile,
- * });
- */
+  Future<String> uploadAvatarImage({
+    required File imageFile,
+    required UserModel user,
+  });
+
+  Future<UserModel> updateUser({
+    required String avatarUrl,
+    required String id,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -69,7 +72,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String password,
     required String username,
-    required String avatarUrl,
   }) async {
     try {
       final res = await supabaseClient.auth.signUp(
@@ -77,7 +79,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         data: {
           "username": username,
-          "avatar_url": avatarUrl,
+          "avatar_url": '',
         },
       );
       if (res.user == null) {
@@ -104,7 +106,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             'id',
             currentUserSession!.user.id,
           );
-
       return UserModel.fromJson(userData.first).copyWith(
         email: currentUserSession!.user.email,
       );
@@ -113,34 +114,49 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  /*
-  TODO: implement uploadAvatarImage
   @override
   Future<String> uploadAvatarImage({
     required File imageFile,
+    required UserModel user,
   }) async {
-    throw UnimplementedError();
     try {
-      final pref = await SharedPreferencesWithCache.create(
-        cacheOptions: SharedPreferencesWithCacheOptions(),
-      );
-      final bytes = await imageFile.readAsBytes();
-      final base64Image = base64Encode(bytes);
-      final fileExt = imageFile.path.split('.').last;
-      final fileName = '${DateTime.now().toIso8601String()}.$fileExt';
-      final filePath = 'avatar/$fileName';
-      pref.setString(filePath, base64Image);
-      return filePath;
-      // await supabaseClient.storage.from('avatars').uploadBinary(
-      //       filePath,
-      //       bytes,
-      //       fileOptions: FileOptions(contentType: imageFile.mimeType),
-      //     );
-      // return await supabaseClient.storage
-      //     .from('avatars')
-      //     .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10);
+      final fileName = user.id;
+      final filePath = fileName;
+      await supabaseClient.storage.from('avatars').upload(
+            filePath,
+            imageFile,
+          );
+      return await supabaseClient.storage.from('avatars').getPublicUrl(filePath);
     } catch (e) {
       throw ServerException(e.toString());
     }
-  }*/
+  }
+
+  @override
+  Future<UserModel> updateUser({
+    required String avatarUrl,
+    required String id,
+  }) async {
+    try {
+      await supabaseClient.from('profiles').update(
+        {
+          'avatar_url': avatarUrl,
+        },
+      ).eq('id', id);
+
+      final res = await supabaseClient.auth.updateUser(
+        UserAttributes(
+          data: {
+            'avatar_url': avatarUrl,
+          },
+        ),
+      );
+      if (res.user == null) {
+        throw ServerException("User not update successful");
+      }
+      return UserModel.fromJson(res.user!.toJson());
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:yomu_no_ikiru/core/common/cubits/appuser/app_user_cubit.dart';
@@ -59,7 +61,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
         username: event.username,
-        avatarUrl: event.avatarUrl,
+        image: event.image,
       ),
     );
     res.fold(
