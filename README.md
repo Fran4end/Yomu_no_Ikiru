@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="500" alt="Yomu no Ikiru logo" src="yomu_no_ikiru/assets/icon.png">
+    <img width="500" alt="Yomu no Ikiru logo" src="assets/icon.png">
 </p>
 
 # Yomu no ikiru
