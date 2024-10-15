@@ -55,7 +55,7 @@ git clone https://github.com/Fran4end/Yomu_no_Ikiru
 cd osu
 ```
 
-To update the source code to the latest commit, run the following command inside the `osu` directory:
+To update the source code to the latest commit, run the following command inside the `yomu_no_ikiru` directory:
 
 ```shell
 git pull
