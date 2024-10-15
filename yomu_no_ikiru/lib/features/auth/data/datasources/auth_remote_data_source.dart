@@ -26,13 +26,13 @@ abstract interface class AuthRemoteDataSource {
  *  Future<UserModel> loginWithGoogle();
  */
 
-/// this method will upload user's avatar image to storage and return the url
+  /// this method will upload user's avatar image to storage and return the url
   Future<String> uploadAvatarImage({
     required File imageFile,
     required UserModel user,
   });
 
-///  this method will update user's avatar url in profiles table and auth table
+  ///  this method will update user's avatar url in profiles table and auth table
   Future<UserModel> updateUser({
     required String avatarUrl,
     required String id,
@@ -128,7 +128,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             filePath,
             imageFile,
           );
-      return await supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+      return supabaseClient.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
     } catch (e) {
       throw ServerException(e.toString());
     }

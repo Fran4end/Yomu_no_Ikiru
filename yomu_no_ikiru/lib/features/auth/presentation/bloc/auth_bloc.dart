@@ -34,7 +34,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthCheckCurrentUser>(_onAuthCheckCurrentUser);
   }
 
-  void _onAuthCheckCurrentUser(AuthCheckCurrentUser event, Emitter<AuthState> emit) async {
+  void _onAuthCheckCurrentUser(
+      AuthCheckCurrentUser event, Emitter<AuthState> emit) async {
     final res = await _currentUser(NoParams());
     res.fold(
       (l) => emit(AuthFailure(l.message)),

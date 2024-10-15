@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:yomu_no_ikiru/core/theme/default/default_palette.dart';
 
 class DefaultTheme {
-  static _border([Color color = DefaultPalette.borderColor]) => OutlineInputBorder(
+  static _border([Color color = DefaultPalette.borderColor]) =>
+      OutlineInputBorder(
         borderSide: BorderSide(
           color: color,
           width: 1,

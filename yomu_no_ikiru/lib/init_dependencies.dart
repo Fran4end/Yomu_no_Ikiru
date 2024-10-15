@@ -13,7 +13,7 @@ import 'package:yomu_no_ikiru/features/auth/presentation/bloc/auth_bloc.dart';
 /// Initializes the service locator and sets up all necessary dependencies.
 ///
 /// This function is responsible for configuring the service locator instance
-/// using the `GetIt` package. It registers all the required services and 
+/// using the `GetIt` package. It registers all the required services and
 /// dependencies that will be used throughout the application.
 ///
 /// Usage:

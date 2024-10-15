@@ -192,8 +192,12 @@ class _SignUpPageState extends State<SignUpPage> {
                             children: [
                               TextSpan(
                                 text: "Sign in",
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.outline,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
                                     ),
                                 onEnter: (event) {},
                               ),

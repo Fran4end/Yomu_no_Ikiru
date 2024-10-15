@@ -42,7 +42,8 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
       if (image != null) {
-        avatarUrl = await remoteDataSource.uploadAvatarImage(imageFile: image, user: user);
+        avatarUrl = await remoteDataSource.uploadAvatarImage(
+            imageFile: image, user: user);
       }
       user = user.copyWith(avatarUrl: avatarUrl);
       return _getUser(
