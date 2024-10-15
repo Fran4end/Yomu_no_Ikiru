@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage("assets/backgrounds/sign_up_background.png"), fit: BoxFit.fill),
         ),
@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                           }
                         },
                       ),
-                      Spacer(),
+                      const Spacer(),
                       GestureDetector(
                         onTap: () {
                           showSnackBar(context, "Not implemented");

@@ -28,11 +28,11 @@ class _DebugPageState extends State<DebugPage> {
               showSnackBar(context,
                   "User: ${user.id},\n${user.username},\n${user.email},\n${user.avatarUrl},");
             },
-            icon: Icon(Icons.bug_report_outlined),
+            icon: const Icon(Icons.bug_report_outlined),
           ),
         ],
       ),
-      body: Center(
+      body: const Center(
         child: Text('Debug Page'),
       ),
     );

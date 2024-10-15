@@ -26,11 +26,13 @@ abstract interface class AuthRemoteDataSource {
  *  Future<UserModel> loginWithGoogle();
  */
 
+/// this method will upload user's avatar image to storage and return the url
   Future<String> uploadAvatarImage({
     required File imageFile,
     required UserModel user,
   });
 
+///  this method will update user's avatar url in profiles table and auth table
   Future<UserModel> updateUser({
     required String avatarUrl,
     required String id,
@@ -152,7 +154,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ),
       );
       if (res.user == null) {
-        throw ServerException("User not update successful");
+        throw const ServerException("User not update successful");
       }
       return UserModel.fromJson(res.user!.toJson());
     } catch (e) {

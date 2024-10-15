@@ -75,7 +75,7 @@ class _SignUpPageState extends State<SignUpPage> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/backgrounds/sign_up_background.png"),
             fit: BoxFit.fill,
@@ -87,7 +87,7 @@ class _SignUpPageState extends State<SignUpPage> {
               showSnackBar(
                 context,
                 state.message,
-                duration: Duration(
+                duration: const Duration(
                   seconds: 5,
                 ),
               );
@@ -143,7 +143,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                             image = null;
                                           });
                                         },
-                                        icon: Icon(Icons.cancel_outlined),
+                                        icon: const Icon(Icons.cancel_outlined),
                                       ),
                                     ),
                                   ),

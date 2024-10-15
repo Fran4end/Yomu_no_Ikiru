@@ -6,7 +6,7 @@ void showSnackBar(
   Duration duration = const Duration(seconds: 2),
 }) {
   final snackBar = SnackBar(
-    margin: EdgeInsets.all(16).copyWith(bottom: 60),
+    margin: const EdgeInsets.all(16).copyWith(bottom: 60),
     behavior: SnackBarBehavior.floating,
     elevation: 3,
     shape: RoundedRectangleBorder(

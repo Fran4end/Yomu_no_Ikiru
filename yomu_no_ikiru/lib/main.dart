@@ -13,6 +13,7 @@ import 'package:yomu_no_ikiru/init_dependencies.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  //Render full size screen (bottom navigation bar and status bar transparent)
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -24,6 +25,7 @@ Future<void> main() async {
 
   await dotenv.load(fileName: ".env");
 
+  //initialize all dependencies for bloc structure and for date formatting
   await initDependencies();
   await initializeDateFormatting();
 

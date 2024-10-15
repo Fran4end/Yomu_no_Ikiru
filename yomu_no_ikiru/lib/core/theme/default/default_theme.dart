@@ -21,7 +21,7 @@ class DefaultTheme {
       outline: DefaultPalette.borderColor,
       inverseSurface: DefaultPalette.transparentColor,
     ),
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: DefaultPalette.transparentColor,
       foregroundColor: DefaultPalette.whiteColor,
     ),

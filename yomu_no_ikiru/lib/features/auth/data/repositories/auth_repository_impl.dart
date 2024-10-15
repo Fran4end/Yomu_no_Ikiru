@@ -7,6 +7,8 @@ import 'package:yomu_no_ikiru/core/common/entities/user.dart';
 import 'package:yomu_no_ikiru/features/auth/data/model/user_model.dart';
 import 'package:yomu_no_ikiru/features/auth/domain/repository/auth_repository.dart';
 
+/// Implantation of AuthRepository to manage the user data and authentication
+/// [remoteDataSource] is the data source to get the data from the server
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
 

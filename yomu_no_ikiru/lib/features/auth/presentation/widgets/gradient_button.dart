@@ -21,7 +21,7 @@ class GradientButton extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 21,
           fontWeight: FontWeight.w600,
           color: Colors.white,
