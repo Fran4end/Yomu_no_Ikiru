@@ -12,6 +12,13 @@ A free app for reading manga in different languages
 This is a multi-platform app inspired from [Tachiyomy](https://tachiyomi.org/).
 For android 6 or above and ios ...,
 
+## Index
+
+1. [Running](#running-yomu-no-ikiru)
+2. [Develop](#developing-yomu-no-ikiru)
+3. [contributing](#contributing)
+4. [License](#license)
+
 ## Status
 
 This project is in development, i do my best to keep things in a stable state. Users are encourage to report any issue and keep in mind that i'm not always active.
@@ -88,12 +95,8 @@ Before committing your code, please run a code formatter. This can be achieved b
 
 ...
 
-## Licence
+## License
 
 _Yomu no Ikiru_'s code are licensed under the `Apache License V2`. Please see [the licence file](LICENSE) for more information. [tl;dr](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0) you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
 
 ## Screenshot
-
-## Problemi Conoscuti
-
-## Features mancanti
