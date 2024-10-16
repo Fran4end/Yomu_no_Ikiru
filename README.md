@@ -4,8 +4,7 @@
 
 # Yomu no ikiru
 
-[![Build status](https://github.com/ppy/osu/actions/workflows/ci.yml/badge.svg?branch=master&event=push)]()
-[![GitHub release](https://img.shields.io/github/release/Fran4end/yomu_no_ikiru.svg)](https://github.com/Fran4end/Yomu_no_Ikiru/releases/lastest)
+[![GitHub release](https://img.shields.io/github/release/Fran4end/yomu_no_ikiru.svg)](https://github.com/Fran4end/Yomu_no_Ikiru/releases)
 
 A free app for reading manga in different languages
 
@@ -23,7 +22,7 @@ For android 6 or above and ios ...,
 
 This project is in development, i do my best to keep things in a stable state. Users are encourage to report any issue and keep in mind that i'm not always active.
 
-Right now the [main](https://github.com/Fran4end/Yomu_no_Ikiru) branch is a version with a deprecated gradle, i'm developing new version from scratch on branch [new_code](https://github.com/Fran4end/Yomu_no_Ikiru/tree/new_code) the others branch is a try of new feature but not working, so please not consider those.
+Right now the [main](https://github.com/Fran4end/Yomu_no_Ikiru) branch is a version with a deprecated gradle and work only on android, i'm developing new version from scratch on branch [new_code](https://github.com/Fran4end/Yomu_no_Ikiru/tree/new_code) the others branch is a try of new feature but not working, so please not consider those.
 
 ## Running Yomu no Ikiru
 
@@ -31,7 +30,7 @@ If you are just looking to give the app a whirl, you can grab the latest release
 
 ### Latest release:
 
-| [Windows ?? (x64)]() | macOS ?? ([Intel](), [Apple Silicon]()) | [Linux (x64)]() | [iOS ??]() | [Android 6+]() |
+| [Windows ?? (x64)]() | macOS ?? ([Intel](), [Apple Silicon]()) | [Linux (x64)]() | [iOS ??]() | [Android 6+](https://github.com/Fran4end/Yomu_no_Ikiru/releases/latest/download/Yomu-no-Ikiru-android.apk) |
 | -------------------- | --------------------------------------- | --------------- | ---------- | -------------- |
 
 ## Developing Yomu no Ikiru
