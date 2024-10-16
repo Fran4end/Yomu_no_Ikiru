@@ -51,7 +51,7 @@ Clone the repository:
 
 ```shell
 git clone https://github.com/Fran4end/Yomu_no_Ikiru
-cd osu
+cd yomu_no_ikiru
 ```
 
 To update the source code to the latest commit, run the following command inside the `yomu_no_ikiru` directory:
