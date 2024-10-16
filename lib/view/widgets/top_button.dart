@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class TopButtonsFunctions extends StatelessWidget {
   const TopButtonsFunctions({
-    Key? key,
+    super.key,
     required this.ic,
     required this.function,
     required this.color,
-  }) : super(key: key);
+  });
 
   final Icon ic;
   final Function()? function;

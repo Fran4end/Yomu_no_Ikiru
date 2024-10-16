@@ -7,26 +7,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:331308178402:android:eb9305521ea07502b737bb",
+        "mobilesdk_app_id": "1:331308178402:android:3667e94b9ceecca7b737bb",
         "android_client_info": {
           "package_name": "yomu.no.ikiru"
         }
       },
       "oauth_client": [
         {
-          "client_id": "331308178402-cakce5747rsr5h9gglir16484h23qqlg.apps.googleusercontent.com",
+          "client_id": "331308178402-85rgpft3r1j3snaq8o06p6ag9imbcdr0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "yomu.no.ikiru",
+            "certificate_hash": "d9138126c1401fbc7c5dc6267a70b69880062b27"
+          }
+        },
+        {
+          "client_id": "331308178402-ufqjgdq3l23caf58ueb63j3fnsatb7l6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "yomu.no.ikiru",
             "certificate_hash": "64768fedbded7ea2ae3a613efec96e967bce4bf2"
-          }
-        },
-        {
-          "client_id": "331308178402-hrmg55sundna6bp8p4pi67ah07cd1fic.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "yomu.no.ikiru",
-            "certificate_hash": "bbc008d968832cdc570fcdd4131c5a64789d2250"
           }
         },
         {
@@ -50,12 +50,13 @@
               "client_id": "331308178402-4eckq378mduijjpste4l308v520j8v7j.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "yomu.no.ikiru"
+                "bundle_id": "com.example.mangaApp"
               }
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-9106478837715288~8868462460"
     }
   ],
   "configuration_version": "1"

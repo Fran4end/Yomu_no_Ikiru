@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -52,13 +51,6 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     pagingController.addPageRequestListener((page) {
       _fetchData(page);
-    });
-    subscription = Connectivity().onConnectivityChanged.listen((connectivityResult) {
-      if ((connectivityResult == ConnectivityResult.mobile ||
-              connectivityResult == ConnectivityResult.wifi) &&
-          pagingController.itemList!.isEmpty) {
-        pagingController.refresh();
-      }
     });
     super.initState();
     textController.addListener(() {

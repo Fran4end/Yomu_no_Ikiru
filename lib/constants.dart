@@ -35,7 +35,7 @@ final ThemeData lightTheme = ThemeData(
     elevation: 5,
     backgroundColor: Colors.black54,
     labelTextStyle:
-        MaterialStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        WidgetStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
   ),
   snackBarTheme: SnackBarThemeData(
     backgroundColor: const Color(0xffF78C25),
@@ -45,7 +45,7 @@ final ThemeData lightTheme = ThemeData(
     contentTextStyle: GoogleFonts.robotoCondensed(fontSize: 28),
   ),
   colorScheme: const ColorScheme.light(
-    background: Color(0xfff6f5f5),
+    surface: Color(0xfff6f5f5),
     primary: Color(0xffF78C25),
     secondary: Color(0xff9f5023),
     tertiary: Color(0xffF78C25),
@@ -74,7 +74,7 @@ final ThemeData darkTheme = ThemeData(
     elevation: 5,
     backgroundColor: const Color(0xff0f0f0f),
     labelTextStyle:
-        MaterialStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        WidgetStateProperty.all(const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
   ),
   snackBarTheme: SnackBarThemeData(
     backgroundColor: const Color(0xff005B41),
@@ -84,7 +84,7 @@ final ThemeData darkTheme = ThemeData(
     contentTextStyle: GoogleFonts.robotoCondensed(fontSize: 28),
   ),
   colorScheme: const ColorScheme.dark(
-    background: Color(0xff0f0f0f),
+    surface: Color(0xff0f0f0f),
     primary: Color(0xff005B41),
     secondary: Color(0xff232D3F),
     tertiary: Color(0xff008170),

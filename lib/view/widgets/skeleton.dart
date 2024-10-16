@@ -5,11 +5,11 @@ import '../../constants.dart';
 
 class Skeleton extends StatelessWidget {
   const Skeleton({
-    Key? key,
+    super.key,
     this.height,
     this.width,
     required this.color,
-  }) : super(key: key);
+  });
 
   final double? height, width;
   final Color color;
@@ -33,9 +33,9 @@ class Skeleton extends StatelessWidget {
 
 class CardSkelton extends StatelessWidget {
   const CardSkelton({
-    Key? key,
+    super.key,
     required this.aspectRatio,
-  }) : super(key: key);
+  });
 
   final double aspectRatio;
 
@@ -71,9 +71,9 @@ class CardSkelton extends StatelessWidget {
 
 class SkeletonGrid extends StatelessWidget {
   const SkeletonGrid({
-    Key? key,
+    super.key,
     this.axisCount = 2,
-  }) : super(key: key);
+  });
 
   final int axisCount;
 

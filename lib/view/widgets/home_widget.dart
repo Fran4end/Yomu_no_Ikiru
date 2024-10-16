@@ -7,9 +7,9 @@ import 'skeleton.dart';
 
 class Recent extends StatelessWidget {
   const Recent({
-    Key? key,
+    super.key,
     required this.builders,
-  }) : super(key: key);
+  });
 
   final List<MangaBuilder>? builders;
 
@@ -70,9 +70,9 @@ class Recent extends StatelessWidget {
 
 class Popular extends StatelessWidget {
   const Popular({
-    Key? key,
+    super.key,
     required this.builders,
-  }) : super(key: key);
+  });
 
   final List<MangaBuilder>? builders;
 

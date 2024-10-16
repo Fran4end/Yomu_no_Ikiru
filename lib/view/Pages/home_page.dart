@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../Api/Apis/mangaworld.dart';
@@ -20,14 +19,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     document = MangaWorld().getPageDocument("");
-    subscription = Connectivity().onConnectivityChanged.listen((connectivityResult) {
-      if (connectivityResult == ConnectivityResult.mobile ||
-          connectivityResult == ConnectivityResult.wifi) {
-        if (mounted) {
-          setState(() {});
-        }
-      }
-    });
   }
 
   @override

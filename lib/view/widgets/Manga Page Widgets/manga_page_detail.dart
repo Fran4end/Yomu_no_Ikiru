@@ -149,9 +149,9 @@ class MangaPageDetailAppBar extends StatelessWidget {
 
 class GenresWrap extends StatelessWidget {
   const GenresWrap({
-    Key? key,
+    super.key,
     required this.manga,
-  }) : super(key: key);
+  });
 
   final Manga manga;
 

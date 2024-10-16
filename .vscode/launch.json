@@ -15,6 +15,12 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"
+    },
+    {
+      "name": "yomu no ikiru (android)",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--android-skip-build-dependency-validation"]
     }
   ]
 }

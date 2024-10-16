@@ -53,7 +53,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
           IconButton.filled(
             icon: const Icon(FontAwesomeIcons.backwardStep),
             style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                  fixedSize: const MaterialStatePropertyAll(Size(20, 20)),
+                  fixedSize: const WidgetStatePropertyAll(Size(20, 20)),
                 ),
             tooltip: !reverse ? "Previous chapter" : "Next chapter",
             onPressed: reverse
@@ -142,7 +142,7 @@ class ReaderBottomNavigationBar extends StatelessWidget {
             tooltip: reverse ? "Previous chapter" : "Next chapter",
             icon: const Icon(FontAwesomeIcons.forwardStep),
             style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                  fixedSize: const MaterialStatePropertyAll(Size(20, 20)),
+                  fixedSize: const WidgetStatePropertyAll(Size(20, 20)),
                 ),
           ),
         ],
