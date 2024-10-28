@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="500" alt="Yomu no Ikiru logo" src="assets/icon.png">
+    <img width="500" alt="Yomu no Ikiru logo" src="yomu_no_ikiru/assets/icon.png">
 </p>
 
 # Yomu no ikiru
@@ -31,7 +31,7 @@ If you are just looking to give the app a whirl, you can grab the latest release
 ### Latest release:
 
 | [Windows ?? (x64)]() | macOS ?? ([Intel](), [Apple Silicon]()) | [Linux (x64)]() | [iOS ??]() | [Android 6+](https://github.com/Fran4end/Yomu_no_Ikiru/releases/latest/download/Yomu-no-Ikiru-android.apk) |
-| -------------------- | --------------------------------------- | --------------- | ---------- | -------------- |
+| -------------------- | --------------------------------------- | --------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
 
 ## Developing Yomu no Ikiru
 
