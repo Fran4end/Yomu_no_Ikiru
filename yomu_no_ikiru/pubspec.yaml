@@ -44,6 +44,16 @@ dependencies:
   image_picker: ^1.1.2
   flutter_initicon: ^3.0.1
   intl: ^0.19.0
+  font_awesome_flutter: ^10.7.0
+  dio: ^5.7.0
+  dio_cache_interceptor: ^3.5.0
+  html: ^0.15.4
+  expandable: ^5.0.1
+  shimmer: ^3.0.0
+  google_fonts: ^6.2.1
+  bloc_concurrency: ^0.2.5
+  stream_transform: ^2.1.0
+  photo_view: ^0.15.0
 
 dev_dependencies:
   flutter_test:
