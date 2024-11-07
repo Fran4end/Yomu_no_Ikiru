@@ -93,10 +93,11 @@ Before committing your code, please run a code formatter. This can be achieved b
 
 ## contributing
 
+this section it will update very soon
 ...
 
 ## License
 
-_Yomu no Ikiru_'s code are licensed under the `Apache License V2`. Please see [the licence file](LICENSE) for more information. [tl;dr](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0) you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
+_Yomu no Ikiru_'s code are licensed under the `Apache License V2`. Please see [the license file](LICENSE) for more information. [tl;dr](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0) you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
 
 ## Screenshot
