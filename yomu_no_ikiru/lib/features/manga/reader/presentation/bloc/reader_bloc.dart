@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:yomu_no_ikiru/core/error/failures.dart';
 import 'package:yomu_no_ikiru/features/manga/common/domain/entities/manga.dart';
 import 'package:yomu_no_ikiru/features/manga/reader/domain/usecase/get_current_chapter.dart';
+import 'package:yomu_no_ikiru/features/manga/reader/presentation/bloc/reader_orientation.dart';
 
 part 'reader_event.dart';
 part 'reader_state.dart';
@@ -22,7 +24,36 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     on<ReaderNextChapter>(_onReaderNextChapter);
     on<ReaderPreviousChapter>(_onReaderPreviousChapter);
     on<ReaderShowAppBar>(_onReaderShowAppBar);
+    on<ReaderChangePage>(_onReaderChangePage);
+    on<ReaderChangeOrientation>(_onReaderChangeOrientation);
   }
+
+  _onReaderChangeOrientation(
+    ReaderChangeOrientation event,
+    Emitter<ReaderState> emit,
+  ) {
+    if (state is! ReaderSuccess) return;
+    emit(
+      _readerS.copyWith(
+        orientation: _readerS.orientation.next,
+      ),
+    );
+  }
+
+  void _onReaderChangePage(
+    ReaderChangePage event,
+    Emitter<ReaderState> emit,
+  ) {
+    if (state is! ReaderSuccess) return;
+    if (_isSeparatorPage(event.newPageIndex)) return;
+    emit(
+      _readerS.copyWith(
+        currentPage: event.newPageIndex,
+      ),
+    );
+  }
+
+  ReaderSuccess get _readerS => state as ReaderSuccess;
 
   Future<void> _onReaderNewChapter(
     ReaderNewChapter event,
@@ -85,10 +116,10 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       );
     } else {
       emit(
-        (state as ReaderSuccess).copyWith(
+        _readerS.copyWith(
           manga: event.manga,
           rawPages: {
-            ...(state as ReaderSuccess).rawPages,
+            ..._readerS.rawPages,
             ...{event.loadChapterIndex: pages}
           },
           currentChapter: event.loadChapterIndex,
@@ -107,7 +138,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
   _emitLoading(ReaderEvent event, Emitter<ReaderState> emit) {
     if (!isFirstLoad) {
       emit(
-        (state as ReaderSuccess).copyWith(
+        _readerS.copyWith(
           isLoadingNewChapter: true,
         ),
       );
@@ -117,18 +148,20 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
   }
 
   _onReaderShowAppBar(ReaderShowAppBar event, Emitter<ReaderState> emit) {
-    if (this.state is! ReaderSuccess) return;
-    final state = this.state as ReaderSuccess;
+    if (state is! ReaderSuccess) return;
+    event.showAppBar
+        ? SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge)
+        : SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
     emit(
-      state.copyWith(showAppBar: !state.showAppBar),
+      _readerS.copyWith(showAppBar: event.showAppBar),
     );
   }
 
-  bool get isFirstLoad => (state is ReaderInitial) || (state is ReaderLoading);
-  bool get hasReachedMin => !isFirstLoad && !((state as ReaderSuccess).currentChapter - 1 >= 0);
+  bool _isSeparatorPage(int index) => index == 0 || index == _readerS.chapterSize + 1;
+  bool get isFirstLoad => (state is! ReaderSuccess);
+  bool get hasReachedMin => !isFirstLoad && !(_readerS.currentChapter - 1 >= 0);
 
   bool get hasReachedMax =>
-      !isFirstLoad &&
-      !((state as ReaderSuccess).currentChapter + 1 <
-          (state as ReaderSuccess).manga.chapters.length);
+      !isFirstLoad && !(_readerS.currentChapter + 1 < _readerS.manga.chapters.length);
 }

@@ -31,7 +31,7 @@ class MangaPageChapterList extends StatelessWidget {
                   Reader.route(
                     chapterIndex: (chapters.length - 1) - index,
                     manga: manga,
-                    pageIndex: 0,
+                    pageIndex: 1,
                   ),
                 ),
               ),

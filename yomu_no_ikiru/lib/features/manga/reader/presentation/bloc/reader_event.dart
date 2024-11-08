@@ -27,10 +27,18 @@ class ReaderPreviousChapter extends ReaderNewChapter {
   });
 }
 
-class ReaderShowAppBar extends ReaderEvent {}
+class ReaderShowAppBar extends ReaderEvent {
+  final bool showAppBar;
+
+  ReaderShowAppBar({required this.showAppBar});
+}
+
+class ReaderChangeOrientation extends ReaderEvent {}
 
 class ReaderChangePage extends ReaderEvent {
   final int newPageIndex;
 
-  ReaderChangePage({required this.newPageIndex});
+  ReaderChangePage({
+    required this.newPageIndex,
+  });
 }

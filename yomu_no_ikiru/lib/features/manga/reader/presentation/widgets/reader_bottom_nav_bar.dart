@@ -1,38 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:yomu_no_ikiru/features/manga/common/domain/entities/chapter.dart';
-import 'package:yomu_no_ikiru/features/manga/common/domain/entities/manga.dart';
+import 'package:yomu_no_ikiru/features/manga/reader/presentation/bloc/reader_bloc.dart';
 
-class ReaderBottomBar extends StatelessWidget {
-  final bool reverse;
-  final List<Chapter> chapters;
-  final Manga manga;
-  final int chapterIndex;
-  final Axis axis;
-  final Widget icon;
-  final Slider slider;
-  final List<String> images;
-  final int pageIndex;
-  final Function() onScope;
-  final Function(int page, int chapterIndex) onPageChange;
-
-  const ReaderBottomBar({
-    required this.reverse,
-    required this.chapters,
-    required this.chapterIndex,
-    required this.axis,
-    required this.icon,
-    required this.onScope,
-    required this.images,
-    required this.pageIndex,
-    required this.onPageChange,
-    required this.slider,
-    required this.manga,
+class ReaderBottomNavBar extends StatelessWidget {
+  const ReaderBottomNavBar({
     super.key,
+    required this.state,
+    required this.onChanged,
+    this.onChangeEnd,
   });
+
+  final ReaderSuccess state;
+  final ValueChanged<double>? onChanged;
+  final ValueChanged<double>? onChangeEnd;
 
   @override
   Widget build(BuildContext context) {
+    final reverse = state.orientation.reverse;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,7 +39,16 @@ class ReaderBottomBar extends StatelessWidget {
                 color: const Color(0xff2a2a2a),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: slider,
+              child: Slider.adaptive(
+                inactiveColor: Theme.of(context).colorScheme.secondary,
+                divisions: state.chapterSize,
+                label: "${state.currentPage.toInt()} / ${state.chapterSize}",
+                min: 1,
+                max: state.chapterSize.toDouble(),
+                value: state.currentPage.toDouble(),
+                onChanged: onChanged,
+                onChangeEnd: onChangeEnd,
+              ),
             ),
           ),
         ),

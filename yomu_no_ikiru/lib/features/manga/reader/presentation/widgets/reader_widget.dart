@@ -5,17 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:yomu_no_ikiru/features/manga/reader/presentation/bloc/reader_bloc.dart';
+import 'package:yomu_no_ikiru/features/manga/reader/presentation/bloc/reader_orientation.dart';
 import 'package:yomu_no_ikiru/features/manga/reader/presentation/widgets/separator_chapter_page_widget.dart';
 
 class ReaderPageWidget extends StatelessWidget {
-  final Axis axis;
-  final bool reverse;
+  final ReaderOrientationType orientation;
   final PageController pageController;
 
   const ReaderPageWidget({
     super.key,
-    required this.axis,
-    required this.reverse,
+    required this.orientation,
     required this.pageController,
   });
 
@@ -29,10 +28,12 @@ class ReaderPageWidget extends StatelessWidget {
       },
       child: PhotoViewGallery(
         pageController: pageController,
-        scrollDirection: axis,
-        reverse: reverse,
+        scrollDirection: orientation.axis,
+        reverse: orientation.reverse,
         gaplessPlayback: true,
-        onPageChanged: (index) {},
+        onPageChanged: (index) {
+          // readerBloc.add(ReaderChangePage(newPageIndex: index, isSliding: false));
+        },
         pageOptions: _buildPages(readerBlocState, readerBloc),
       ),
     );
