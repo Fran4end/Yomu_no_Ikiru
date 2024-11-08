@@ -56,11 +56,6 @@ class _ReaderState extends State<Reader> {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    // pageController.addListener(() {
-    //   final currentPage = pageController.page?.round();
-    //   if (currentPage == null) return;
-    //   context.read<ReaderBloc>().add(ReaderChangePage(newPageIndex: currentPage));
-    // });
     // controller = WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted);
     // _loadChapter(currentChap.link);
   }
@@ -90,10 +85,11 @@ class _ReaderState extends State<Reader> {
         if (state is! ReaderSuccess) {
           return const Loader();
         }
+        print(state.showAppBar);
         return Scaffold(
           appBar: AnimatedBar(
             begin: const Offset(0, -1),
-            builder: () => state.showAppBar
+            builder: () => !state.showAppBar
                 ? const SizedBox.shrink()
                 : ReaderAppBar(
                     state: state,
@@ -104,7 +100,7 @@ class _ReaderState extends State<Reader> {
             padding: const EdgeInsets.all(defaultPadding),
             child: AnimatedBar(
               begin: const Offset(0, 1),
-              builder: () => state.showAppBar
+              builder: () => !state.showAppBar
                   ? const SizedBox.shrink()
                   : SafeArea(
                       child: ReaderBottomNavBar(
