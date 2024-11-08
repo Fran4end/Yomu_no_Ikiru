@@ -22,12 +22,12 @@ Future<Either<Failure, List<String>>> _getImagePageUrls({
 onPointerSignal(PointerSignalEvent event, PageController pageController) {
   if (event is PointerScrollEvent) {
     if (event.scrollDelta.dy > 0) {
-      pageController.nextPage(
+      pageController.previousPage(
         duration: const Duration(microseconds: 10),
         curve: Curves.easeInOut,
       );
     } else {
-      pageController.previousPage(
+      pageController.nextPage(
         duration: const Duration(microseconds: 10),
         curve: Curves.easeInOut,
       );

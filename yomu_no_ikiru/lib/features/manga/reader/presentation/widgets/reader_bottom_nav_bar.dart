@@ -41,7 +41,7 @@ class ReaderBottomNavBar extends StatelessWidget {
               ),
               child: Slider.adaptive(
                 inactiveColor: Theme.of(context).colorScheme.secondary,
-                divisions: state.chapterSize,
+                divisions: state.chapterSize - 1,
                 label: "${state.currentPage.toInt()} / ${state.chapterSize}",
                 min: 1,
                 max: state.chapterSize.toDouble(),

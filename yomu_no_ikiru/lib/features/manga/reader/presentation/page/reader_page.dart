@@ -86,6 +86,9 @@ class _ReaderState extends State<Reader> {
           return const Loader();
         }
         return Scaffold(
+          backgroundColor: Colors.transparent,
+          extendBody: true,
+          extendBodyBehindAppBar: true,
           appBar: AnimatedBar(
             begin: const Offset(0, -1),
             builder: () => !state.showAppBar
@@ -95,39 +98,44 @@ class _ReaderState extends State<Reader> {
                     onPressed: () => readerBloc.add(ReaderChangeOrientation()),
                   ),
           ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.all(defaultPadding),
-            child: AnimatedBar(
-              begin: const Offset(0, 1),
-              builder: () => !state.showAppBar
-                  ? const SizedBox.shrink()
-                  : SafeArea(
-                      child: ReaderBottomNavBar(
-                        state: state,
-                        onChangeEnd: (value) {
-                          readerBloc.add(
-                            ReaderChangePage(
-                              newPageIndex: value.toInt(),
-                              isSliding: false,
-                            ),
-                          );
-                        },
-                        onChanged: (value) {
-                          final int duration = (value % state.currentPage).toInt() + 200;
-                          pageController.animateToPage(
-                            value.toInt(),
-                            duration: Duration(milliseconds: duration),
-                            curve: Curves.easeIn,
-                          );
-                          readerBloc.add(
-                            ReaderChangePage(
-                              newPageIndex: value.toInt(),
-                              isSliding: true,
-                            ),
-                          );
-                        },
+          bottomNavigationBar: Container(
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: AnimatedBar(
+                begin: const Offset(0, 1),
+                builder: () => !state.showAppBar
+                    ? const SizedBox.shrink()
+                    : SafeArea(
+                        child: ReaderBottomNavBar(
+                          state: state,
+                          onChangeEnd: (value) {
+                            readerBloc.add(
+                              ReaderChangePage(
+                                newPageIndex: value.toInt(),
+                                isSliding: false,
+                              ),
+                            );
+                          },
+                          onChanged: (value) {
+                            final int duration = (value % state.currentPage).toInt() + 150;
+                            pageController.animateToPage(
+                              value.toInt(),
+                              duration: Duration(milliseconds: duration),
+                              curve: Curves.easeInOut,
+                            );
+                            readerBloc.add(
+                              ReaderChangePage(
+                                newPageIndex: value.toInt(),
+                                isSliding: true,
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
+              ),
             ),
           ),
           body: GestureDetector(
