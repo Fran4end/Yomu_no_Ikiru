@@ -37,8 +37,10 @@ class ReaderChangeOrientation extends ReaderEvent {}
 
 class ReaderChangePage extends ReaderEvent {
   final int newPageIndex;
+  final bool isSliding;
 
   ReaderChangePage({
     required this.newPageIndex,
+    this.isSliding = false,
   });
 }

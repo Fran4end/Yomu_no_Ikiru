@@ -1,0 +1,29 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "yomu_no_ikiru",
+      "cwd": "yomu_no_ikiru",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--quiet"]
+    },
+    {
+      "name": "yomu_no_ikiru (profile mode)",
+      "cwd": "yomu_no_ikiru",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "yomu_no_ikiru (release mode)",
+      "cwd": "yomu_no_ikiru",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    }
+  ]
+}

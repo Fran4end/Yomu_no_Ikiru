@@ -85,7 +85,6 @@ class _ReaderState extends State<Reader> {
         if (state is! ReaderSuccess) {
           return const Loader();
         }
-        print(state.showAppBar);
         return Scaffold(
           appBar: AnimatedBar(
             begin: const Offset(0, -1),
@@ -105,7 +104,14 @@ class _ReaderState extends State<Reader> {
                   : SafeArea(
                       child: ReaderBottomNavBar(
                         state: state,
-                        onChangeEnd: (value) {},
+                        onChangeEnd: (value) {
+                          readerBloc.add(
+                            ReaderChangePage(
+                              newPageIndex: value.toInt(),
+                              isSliding: false,
+                            ),
+                          );
+                        },
                         onChanged: (value) {
                           final int duration = (value % state.currentPage).toInt() + 200;
                           pageController.animateToPage(
@@ -116,6 +122,7 @@ class _ReaderState extends State<Reader> {
                           readerBloc.add(
                             ReaderChangePage(
                               newPageIndex: value.toInt(),
+                              isSliding: true,
                             ),
                           );
                         },
@@ -128,6 +135,7 @@ class _ReaderState extends State<Reader> {
             child: ReaderPageWidget(
               orientation: state.orientation,
               pageController: pageController,
+              isSliding: state.isSliding,
             ),
           ),
         );

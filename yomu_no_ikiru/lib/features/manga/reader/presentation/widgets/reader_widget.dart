@@ -11,11 +11,13 @@ import 'package:yomu_no_ikiru/features/manga/reader/presentation/widgets/separat
 class ReaderPageWidget extends StatelessWidget {
   final ReaderOrientationType orientation;
   final PageController pageController;
+  final bool isSliding;
 
   const ReaderPageWidget({
     super.key,
     required this.orientation,
     required this.pageController,
+    required this.isSliding,
   });
 
   @override
@@ -32,7 +34,8 @@ class ReaderPageWidget extends StatelessWidget {
         reverse: orientation.reverse,
         gaplessPlayback: true,
         onPageChanged: (index) {
-          // readerBloc.add(ReaderChangePage(newPageIndex: index, isSliding: false));
+          if (isSliding) return;
+          readerBloc.add(ReaderChangePage(newPageIndex: index));
         },
         pageOptions: _buildPages(readerBlocState, readerBloc),
       ),

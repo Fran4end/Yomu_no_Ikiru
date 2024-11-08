@@ -40,12 +40,22 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     );
   }
 
+  void _sliding(bool isSliding, Emitter<ReaderState> emit) {
+    if (state is! ReaderSuccess) return;
+    emit(
+      _readerS.copyWith(
+        isSliding: isSliding,
+      ),
+    );
+  }
+
   void _onReaderChangePage(
     ReaderChangePage event,
     Emitter<ReaderState> emit,
   ) {
     if (state is! ReaderSuccess) return;
     if (_isSeparatorPage(event.newPageIndex)) return;
+    _sliding(event.isSliding, emit);
     emit(
       _readerS.copyWith(
         currentPage: event.newPageIndex,
