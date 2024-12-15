@@ -69,6 +69,17 @@ class _MyAppState extends State<MyApp> {
       title: 'Yomu no Ikiru',
       darkTheme: OldTheme.darkTheme,
       theme: OldTheme.lightTheme,
+      home: const ExplorePage(),
+    );
+  }
+
+/*  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      themeMode: ThemeMode.system,
+      title: 'Yomu no Ikiru',
+      darkTheme: OldTheme.darkTheme,
+      theme: OldTheme.lightTheme,
       home: BlocSelector<AppUserCubit, AppUserState, bool>(
         selector: (state) {
           return state is AppUserLoggedIn;
@@ -82,5 +93,5 @@ class _MyAppState extends State<MyApp> {
         },
       ),
     );
-  }
+  }*/
 }

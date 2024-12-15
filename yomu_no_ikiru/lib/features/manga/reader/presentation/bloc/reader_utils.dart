@@ -19,18 +19,14 @@ Future<Either<Failure, List<String>>> _getImagePageUrls({
   return res;
 }
 
-onPointerSignal(PointerSignalEvent event, PageController pageController) {
-  if (event is PointerScrollEvent) {
-    if (event.scrollDelta.dy > 0) {
-      pageController.previousPage(
-        duration: const Duration(microseconds: 10),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      pageController.nextPage(
-        duration: const Duration(microseconds: 10),
-        curve: Curves.easeInOut,
-      );
+void prefetchImages(List<String> pages, PageController pageController, {int bufferSize = 3}) {
+  final currentPage = pageController.page?.toInt() ?? 0;
+
+  // Preload previous and next images
+  for (int offset = -bufferSize; offset <= bufferSize; offset++) {
+    final targetIndex = currentPage + offset;
+    if (targetIndex >= 0 && targetIndex < pages.length) {
+      CachedNetworkImageProvider(pages[targetIndex]).resolve(const ImageConfiguration());
     }
   }
 }

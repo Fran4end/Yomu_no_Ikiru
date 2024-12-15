@@ -1,5 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
@@ -40,30 +40,18 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     );
   }
 
-  void _sliding(bool isSliding, Emitter<ReaderState> emit) {
-    if (state is! ReaderSuccess) return;
-    emit(
-      _readerS.copyWith(
-        isSliding: isSliding,
-      ),
-    );
-  }
-
   void _onReaderChangePage(
     ReaderChangePage event,
     Emitter<ReaderState> emit,
   ) {
     if (state is! ReaderSuccess) return;
     if (_isSeparatorPage(event.newPageIndex)) return;
-    _sliding(event.isSliding, emit);
     emit(
       _readerS.copyWith(
         currentPage: event.newPageIndex,
       ),
     );
   }
-
-  ReaderSuccess get _readerS => state as ReaderSuccess;
 
   Future<void> _onReaderNewChapter(
     ReaderNewChapter event,
@@ -169,6 +157,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
   }
 
   bool _isSeparatorPage(int index) => index == 0 || index == _readerS.chapterSize + 1;
+  ReaderSuccess get _readerS => state as ReaderSuccess;
   bool get isFirstLoad => (state is! ReaderSuccess);
   bool get hasReachedMin => !isFirstLoad && !(_readerS.currentChapter - 1 >= 0);
 

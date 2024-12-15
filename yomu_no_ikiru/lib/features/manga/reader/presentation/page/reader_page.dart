@@ -85,6 +85,13 @@ class _ReaderState extends State<Reader> {
         if (state is! ReaderSuccess) {
           return const Loader();
         }
+        if (pageController.hasClients && state.currentPage != pageController.page?.toInt()) {
+          pageController.animateToPage(
+            state.currentPage,
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeInOut,
+          );
+        }
         return Scaffold(
           backgroundColor: Colors.transparent,
           extendBody: true,
@@ -111,25 +118,10 @@ class _ReaderState extends State<Reader> {
                     : SafeArea(
                         child: ReaderBottomNavBar(
                           state: state,
-                          onChangeEnd: (value) {
-                            readerBloc.add(
-                              ReaderChangePage(
-                                newPageIndex: value.toInt(),
-                                isSliding: false,
-                              ),
-                            );
-                          },
                           onChanged: (value) {
-                            final int duration = (value % state.currentPage).toInt() + 150;
-                            pageController.animateToPage(
-                              value.toInt(),
-                              duration: Duration(milliseconds: duration),
-                              curve: Curves.easeInOut,
-                            );
                             readerBloc.add(
                               ReaderChangePage(
                                 newPageIndex: value.toInt(),
-                                isSliding: true,
                               ),
                             );
                           },
@@ -141,9 +133,7 @@ class _ReaderState extends State<Reader> {
           body: GestureDetector(
             onTap: () => readerBloc.add(ReaderShowAppBar(showAppBar: !state.showAppBar)),
             child: ReaderPageWidget(
-              orientation: state.orientation,
               pageController: pageController,
-              isSliding: state.isSliding,
             ),
           ),
         );

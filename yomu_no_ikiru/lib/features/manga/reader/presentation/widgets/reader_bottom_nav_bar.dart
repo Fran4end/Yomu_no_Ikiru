@@ -7,12 +7,10 @@ class ReaderBottomNavBar extends StatelessWidget {
     super.key,
     required this.state,
     required this.onChanged,
-    this.onChangeEnd,
   });
 
   final ReaderSuccess state;
   final ValueChanged<double>? onChanged;
-  final ValueChanged<double>? onChangeEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +45,6 @@ class ReaderBottomNavBar extends StatelessWidget {
                 max: state.chapterSize.toDouble(),
                 value: state.currentPage.toDouble(),
                 onChanged: onChanged,
-                onChangeEnd: onChangeEnd,
               ),
             ),
           ),
