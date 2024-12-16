@@ -54,6 +54,7 @@ dependencies:
   bloc_concurrency: ^0.2.5
   stream_transform: ^2.1.0
   photo_view: ^0.15.0
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:

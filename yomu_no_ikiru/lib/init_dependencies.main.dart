@@ -17,7 +17,8 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   _initAuth();
-  _initManga();
+  _initExplore();
+  _initDetails();
 
   final supabase = await Supabase.initialize(
     url: dotenv.env["supabaseUrl"] as String,
@@ -29,6 +30,9 @@ Future<void> initDependencies() async {
 
   //user retrive from session
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+
+  //manga for global state
+  serviceLocator.registerLazySingleton(() => CurrentMangaCubit());
 }
 
 void _initAuth() {
@@ -72,21 +76,48 @@ void _initAuth() {
     );
 }
 
-_initManga() {
+_initExplore() {
   serviceLocator
     // Repository
-    ..registerFactory<MangaRepositoryImpl>(
-      () => MangaRepositoryImpl(),
-    )
-    ..registerFactory<MangaRepository>(
-      () => MangaRepositoryImpl(),
+    ..registerFactory<ExploreRepository>(
+      () => ExploreRepositoryImpl(),
     )
     // Usecases
+    // ..registerFactory(
+    //   () => GetPopularMangaList(
+    //     serviceLocator(),
+    //   ),
+    // )
+    // ..registerFactory(
+    //   () => GetLatestMangaList(
+    //     serviceLocator(),
+    //   ),
+    // )
     ..registerFactory(
       () => SearchMangaList(
         serviceLocator(),
       ),
     )
+    // Bloc
+    ..registerLazySingleton(
+      () => ExploreBloc(
+        // getPopularMangaList: serviceLocator(),
+        // getLatestMangaList: serviceLocator(),
+        getMangaList: serviceLocator(),
+      ),
+    );
+}
+
+_initDetails() {
+  serviceLocator
+    // Repository
+    ..registerFactory<DetailsRepositoryImpl>(
+      () => DetailsRepositoryImpl(),
+    )
+    ..registerFactory<ReaderRepository>(
+      () => ReaderRepositoryImpl(),
+    )
+    // Usecases
     ..registerFactory(
       () => GetMangaDetails(
         serviceLocator(),
@@ -98,10 +129,10 @@ _initManga() {
       ),
     )
     // Bloc
-    ..registerLazySingleton(
-      () => MangaBloc(
+    ..registerFactory(
+      () => DetailsBloc(
         getMangaDetails: serviceLocator(),
-        getMangaList: serviceLocator(),
+        currentMangaCubit: serviceLocator(),
       ),
     )
     ..registerFactory<ReaderBloc>(

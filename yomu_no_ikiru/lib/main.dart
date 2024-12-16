@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:yomu_no_ikiru/core/common/cubits/appuser/app_user_cubit.dart';
+import 'package:yomu_no_ikiru/core/common/cubits/currentmanga/current_manga_cubit.dart';
 import 'package:yomu_no_ikiru/core/theme/old/old_theme.dart';
 import 'package:yomu_no_ikiru/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:yomu_no_ikiru/features/auth/presentation/pages/login_page.dart';
-import 'package:yomu_no_ikiru/features/manga/common/presentation/bloc/manga_bloc.dart';
-import 'package:yomu_no_ikiru/features/manga/explore/presentation/page/explore_page.dart';
+import 'package:yomu_no_ikiru/features/explore/presentation/bloc/explore_bloc.dart';
+import 'package:yomu_no_ikiru/features/explore/presentation/page/explore_page.dart';
 import 'package:yomu_no_ikiru/init_dependencies.dart';
 
 Future<void> main() async {
@@ -40,7 +40,10 @@ Future<void> main() async {
           create: (_) => serviceLocator<AuthBloc>(),
         ),
         BlocProvider(
-          create: (_) => serviceLocator<MangaBloc>(),
+          create: (_) => serviceLocator<CurrentMangaCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<ExploreBloc>(),
         ),
       ],
       child: const MyApp(),

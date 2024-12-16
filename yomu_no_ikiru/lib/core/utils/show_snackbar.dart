@@ -28,10 +28,8 @@ void showSnackBar(
           ),
           Expanded(
             child: Center(
-              child: Flexible(
-                child: Text(
-                  content,
-                ),
+              child: Text(
+                content,
               ),
             ),
           ),
