@@ -11,7 +11,6 @@ import 'package:yomu_no_ikiru/features/auth/domain/usecases/user_login.dart';
 import 'package:yomu_no_ikiru/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:yomu_no_ikiru/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:yomu_no_ikiru/features/details/data/repository/details_repository_impl.dart';
-import 'package:yomu_no_ikiru/features/details/domain/repository/details_repository.dart';
 import 'package:yomu_no_ikiru/features/details/presentation/bloc/details_bloc.dart';
 import 'package:yomu_no_ikiru/features/explore/data/repository/explore_repository_impl.dart';
 import 'package:yomu_no_ikiru/features/explore/domain/repository/explore_repository.dart';
