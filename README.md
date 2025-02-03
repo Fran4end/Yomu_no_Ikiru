@@ -28,7 +28,7 @@ Right now the [main](https://github.com/Fran4end/Yomu_no_Ikiru) branch is a vers
 
 If you are just looking to give the app a whirl, you can grab the latest release for your platform:
 
-### Latest release:
+### Latest release
 
 | [Windows ?? (x64)]() | macOS ?? ([Intel](), [Apple Silicon]()) | [Linux (x64)]() | [iOS ??]() | [Android 6+](https://github.com/Fran4end/Yomu_no_Ikiru/releases/latest/download/Yomu-no-Ikiru-android.apk) |
 | -------------------- | --------------------------------------- | --------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
