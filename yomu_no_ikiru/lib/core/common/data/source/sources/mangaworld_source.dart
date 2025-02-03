@@ -1,3 +1,4 @@
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
@@ -10,7 +11,19 @@ import 'package:yomu_no_ikiru/core/common/data/source/remote_manga_source.dart';
 
 class MangaWorldSource implements MangaRemoteDataSource {
   @override
-  Dio get dio => Dio(BaseOptions(baseUrl: 'https://mangaworld.ac'));
+  CookieJar get cookieJar => CookieJar();
+
+  @override
+  Dio get dio => Dio(
+        BaseOptions(
+          baseUrl: 'https://mangaworld.ac',
+          headers: {
+            'User-Agent':
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+            "Cookie": "MWCookie=954942431558f2c8216fe1ca15fbfc57",
+          },
+        ),
+      );
 
   @override
   DateTime getFormattedDate(String date) {
@@ -128,7 +141,8 @@ class MangaWorldSource implements MangaRemoteDataSource {
   @override
   Future<List<MangaModel>> getSearchMangaList(Map<String, dynamic> filters) async {
     try {
-      Response res = await dio.get('/archive', queryParameters: filters);
+      final redirected = await dio.get('/archive', queryParameters: filters);
+      Response res = await dio.get(redirected.realUri.toString());
       if (res.statusCode == 200) {
         Document document = parse(res.data);
         if (document.querySelector('.comics-grid')!.children.isEmpty) {

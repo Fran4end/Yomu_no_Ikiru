@@ -6,6 +6,7 @@
     "fpdart",
     "ikiru",
     "Initicon",
+    "KHTML",
     "mangaworld",
     "noidungm",
     "Supabase",
@@ -77,5 +78,6 @@
     "xtr1common": "cpp",
     "xtree": "cpp",
     "xutility": "cpp"
-  }
+  },
+  "cmake.ignoreCMakeListsMissing": true
 }

@@ -16,7 +16,8 @@
       "cwd": "yomu_no_ikiru",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "profile"
+      "flutterMode": "profile",
+      "args": ["--quiet", "--enable-impeller"]
     },
     {
       "name": "yomu_no_ikiru (release mode)",
