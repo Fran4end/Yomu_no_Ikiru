@@ -14,14 +14,26 @@ final cacheOptions = CacheOptions(
 
 const throttleDuration = Duration(milliseconds: 100);
 
-EventTransformer<E> throttleDroppable<E>(Duration duration) {
+EventTransformer<E> throttleDroppable<E>(Duration duration, [bool trailing = true]) {
   return (events, mapper) {
-    return droppable<E>().call(events.throttle(duration, trailing: true), mapper);
+    return droppable<E>().call(events.throttle(duration, trailing: trailing), mapper);
   };
 }
 
-EventTransformer<E> throttleRestartable<E>(Duration duration) {
+EventTransformer<E> throttleRestartable<E>(Duration duration, [bool trailing = true]) {
   return (events, mapper) {
-    return restartable<E>().call(events.throttle(duration, trailing: true), mapper);
+    return restartable<E>().call(events.throttle(duration, trailing: trailing), mapper);
+  };
+}
+
+EventTransformer<E> throttleSequential<E>(Duration duration, [bool trailing = true]) {
+  return (events, mapper) {
+    return sequential<E>().call(events.throttle(duration, trailing: trailing), mapper);
+  };
+}
+
+EventTransformer<E> throttleConcurrent<E>(Duration duration, [bool trailing = true]) {
+  return (events, mapper) {
+    return concurrent<E>().call(events.throttle(duration, trailing: trailing), mapper);
   };
 }
