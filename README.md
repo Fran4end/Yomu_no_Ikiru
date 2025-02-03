@@ -1,8 +1,8 @@
 <p align="center">
-    <img width="500" alt="Yomu no Ikiru logo" src="yomu_no_ikiru/assets/icon.png">
+    <img src="yomu_no_ikiru/assets/icon.png" alt="Yomu no Ikiru logo">
 </p>
 
-# Yomu no ikiru
+# Yomu no Ikiru
 
 [![GitHub release](https://img.shields.io/github/release/Fran4end/yomu_no_ikiru.svg)](https://github.com/Fran4end/Yomu_no_Ikiru/releases)
 
