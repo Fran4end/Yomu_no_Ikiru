@@ -80,5 +80,6 @@
     "xtree": "cpp",
     "xutility": "cpp"
   },
-  "cmake.ignoreCMakeListsMissing": true
+  "cmake.ignoreCMakeListsMissing": true,
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

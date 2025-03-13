@@ -1,0 +1,2 @@
+S:/Yomu_no_Ikiru/yomu_no_ikiru/android/app/.cxx/Debug/543724l1/x86/CMakeFiles/edit_cache.dir
+S:/Yomu_no_Ikiru/yomu_no_ikiru/android/app/.cxx/Debug/543724l1/x86/CMakeFiles/rebuild_cache.dir

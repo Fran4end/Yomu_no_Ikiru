@@ -34,11 +34,3 @@ class ReaderShowAppBar extends ReaderEvent {
 }
 
 class ReaderChangeOrientation extends ReaderEvent {}
-
-class ReaderChangePage extends ReaderEvent {
-  final int newPageIndex;
-
-  ReaderChangePage({
-    required this.newPageIndex,
-  });
-}

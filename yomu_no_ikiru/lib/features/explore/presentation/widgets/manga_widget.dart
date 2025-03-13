@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:yomu_no_ikiru/constants.dart';
 import 'package:yomu_no_ikiru/core/common/widgets/skeleton.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
-import 'package:yomu_no_ikiru/features/details/presentation/page/manga_detail_page.dart';
+import 'package:yomu_no_ikiru/features/item/presentation/page/manga_detail_page.dart';
 
 class MangaCard extends StatelessWidget {
   const MangaCard({

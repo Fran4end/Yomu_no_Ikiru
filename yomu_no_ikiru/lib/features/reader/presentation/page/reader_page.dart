@@ -6,6 +6,7 @@ import 'package:yomu_no_ikiru/core/common/widgets/loader.dart';
 import 'package:yomu_no_ikiru/core/utils/show_snackbar.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/bloc/reader_bloc.dart';
+import 'package:yomu_no_ikiru/features/reader/presentation/cubit/page_handler_cubit.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/animated_bar.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/app_bar_reader_page.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/reader_bottom_nav_bar.dart';
@@ -19,8 +20,15 @@ class Reader extends StatefulWidget {
     required int pageIndex,
   }) =>
       MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (context) => serviceLocator<ReaderBloc>(),
+        builder: (context) => MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => serviceLocator<ReaderBloc>(),
+            ),
+            BlocProvider(
+              create: (context) => PageHandlerCubit(),
+            ),
+          ],
           child: Reader(
             chapterIndex: chapterIndex,
             manga: manga,
@@ -37,7 +45,6 @@ class Reader extends StatefulWidget {
   });
 
   final int chapterIndex, pageIndex;
-  // final Function(int, int) onPageChange;
   final Manga manga;
 
   @override
@@ -85,13 +92,6 @@ class _ReaderState extends State<Reader> {
         if (state is! ReaderSuccess) {
           return const Loader();
         }
-        if (pageController.hasClients && state.currentPage != pageController.page?.toInt()) {
-          pageController.animateToPage(
-            state.currentPage,
-            duration: const Duration(milliseconds: 150),
-            curve: Curves.easeInOut,
-          );
-        }
         return Scaffold(
           backgroundColor: Colors.transparent,
           extendBody: true,
@@ -118,12 +118,19 @@ class _ReaderState extends State<Reader> {
                     : SafeArea(
                         child: ReaderBottomNavBar(
                           state: state,
+                          // onChangeStart: (_) => readerBloc.add(ReaderStartSliding()),
+                          onChangeEnd: (value) => context
+                              .read<PageHandlerCubit>()
+                              .updateCurrentPage(value.toInt(), false),
                           onChanged: (value) {
-                            readerBloc.add(
-                              ReaderChangePage(
-                                newPageIndex: value.toInt(),
-                              ),
+                            print('value: $value');
+                            pageController.animateToPage(
+                              value.toInt(),
+                              duration: const Duration(milliseconds: 150),
+                              curve: Curves.easeInOut,
                             );
+                            // readerBloc.add(ReaderChangePage(newPageIndex: value.toInt()));
+                            context.read<PageHandlerCubit>().updateCurrentPage(value.toInt(), true);
                           },
                         ),
                       ),
@@ -132,8 +139,18 @@ class _ReaderState extends State<Reader> {
           ),
           body: GestureDetector(
             onTap: () => readerBloc.add(ReaderShowAppBar(showAppBar: !state.showAppBar)),
-            child: ReaderPageWidget(
-              pageController: pageController,
+            child: BlocSelector<PageHandlerCubit, PageHandlerState, int>(
+              selector: (state) => state.currentPage,
+              builder: (context, page) {
+                if (pageController.hasClients && page != pageController.page?.round()) {
+                  pageController.animateToPage(
+                    context.read<PageHandlerCubit>().state.currentPage,
+                    duration: const Duration(milliseconds: 150),
+                    curve: Curves.easeInOut,
+                  );
+                }
+                return ReaderPageWidget(pageController: pageController);
+              },
             ),
           ),
         );

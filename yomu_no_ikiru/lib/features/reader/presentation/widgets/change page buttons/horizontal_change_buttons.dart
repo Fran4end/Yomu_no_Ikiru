@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yomu_no_ikiru/features/reader/presentation/bloc/reader_bloc.dart';
+import 'package:yomu_no_ikiru/features/reader/presentation/cubit/page_handler_cubit.dart';
 
 class HorizontalChangeButtons extends StatelessWidget {
   const HorizontalChangeButtons({
@@ -36,19 +36,11 @@ class HorizontalChangeButtons extends StatelessWidget {
   }
 
   void _nextOrPreviousPage(bool dxOrSx, BuildContext context) {
-    final currentPage = (context.read<ReaderBloc>().state as ReaderSuccess).currentPage;
+    final currentPage = context.read<PageHandlerCubit>().state.currentPage;
     if (dxOrSx) {
-      context.read<ReaderBloc>().add(
-            ReaderChangePage(
-              newPageIndex: currentPage + 1,
-            ),
-          );
+      context.read<PageHandlerCubit>().updateCurrentPage(currentPage + 1);
     } else {
-      context.read<ReaderBloc>().add(
-            ReaderChangePage(
-              newPageIndex: currentPage - 1,
-            ),
-          );
+      context.read<PageHandlerCubit>().updateCurrentPage(currentPage - 1);
     }
   }
 }

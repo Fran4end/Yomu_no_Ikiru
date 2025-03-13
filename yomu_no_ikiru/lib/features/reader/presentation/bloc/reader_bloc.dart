@@ -24,9 +24,9 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     on<ReaderNextChapter>(_onReaderNextChapter);
     on<ReaderPreviousChapter>(_onReaderPreviousChapter);
     on<ReaderShowAppBar>(_onReaderShowAppBar);
-    on<ReaderChangePage>(_onReaderChangePage);
     on<ReaderChangeOrientation>(_onReaderChangeOrientation);
   }
+
 
   _onReaderChangeOrientation(
     ReaderChangeOrientation event,
@@ -36,19 +36,6 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     emit(
       _readerS.copyWith(
         orientation: _readerS.orientation.next,
-      ),
-    );
-  }
-
-  void _onReaderChangePage(
-    ReaderChangePage event,
-    Emitter<ReaderState> emit,
-  ) {
-    if (state is! ReaderSuccess) return;
-    if (_isSeparatorPage(event.newPageIndex)) return;
-    emit(
-      _readerS.copyWith(
-        currentPage: event.newPageIndex,
       ),
     );
   }
@@ -156,7 +143,6 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     );
   }
 
-  bool _isSeparatorPage(int index) => index == 0 || index == _readerS.chapterSize + 1;
   ReaderSuccess get _readerS => state as ReaderSuccess;
   bool get isFirstLoad => (state is! ReaderSuccess);
   bool get hasReachedMin => !isFirstLoad && !(_readerS.currentChapter - 1 >= 0);

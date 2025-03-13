@@ -14,16 +14,7 @@ class MangaWorldSource implements MangaRemoteDataSource {
   CookieJar get cookieJar => CookieJar();
 
   @override
-  Dio get dio => Dio(
-        BaseOptions(
-          baseUrl: 'https://mangaworld.ac',
-          headers: {
-            'User-Agent':
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-            "Cookie": "MWCookie=954942431558f2c8216fe1ca15fbfc57",
-          },
-        ),
-      );
+  Dio get dio => Dio(BaseOptions(baseUrl: 'https://mangaworld.ac'));
 
   @override
   DateTime getFormattedDate(String date) {

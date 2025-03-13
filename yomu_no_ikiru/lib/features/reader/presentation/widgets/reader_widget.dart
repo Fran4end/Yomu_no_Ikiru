@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/bloc/reader_bloc.dart';
+import 'package:yomu_no_ikiru/features/reader/presentation/cubit/page_handler_cubit.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/separator_chapter_page_widget.dart';
 
 class ReaderPageWidget extends StatelessWidget {
@@ -24,12 +25,24 @@ class ReaderPageWidget extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          PhotoViewGallery(
-            pageController: pageController,
-            scrollDirection: orientation.axis,
-            reverse: orientation.reverse,
-            gaplessPlayback: true,
-            pageOptions: _buildPages(readerBlocState, readerBloc),
+          BlocSelector<PageHandlerCubit, PageHandlerState, bool>(
+            selector: (state) => state.isSliding,
+            builder: (context, isSliding) {
+              context.read<PageHandlerCubit>().updateTotalPages(readerBlocState.chapterSize);
+              return PhotoViewGallery(
+                pageController: pageController,
+                scrollDirection: orientation.axis,
+                reverse: orientation.reverse,
+                onPageChanged: (index) {
+                  if (!isSliding) {
+                    print("onPageChanged");
+                    context.read<PageHandlerCubit>().updateCurrentPage(index.toInt());
+                  }
+                },
+                gaplessPlayback: true,
+                pageOptions: _buildPages(readerBlocState, readerBloc),
+              );
+            },
           ),
           orientation.changePageButtons,
         ],
