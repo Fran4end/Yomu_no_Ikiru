@@ -29,7 +29,7 @@ class _ExplorePageState extends State<ExplorePage> {
           ExploreFetchSearchList(
             maxPagesize: maxPagesize,
             source: "MangaWorld",
-            filters: const {'sort': 'most_read', "page": 1},
+            filters: const {"page": 1},
             query: "",
           ),
         );

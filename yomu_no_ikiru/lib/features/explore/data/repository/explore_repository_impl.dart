@@ -26,6 +26,7 @@ class ExploreRepositoryImpl implements ExploreRepository {
     required Map<String, dynamic> filters,
   }) async {
     try {
+      filters['sort'] = 'most_read';
       List<MangaModel> mangaList = await remoteMangaSource.getSearchMangaList(filters);
       if (mangaList.isEmpty) {
         return left(Failure('No manga found'));
