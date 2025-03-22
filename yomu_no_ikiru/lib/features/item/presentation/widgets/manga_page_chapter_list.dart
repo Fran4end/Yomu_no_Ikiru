@@ -3,6 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/page/reader_page.dart';
 
+/// Widget that displays the list of chapters for the manga.
+///
+/// This widget is a [SliverFixedExtentList] that displays the chapters of the manga.
+/// Each chapter is displayed as a [Card] with a [ListTile] that displays the chapter's title and date.
 class MangaPageChapterList extends StatelessWidget {
   const MangaPageChapterList({super.key, required this.manga});
 

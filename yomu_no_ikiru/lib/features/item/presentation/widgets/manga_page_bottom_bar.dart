@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+/// Widget that displays the bottom bar for the manga page.
+///
+/// This widget is a [Row] that displays a back button and a resume button.
+/// The arrow down button is used to navigate down to the first chapter of the manga.
+/// The resume button is used to resume reading the manga from where the user left off.
 class MangaPageBottomBar extends StatelessWidget {
   const MangaPageBottomBar({super.key, required this.onPressed});
 

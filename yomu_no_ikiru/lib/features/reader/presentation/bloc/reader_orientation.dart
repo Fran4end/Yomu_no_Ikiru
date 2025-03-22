@@ -5,6 +5,9 @@ import 'package:yomu_no_ikiru/features/reader/presentation/widgets/orientation%2
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/orientation%20icons/oriental_horizontal_icon.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/orientation%20icons/vertical_icon.dart';
 
+/// The reader orientation type
+/// 
+/// The type will be used to change the orientation of the reader state in rotation
 enum ReaderOrientationType {
   occidentalHorizontal(
     axis: Axis.horizontal,

@@ -7,6 +7,10 @@ import 'package:yomu_no_ikiru/features/item/presentation/widgets/manga_page_genr
 
 import '../../../../constants.dart';
 
+/// Widget that displays the plot of the manga.
+/// 
+/// This widget is an [ExpandablePanel] that displays the plot of the manga.
+/// TODO: Add a possibility to pop up more information from exterlal site of tracking (such as MyAnimeList, AniList, etc.).
 class MangaPlot extends StatelessWidget {
   final double expandedHeight;
   final Manga manga;

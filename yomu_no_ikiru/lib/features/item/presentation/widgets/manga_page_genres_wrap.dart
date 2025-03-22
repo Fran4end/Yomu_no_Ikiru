@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
 
+/// Widget that displays the genres of the manga.
+///
+/// This widget is a [Wrap] that displays the genres of the manga.
 class GenresWrap extends StatelessWidget {
   const GenresWrap({
     super.key,

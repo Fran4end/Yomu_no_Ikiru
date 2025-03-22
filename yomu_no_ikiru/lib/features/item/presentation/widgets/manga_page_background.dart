@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:yomu_no_ikiru/core/common/widgets/skeleton.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
 
+/// Widget that displays the background of the manga page.
+///
+/// This widget is a [ShaderMask] that displays a gradient on top of the manga's cover image.
+/// The gradient is used to make the manga's title and author more readable.
+/// The cover image is fetched from the internet using the [CachedNetworkImage] widget.
 class MangaPageBackground extends StatelessWidget {
   const MangaPageBackground({
     super.key,

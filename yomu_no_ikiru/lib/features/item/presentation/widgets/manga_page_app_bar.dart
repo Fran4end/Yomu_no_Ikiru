@@ -6,6 +6,12 @@ import 'package:yomu_no_ikiru/core/common/widgets/top_button.dart';
 
 import '../../../../constants.dart';
 
+/// Widget that displays the app bar for the manga page.
+///
+/// This widget is a [SliverAppBar] that displays the manga's title, author, and artist.
+/// It also displays the manga's cover image as the background.
+/// The app bar is pinned to the top of the screen.
+/// The app bar also has a [TopButtonsFunctions] widget that displays a back button and a save button.
 class CustomSliverAppBar extends StatelessWidget {
   const CustomSliverAppBar({
     super.key,

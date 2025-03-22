@@ -21,13 +21,18 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
         super(ReaderInitial()) {
     on<ReaderEvent>(_emitLoading);
     on<ReaderNewChapter>(_onReaderNewChapter);
-    on<ReaderNextChapter>(_onReaderNextChapter);
-    on<ReaderPreviousChapter>(_onReaderPreviousChapter);
+    on<ReaderNextChapter>(_onReaderNewChapter);
+    on<ReaderPreviousChapter>(_onReaderNewChapter);
     on<ReaderShowAppBar>(_onReaderShowAppBar);
     on<ReaderChangeOrientation>(_onReaderChangeOrientation);
   }
 
-
+  /// handle the orientation change event
+  ///
+  /// [event] is the event
+  /// [emit] is the emitter
+  /// the function will change the orientation of the reader state in rotation
+  /// TODO: add more complex configuration for the orientation
   _onReaderChangeOrientation(
     ReaderChangeOrientation event,
     Emitter<ReaderState> emit,
@@ -40,38 +45,13 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     );
   }
 
+  /// Handle the new chapter event
+  ///
+  /// [event] is the event
+  /// [emit] is the emitter
+  /// the function will get the new chapter pages and emit the success or failure state
   Future<void> _onReaderNewChapter(
     ReaderNewChapter event,
-    Emitter<ReaderState> emit,
-  ) async {
-    final res = await _getImagePageUrls(
-      event: event,
-      getCurrentChapter: _getCurrentChapter,
-      hasReachedMaxOrMin: hasReachedMax || hasReachedMin,
-    );
-    return res.fold(
-      (l) => _emitFailure(l, emit),
-      (pages) => _emitSuccess(event, emit, pages),
-    );
-  }
-
-  Future<void> _onReaderPreviousChapter(
-    ReaderPreviousChapter event,
-    Emitter<ReaderState> emit,
-  ) async {
-    final res = await _getImagePageUrls(
-      event: event,
-      getCurrentChapter: _getCurrentChapter,
-      hasReachedMaxOrMin: hasReachedMax || hasReachedMin,
-    );
-    return res.fold(
-      (l) => _emitFailure(l, emit),
-      (pages) => _emitSuccess(event, emit, pages),
-    );
-  }
-
-  Future<void> _onReaderNextChapter(
-    ReaderNextChapter event,
     Emitter<ReaderState> emit,
   ) async {
     final res = await _getImagePageUrls(
@@ -132,6 +112,11 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     emit(ReaderLoading());
   }
 
+  /// Handle the show app bar event
+  ///
+  /// [event] is the event
+  /// [emit] is the emitter
+  /// the function will show or hide the app bar
   _onReaderShowAppBar(ReaderShowAppBar event, Emitter<ReaderState> emit) {
     if (state is! ReaderSuccess) return;
     event.showAppBar
