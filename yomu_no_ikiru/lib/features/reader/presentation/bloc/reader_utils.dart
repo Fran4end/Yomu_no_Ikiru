@@ -1,5 +1,9 @@
 part of 'reader_bloc.dart';
 
+/// Method to get the image page urls
+///
+/// The method will get the image page urls from the current chapter
+/// and return the list of image page urls.
 Future<Either<Failure, List<String>>> _getImagePageUrls({
   required ReaderNewChapter event,
   required bool hasReachedMaxOrMin,
@@ -19,6 +23,7 @@ Future<Either<Failure, List<String>>> _getImagePageUrls({
   return res;
 }
 
+/// Method for render the image pages without displaying it
 void prefetchImages(List<String> pages, PageController pageController, {int bufferSize = 3}) {
   final currentPage = pageController.page?.toInt() ?? 0;
 

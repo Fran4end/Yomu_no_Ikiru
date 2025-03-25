@@ -1,5 +1,10 @@
 part of 'page_handler_cubit.dart';
 
+/// State for [PageHandlerCubit]
+/// 
+/// [currentPage] is the current page of the manga.
+/// [totalPages] is the total number of pages in the manga.
+/// [isSliding] is true if the user is using the slider.
 final class PageHandlerState extends Equatable {
   final int currentPage;
   final int totalPages;

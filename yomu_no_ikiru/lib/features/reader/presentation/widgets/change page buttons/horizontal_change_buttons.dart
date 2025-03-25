@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/cubit/page_handler_cubit.dart';
 
+/// Widget that displays the buttons to change the page horizontally.
+/// 
+/// This widget is responsible for displaying the invisible buttons to change the page horizontally.
 class HorizontalChangeButtons extends StatelessWidget {
   const HorizontalChangeButtons({
     super.key,

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/bloc/reader_bloc.dart';
 
+/// AppBar for the reader.
+/// 
+/// This widget is responsible for displaying the AppBar of the reader.
+/// It contains the title of the current chapter and the button to change the reader direction.
 class ReaderAppBar extends StatelessWidget {
   final void Function()? onPressed;
   final ReaderSuccess state;

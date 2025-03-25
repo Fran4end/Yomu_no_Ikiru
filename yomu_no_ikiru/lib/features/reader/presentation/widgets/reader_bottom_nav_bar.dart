@@ -4,6 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/cubit/page_handler_cubit.dart';
 
+/// Bottom navigation bar for the reader.
+/// 
+/// This widget is responsible for displaying the bottom navigation bar of the reader.
+/// It contains the buttons to go to the next or previous chapter and the slider to navigate between the pages.
 class ReaderBottomNavBar extends StatelessWidget {
   const ReaderBottomNavBar({
     super.key,

@@ -1,6 +1,8 @@
-
 import 'package:flutter/material.dart';
 
+/// Animated bar that slides in from the given [begin] offset.
+///
+/// This widget is responsible for animation of app bar [ReaderAppBar] and bottom navigation bar [ReaderBottomNavBar].
 class AnimatedBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget Function() builder;
   final Offset begin;

@@ -2,6 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:yomu_no_ikiru/constants.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/chapter.dart';
 
+/// Widget that displays the current chapter and the next or previous chapter.
+///
+/// This is a page that is used to load the next or previous chapter and display to user some information about the current chapter.
 class SeparatorChapterPageWidget extends StatelessWidget {
   const SeparatorChapterPageWidget({
     super.key,

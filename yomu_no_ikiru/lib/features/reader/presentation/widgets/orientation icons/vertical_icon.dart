@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+/// Icon that represents the vertical orientation.
+/// 
+/// This icon is used to indicate the vertical reading mode in the reader interface.
 class VerticalIcon extends StatelessWidget {
   const VerticalIcon({super.key});
 

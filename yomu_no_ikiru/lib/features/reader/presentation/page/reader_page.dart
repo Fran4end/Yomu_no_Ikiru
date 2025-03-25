@@ -8,7 +8,7 @@ import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/cubit/page_handler_cubit.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/animated_bar.dart';
-import 'package:yomu_no_ikiru/features/reader/presentation/widgets/app_bar_reader_page.dart';
+import 'package:yomu_no_ikiru/features/reader/presentation/widgets/reader_app_bar_widget.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/reader_bottom_nav_bar.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/reader_widget.dart';
 import 'package:yomu_no_ikiru/init_dependencies.dart';

@@ -7,6 +7,10 @@ import 'package:yomu_no_ikiru/features/reader/presentation/bloc/reader_bloc.dart
 import 'package:yomu_no_ikiru/features/reader/presentation/cubit/page_handler_cubit.dart';
 import 'package:yomu_no_ikiru/features/reader/presentation/widgets/separator_chapter_page_widget.dart';
 
+/// Widget that displays the pages of the manga.
+///
+/// This widget is responsible for displaying the pages of the manga and the separator pages [SeparatorChapterPageWidget].
+/// It handles the gestures of the user and the page changes.
 class ReaderPageWidget extends StatelessWidget {
   final PageController pageController;
 
@@ -35,7 +39,6 @@ class ReaderPageWidget extends StatelessWidget {
                 reverse: orientation.reverse,
                 onPageChanged: (index) {
                   if (!isSliding) {
-                    print("onPageChanged");
                     context.read<PageHandlerCubit>().updateCurrentPage(index.toInt());
                   }
                 },

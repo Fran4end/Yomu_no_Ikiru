@@ -3,10 +3,15 @@ part of 'reader_bloc.dart';
 @immutable
 sealed class ReaderState {}
 
+/// The initial state of the reader
 final class ReaderInitial extends ReaderState {}
 
+/// The state when the reader is loading the first chapter
 final class ReaderLoading extends ReaderState {}
 
+/// The state when the chapter is successfully loaded
+///
+/// The state will contain the manga, the raw pages, the current chapter, the loading new chapter state, the app bar state, and the orientation state.
 final class ReaderSuccess extends ReaderState {
   final Manga manga;
   final Map<int, List<String>> rawPages;
@@ -49,6 +54,7 @@ final class ReaderSuccess extends ReaderState {
   }
 }
 
+/// The state when the reader fails to load the chapter or something else
 final class ReaderFailure extends ReaderState {
   final String error;
 

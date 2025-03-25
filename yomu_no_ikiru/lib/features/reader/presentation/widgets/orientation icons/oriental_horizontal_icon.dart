@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+/// Icon that represents the horizontal orientation.
+/// 
+/// This icon is used to indicate the horizontal reading mode in the reader interface.
 class OrientalHorizontalIcon extends StatelessWidget {
   const OrientalHorizontalIcon({super.key});
 
