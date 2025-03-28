@@ -1,0 +1,25 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_it/get_it.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:yomu_no_ikiru/core/common/cubits/appuser/app_user_cubit.dart';
+import 'package:yomu_no_ikiru/core/common/cubits/currentmanga/current_manga_cubit.dart';
+import 'package:yomu_no_ikiru/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:yomu_no_ikiru/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:yomu_no_ikiru/features/auth/domain/repository/auth_repository.dart';
+import 'package:yomu_no_ikiru/features/auth/domain/usecases/current_user.dart';
+import 'package:yomu_no_ikiru/features/auth/domain/usecases/user_login.dart';
+import 'package:yomu_no_ikiru/features/auth/domain/usecases/user_sign_up.dart';
+import 'package:yomu_no_ikiru/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:yomu_no_ikiru/features/item/data/repository/details_repository_impl.dart';
+import 'package:yomu_no_ikiru/features/item/presentation/bloc/details_bloc.dart';
+import 'package:yomu_no_ikiru/features/explore/data/repository/explore_repository_impl.dart';
+import 'package:yomu_no_ikiru/features/explore/domain/repository/explore_repository.dart';
+import 'package:yomu_no_ikiru/features/explore/presentation/bloc/explore_bloc.dart';
+import 'package:yomu_no_ikiru/features/item/domain/usecase/get_manga_details.dart';
+import 'package:yomu_no_ikiru/features/explore/domain/usecase/search_manga.dart';
+import 'package:yomu_no_ikiru/features/reader/data/repository/reader_repository_impl.dart';
+import 'package:yomu_no_ikiru/features/reader/domain/repository/reader_repository.dart';
+import 'package:yomu_no_ikiru/features/reader/domain/usecase/get_current_chapter.dart';
+import 'package:yomu_no_ikiru/features/reader/presentation/bloc/reader_bloc.dart';
+
+part 'init_dependencies.main.dart';

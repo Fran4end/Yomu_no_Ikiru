@@ -1,26 +1,30 @@
 {
-  // Usare IntelliSense per informazioni sui possibili attributi.
-  // Al passaggio del mouse vengono visualizzate le descrizioni degli attributi esistenti.
-  // Per altre informazioni, visitare: https://go.microsoft.com/fwlink/?linkid=830387
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "yomu no ikiru",
+      "name": "yomu_no_ikiru",
+      "cwd": "yomu_no_ikiru",
       "request": "launch",
       "type": "dart",
-      "args": ["--web-browser-flag", "--disable-web-security"]
+      "args": ["--quiet"]
     },
     {
-      "name": "yomu no ikiru (release mode)",
+      "name": "yomu_no_ikiru (profile mode)",
+      "cwd": "yomu_no_ikiru",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "args": ["--quiet", "--enable-impeller"]
+    },
+    {
+      "name": "yomu_no_ikiru (release mode)",
+      "cwd": "yomu_no_ikiru",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"
-    },
-    {
-      "name": "yomu no ikiru (android)",
-      "request": "launch",
-      "type": "dart",
-      "args": ["--android-skip-build-dependency-validation"]
     }
   ]
 }
