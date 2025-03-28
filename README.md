@@ -22,7 +22,7 @@ For android 6 or above and ios ...,
 
 This project is in development, i do my best to keep things in a stable state. Users are encourage to report any issue and keep in mind that i'm not always active.
 
-Right now the [main](https://github.com/Fran4end/Yomu_no_Ikiru) branch is a version with a new codebase, if you go backwards with commit you can find a version with legacy code and gradle that have more features than now
+Right now the [main](https://github.com/Fran4end/Yomu_no_Ikiru) branch uses a new codebase; if you revert to an earlier commit, you can find a version with legacy code and a Gradle build that includes additional features.
 ## Running Yomu no Ikiru
 
 If you are just looking to give the app a whirl, you can grab the latest release for your platform (for now i haven't build a version so no link work):
