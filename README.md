@@ -42,8 +42,7 @@ Please make sure you have the following prerequisites:
 - [Flutter SDK](https://flutter.dev/) installed.
 - [Android SDK](https://developer.android.com/studio) installed
 - [Java JDK 17](https://www.oracle.com/java/technologies/downloads/#java17) installed
-- For now if you are working on new_code branch, you need an a test database to put an account
-
+- For now if you are working on new_code branch, you need a test database to put an account
 When working with the codebase, i recommend using an IDE with intelligent code completion and syntax highlighting, such as the latest version of [Visual Studio Code](https://code.visualstudio.com/) or [Android Studio](https://developer.android.com/)
 
 ### Downloading the source code
