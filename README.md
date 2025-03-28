@@ -22,11 +22,11 @@ For android 6 or above and ios ...,
 
 This project is in development, i do my best to keep things in a stable state. Users are encourage to report any issue and keep in mind that i'm not always active.
 
-Right now the [main](https://github.com/Fran4end/Yomu_no_Ikiru) branch is a version with a deprecated gradle and work only on android, i'm developing new version from scratch on branch [new_code](https://github.com/Fran4end/Yomu_no_Ikiru/tree/new_code) the others branch is a try of new feature but not working, so please not consider those.
+Right now the [main](https://github.com/Fran4end/Yomu_no_Ikiru) branch is a version with a new codebase, if you go backwards with commint you can find a version with legacy code and gradle that have more features than now 
 
 ## Running Yomu no Ikiru
 
-If you are just looking to give the app a whirl, you can grab the latest release for your platform:
+If you are just looking to give the app a whirl, you can grab the latest release for your platform (for now i haven't build a version so no link work):
 
 ### Latest release
 
@@ -41,8 +41,7 @@ Please make sure you have the following prerequisites:
 
 - [Flutter SDK](https://flutter.dev/) installed.
 - [Android SDK](https://developer.android.com/studio) installed
-- [Java JDK 17](https://www.oracle.com/java/technologies/downloads/#java17) installed
-- For now if you are working on new_code branch, you need a test database to put an account
+- [Java JDK 21](https://www.oracle.com/java/technologies/downloads/#jdk21-windows) installed
 When working with the codebase, i recommend using an IDE with intelligent code completion and syntax highlighting, such as the latest version of [Visual Studio Code](https://code.visualstudio.com/) or [Android Studio](https://developer.android.com/)
 
 ### Downloading the source code
@@ -54,7 +53,7 @@ git clone https://github.com/Fran4end/Yomu_no_Ikiru
 cd yomu_no_ikiru
 ```
 
-To update the source code to the latest commit, run the following command inside the `yomu_no_ikiru` directory:
+To update the source code to the latest commit, run the following command inside the `Yomu no Ikiru` directory:
 
 ```shell
 git pull
@@ -79,7 +78,8 @@ flutter devices
 - run code:
 
 ```shell
-flutter flutter run -d <DEVICE_ID>
+cd yomu_no_ikiru
+flutter run -d <DEVICE_ID>
 ```
 
 When running locally to do any kind of performance testing, make sure to add `--release` to the run command, as the overhead of running with the default `Debug` configuration can be large.
