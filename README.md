@@ -92,7 +92,7 @@ Before committing your code, please run a code formatter. This can be achieved b
 
 ## contributing
 
-this section it will update soon
+This section will be updated soon.
 ...
 
 ## License
