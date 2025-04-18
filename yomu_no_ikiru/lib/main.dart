@@ -8,7 +8,7 @@ import 'package:yomu_no_ikiru/core/common/cubits/currentmanga/current_manga_cubi
 import 'package:yomu_no_ikiru/core/theme/old/old_theme.dart';
 import 'package:yomu_no_ikiru/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:yomu_no_ikiru/features/explore/presentation/bloc/explore_bloc.dart';
-import 'package:yomu_no_ikiru/core/common/widgets/navigation_bar.dart';
+import 'package:yomu_no_ikiru/features/explore/presentation/page/explore_page.dart';
 import 'package:yomu_no_ikiru/init_dependencies.dart';
 
 Future<void> main() async {
@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Yomu no Ikiru',
       darkTheme: OldTheme.darkTheme,
       theme: OldTheme.lightTheme,
-      home: const NavigationBarWidget(),
+      home: const ExplorePage(),
     );
   }
 
