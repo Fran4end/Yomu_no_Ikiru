@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:yomu_no_ikiru/constants.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/chapter.dart';
 
 /// Widget that displays the current chapter and the next or previous chapter.

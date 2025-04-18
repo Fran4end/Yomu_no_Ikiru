@@ -4,7 +4,7 @@ import 'package:yomu_no_ikiru/features/item/presentation/widgets/manga_page_back
 import 'package:yomu_no_ikiru/features/item/presentation/widgets/manga_page_app_bar_detail.dart';
 import 'package:yomu_no_ikiru/core/common/widgets/top_button.dart';
 
-import '../../../../constants.dart';
+import '../../../../core/utils/constants.dart';
 
 /// Widget that displays the app bar for the manga page.
 ///

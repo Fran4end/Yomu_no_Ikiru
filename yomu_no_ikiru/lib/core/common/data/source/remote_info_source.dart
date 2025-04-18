@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:html/dom.dart';
-import 'package:yomu_no_ikiru/constants.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 import 'package:yomu_no_ikiru/core/common/data/model/manga_info_model.dart';
 
 abstract interface class MangaRemoteInfoSource {

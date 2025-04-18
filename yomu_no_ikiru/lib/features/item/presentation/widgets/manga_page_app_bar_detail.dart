@@ -5,7 +5,7 @@ import 'package:yomu_no_ikiru/core/common/widgets/skeleton.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
 import 'package:yomu_no_ikiru/features/item/presentation/widgets/manga_page_genres_wrap.dart';
 
-import '../../../../constants.dart';
+import '../../../../core/utils/constants.dart';
 
 /// Widget that displays the plot of the manga.
 /// 

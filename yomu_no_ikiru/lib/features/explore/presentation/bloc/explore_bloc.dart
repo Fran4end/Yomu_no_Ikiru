@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yomu_no_ikiru/constants.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
 import 'package:yomu_no_ikiru/features/explore/domain/usecase/search_manga.dart';
 

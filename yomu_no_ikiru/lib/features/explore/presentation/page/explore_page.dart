@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yomu_no_ikiru/constants.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 import 'package:yomu_no_ikiru/core/common/widgets/skeleton.dart';
 import 'package:yomu_no_ikiru/core/utils/show_snackbar.dart';
 import 'package:yomu_no_ikiru/features/explore/presentation/bloc/explore_bloc.dart';
