@@ -3,12 +3,11 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:yomu_no_ikiru/core/common/widgets/skeleton.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 import 'package:yomu_no_ikiru/features/item/presentation/widgets/manga_page_genres_wrap.dart';
 
-import '../../../../core/utils/constants.dart';
-
 /// Widget that displays the plot of the manga.
-/// 
+///
 /// This widget is an [ExpandablePanel] that displays the plot of the manga.
 /// TODO: Add a possibility to pop up more information from exterlal site of tracking (such as MyAnimeList, AniList, etc.).
 class MangaPlot extends StatelessWidget {
