@@ -6,48 +6,72 @@
 
 [![GitHub release](https://img.shields.io/github/release/Fran4end/yomu_no_ikiru.svg)](https://github.com/Fran4end/Yomu_no_Ikiru/releases)
 
-A free app for reading manga in different languages
+**Yomu no Ikiru** is a free and open-source multi-platform app for reading manga.  
+It is designed to be flexible, extendable, and respectful of intellectual property.
 
-This is a multi-platform app inspired from [Tachiyomy](https://tachiyomi.org/).
-For android 6 or above and ios ...,
+> ⚠️ **Disclaimer**  
+> This application does not provide or host any manga content.  
+> Users are responsible for importing and managing their own sources through external configuration files.  
+> The app acts solely as a reading tool for publicly accessible content. It does not verify or moderate third-party sources.
 
-## Index
+---
+
+## Table of Contents
 
 1. [Running](#running-yomu-no-ikiru)
 2. [Develop](#developing-yomu-no-ikiru)
 3. [contributing](#contributing)
 4. [License](#license)
 
-## Status
+---
 
-This project is in development, i do my best to keep things in a stable state. Users are encourage to report any issue and keep in mind that i'm not always active.
+## Project Status
 
-Right now the [main](https://github.com/Fran4end/Yomu_no_Ikiru) branch uses a new codebase; if you revert to an earlier commit, you can find a version with legacy code and a Gradle build that includes additional features.
+This project is under active development.  
+I do my best to keep things in a stable state. Feedback and bug reports are welcome, but please be aware that I may not always be immediately available.
+
+> ⚙️ The current [`main`](https://github.com/Fran4end/Yomu_no_Ikiru) branch is a new codebase. Older versions can be found in earlier commits and may include legacy features (e.g., Gradle builds).  
+> **⚠️ LEGACY CODE DISCLAIMER**  
+> This branch contains legacy code that references third‑party websites which may infringe copyright.  
+> These versions are **unsupported**, **unmaintained**, and **provided “as‑is”**.  
+> The maintainers **do not condone** unauthorized access to copyrighted content and **disclaim all liability** for any use of these legacy branches.  
+> Please use only the last commits on [`main`](https://github.com/Fran4end/Yomu_no_Ikiru) branch for the officially supported, legal‑friendly code.
+
+---
+
 ## Running Yomu no Ikiru
 
-If you are just looking to give the app a whirl, you can grab the latest release for your platform (for now I haven't built a version so the links are currently inactive):
+Currently, there are no automated builds. You can compile the app from source or download the latest release when available:
+
 ### Latest release
 
-| [Windows ?? (x64)]() | macOS ?? ([Intel](), [Apple Silicon]()) | [Linux (x64)]() | [iOS ??]() | [Android 6+](https://github.com/Fran4end/Yomu_no_Ikiru/releases/latest/download/Yomu-no-Ikiru-android.apk) |
-| -------------------- | --------------------------------------- | --------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| [Windows ?? (x64)]() | macOS ?? ([Intel](), [Apple Silicon]()) | [Linux (x64)]() | [iOS ??]() | [Android 6+]() |
+| -------------------- | --------------------------------------- | --------------- | ---------- | -------------- |
+
+---
 
 ## Developing Yomu no Ikiru
 
 ### Prerequisite
 
-Please make sure you have the following prerequisites:
+Ensure you have the following installed:
 
 - [Flutter SDK](https://flutter.dev/) installed.
 - [Android SDK](https://developer.android.com/studio) installed
 - [Java JDK 21](https://www.oracle.com/java/technologies/downloads/#jdk21-windows) installed
-When working with the codebase, i recommend using an IDE with intelligent code completion and syntax highlighting, such as the latest version of [Visual Studio Code](https://code.visualstudio.com/) or [Android Studio](https://developer.android.com/)
 
-### Downloading the source code
+Recommended IDEs:
+
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Android Studio](https://developer.android.com/)
+
+### Cloning the source code
 
 Clone the repository:
 
 ```shell
 git clone https://github.com/Fran4end/Yomu_no_Ikiru
+
 cd yomu_no_ikiru
 ```
 
@@ -61,7 +85,7 @@ git pull
 
 #### From an IDE
 
-...
+(coming soon...)
 
 #### From CLI
 
@@ -88,13 +112,18 @@ If you want more information log, try to add `--verbose`.
 
 Before committing your code, please run a code formatter. This can be achieved by running `dart format ./` in the command line, or using the `Format code` command in your IDE.
 
+---
+
 ## contributing
 
-This section will be updated soon.
-...
+(coming soon...)
+
+---
+
+## Screenshot
+
+---
 
 ## License
 
-_Yomu no Ikiru_'s code are licensed under the `Apache License V2`. Please see [the license file](LICENSE) for more information. [tl;dr](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0) you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
-
-## Screenshot
+_Yomu no Ikiru_'s code are licensed under the `Apache License 2.0`. Please see [the license file](LICENSE) for more information. [tl;dr](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0) you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
