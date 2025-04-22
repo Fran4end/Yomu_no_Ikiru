@@ -81,5 +81,6 @@
     "xutility": "cpp"
   },
   "cmake.ignoreCMakeListsMissing": true,
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

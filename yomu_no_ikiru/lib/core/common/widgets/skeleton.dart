@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:yomu_no_ikiru/constants.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 
 class Skeleton extends StatelessWidget {
   const Skeleton({

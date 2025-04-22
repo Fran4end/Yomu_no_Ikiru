@@ -3,7 +3,7 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:html/dom.dart';
-import 'package:yomu_no_ikiru/constants.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 import 'package:yomu_no_ikiru/core/common/data/model/chapter_model.dart';
 import 'package:yomu_no_ikiru/core/common/data/model/manga_model.dart';
 

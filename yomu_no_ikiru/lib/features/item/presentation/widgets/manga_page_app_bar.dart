@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 import 'package:yomu_no_ikiru/features/item/presentation/widgets/manga_page_background.dart';
 import 'package:yomu_no_ikiru/features/item/presentation/widgets/manga_page_app_bar_detail.dart';
 import 'package:yomu_no_ikiru/core/common/widgets/top_button.dart';
-
-import '../../../../constants.dart';
 
 /// Widget that displays the app bar for the manga page.
 ///

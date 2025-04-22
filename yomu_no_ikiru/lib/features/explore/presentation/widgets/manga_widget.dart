@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:yomu_no_ikiru/constants.dart';
+import 'package:yomu_no_ikiru/core/utils/constants.dart';
 import 'package:yomu_no_ikiru/core/common/widgets/skeleton.dart';
 import 'package:yomu_no_ikiru/core/common/entities/manga/manga.dart';
 import 'package:yomu_no_ikiru/features/item/presentation/page/manga_detail_page.dart';

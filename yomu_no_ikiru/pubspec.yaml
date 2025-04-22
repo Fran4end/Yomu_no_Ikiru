@@ -34,24 +34,24 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  flutter_bloc: ^8.1.6
+  flutter_bloc: ^9.1.0
   fpdart: ^1.1.0
   supabase_flutter: ^2.6.0
   flutter_dotenv: ^5.1.0
-  get_it: ^7.7.0
+  get_it: ^8.0.3
   cached_network_image: ^3.4.1
   uuid: ^4.4.2
   image_picker: ^1.1.2
   flutter_initicon: ^3.0.1
-  intl: ^0.19.0
+  intl: ^0.20.2
   font_awesome_flutter: ^10.7.0
   dio: ^5.7.0
-  dio_cache_interceptor: ^3.5.0
+  dio_cache_interceptor: ^4.0.3
   html: ^0.15.4
   expandable: ^5.0.1
   shimmer: ^3.0.0
   google_fonts: ^6.2.1
-  bloc_concurrency: ^0.2.5
+  bloc_concurrency: ^0.3.0
   stream_transform: ^2.1.0
   photo_view: ^0.15.0
   collection: ^1.18.0
@@ -59,6 +59,8 @@ dependencies:
   cookie_jar: ^4.0.8
   mockito: ^5.4.5
   equatable: ^2.0.7
+  lazy_load_indexed_stack: ^1.2.1
+  rive: ^0.13.20
 
 dev_dependencies:
   flutter_test:
@@ -69,8 +71,8 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
 
 flutter_launcher_icons:
   android: true
@@ -105,6 +107,7 @@ flutter:
     - .env
     - assets/
     - assets/backgrounds/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
