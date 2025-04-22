@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
 import 'package:rive/rive.dart';
 import 'package:yomu_no_ikiru/core/utils/constants.dart';
-import 'package:yomu_no_ikiru/core/utils/navigation_bar_destination.dart';
+import 'package:yomu_no_ikiru/core/common/entities/navigation_bar_destination.dart';
 import 'package:yomu_no_ikiru/core/utils/rive_controller.dart';
 import 'package:yomu_no_ikiru/features/explore/presentation/page/explore_page.dart';
 

@@ -2,7 +2,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stream_transform/stream_transform.dart';
-import 'package:yomu_no_ikiru/core/utils/navigation_bar_destination.dart';
+import 'package:yomu_no_ikiru/core/common/entities/navigation_bar_destination.dart';
 
 const double defaultPadding = 16;
 final cacheOptions = CacheOptions(
